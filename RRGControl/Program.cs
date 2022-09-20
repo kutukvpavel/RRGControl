@@ -20,14 +20,5 @@ namespace RRGControl
                 .UsePlatformDetect()
                 .LogToTrace()
                 .UseReactiveUI();
-
-
-        public static Models.Network MyNetwork { get; private set; }
-        public static void StartRRGServer(string modelsFolder, string mappingsFolder)
-        {
-            var p = new MyModbus.ModbusProvider(ConfigProvider.ReadModelConfigurations(modelsFolder));
-            MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings(mappingsFolder));
-            
-        }
     }
 }

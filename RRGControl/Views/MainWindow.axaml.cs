@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace RRGControl.Views
 {
@@ -7,6 +8,23 @@ namespace RRGControl.Views
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Rescan_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void ReadAll_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void GenerateExamples_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -16,12 +16,5 @@ namespace RRGControl.MyModbus
     {
         public string Port { get; set; }
         public ModbusType Type { get; set; }
-        [JsonIgnore]
-        public Connection Connection { get; private set; }
-
-        public void CreateConnection(ModbusProvider p)
-        {
-            Connection = new Connection(p, this);
-        }
     }
 }

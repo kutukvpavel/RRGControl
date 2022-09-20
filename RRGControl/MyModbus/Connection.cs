@@ -18,17 +18,26 @@ namespace RRGControl.MyModbus
             Mapping = m;
             Master = m.Type switch
             {
-                ModbusType.RTU => p.Factory.CreateRtuMaster(new SerialPortStreamAdapter(new SerialPortStream(m.Port))),
-                ModbusType.TCP => p.Factory.CreateMaster(new TcpClient(IPEndPoint.Parse(m.Port))),
+                ModbusType.RTU => p.Factory.CreateRtuMaster(new SerialPortStreamAdapter(
+                    new SerialPortStream(m.Port) { ReadTimeout = 200, WriteTimeout = 200 })),
+                ModbusType.TCP => p.Factory.CreateMaster(
+                    new TcpClient(IPEndPoint.Parse(m.Port)) { ReceiveTimeout = 500, SendTimeout = 500 }),
                 _ => throw new ArgumentOutOfRangeException(null, "ModbusType out of range.")
             };
-            Units = m.ToDictionary(x => x.Key, x => new Models.RRGUnit(p.ConfigurationDatabase[x.Value.Model], x.Value, this, x.Key));
+            Units = m.ToDictionary(x => x.Key, x => new RRGUnit(p.ConfigurationDatabase[x.Value.Model], x.Value, this, x.Key));
         }
 
         public IModbusMaster Master { get; }
         public RRGUnitMapping Mapping { get; }
-        public Dictionary<ushort, Models.RRGUnit> Units { get; }
+        public Dictionary<ushort, RRGUnit> Units { get; }
 
+        public void Scan()
+        {
+            foreach (var item in Units)
+            {
+                item.Value.Probe();
+            }
+        }
         public void WriteRegister(ModbusRegister r, ushort v)
         {
             ThrowHelper(r);

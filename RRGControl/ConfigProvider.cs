@@ -10,6 +10,20 @@ namespace RRGControl
 {
     public static class ConfigProvider
     {
+        public class GeneralSettings
+        {
+            public string FlowrateDisplayFormat { get; set; } = "F1";
+            public bool AllowUnitAddressChange { get; set; } = false;
+        }
+
+        public const string AddressRegName = "NetworkAddress";
+        public const string OperationModeRegName = "OperationMode";
+        public const string SetpointRegName = "Setpoint";
+        public const string MeasuredRegName = "Measured";
+        public const string OpenModeName = "Open";
+        public const string ClosedModeName = "Closed";
+        public const string RegulateModeName = "Regulate";
+
         public static JsonSerializerOptions SerializerOptions { get; set; } = new JsonSerializerOptions()
         {
             WriteIndented = true,
@@ -17,15 +31,15 @@ namespace RRGControl
         };
         public static readonly MyModbus.RRGModelConfig RRG = new MyModbus.RRGModelConfig("RRG", new List<MyModbus.ModbusRegisterBase>()
         {
-            new MyModbus.ModbusRegisterBase(MyModbus.RRGModelConfig.AddressRegName, 0, 0, 1, 65535),
-            new MyModbus.ModbusRegisterBase(MyModbus.RRGModelConfig.OperationModeRegName, 2, 19, new Dictionary<string, ushort>()
+            new MyModbus.ModbusRegisterBase(AddressRegName, 0, 0, 1, 65535),
+            new MyModbus.ModbusRegisterBase(OperationModeRegName, 2, 19, new Dictionary<string, ushort>()
             {
-                { "Regulate", 19 },
-                { "Open", 6 },
-                { "Close", 10 }
+                { RegulateModeName, 19 },
+                { OpenModeName, 6 },
+                { ClosedModeName, 10 }
             }),
-            new MyModbus.ModbusRegisterBase(MyModbus.RRGModelConfig.SetpointRegName, 4, 0, 0, 10000),
-            new MyModbus.ModbusRegisterBase(MyModbus.RRGModelConfig.MeasuredRegName, 5)
+            new MyModbus.ModbusRegisterBase(SetpointRegName, 4, 0, 0, 10000),
+            new MyModbus.ModbusRegisterBase(MeasuredRegName, 5)
         });
         public static readonly MyModbus.RRGModelConfig RRG20 = new MyModbus.RRGModelConfig(
             $"RRG{MyModbus.RRGModelConfig.ModelPathSeparator}RRG20", new List<MyModbus.ModbusRegisterBase>()
@@ -39,23 +53,33 @@ namespace RRGControl
             })
         });
 
-        public static event EventHandler<string> LogEvent;
+        public static event EventHandler<string>? LogEvent;
+        public static GeneralSettings Settings { get; private set; }
 
         private static List<T> ReadConfigFiles<T>(string folder)
         {
+            const string name = "Config folder reader";
+
             List<T> result = new List<T>();
-            foreach (var item in Directory.EnumerateFiles(folder, "*.json", SearchOption.AllDirectories))
-            { 
-                try
+            try
+            {
+                foreach (var item in Directory.EnumerateFiles(folder, "*.json", SearchOption.AllDirectories))
                 {
-                    var m = JsonSerializer.Deserialize<T>(File.ReadAllText(item), SerializerOptions);
-                    if (m == null) throw new InvalidOperationException($"File \"{item}\" deserializes as NULL.");
-                    result.Add(m);
+                    try
+                    {
+                        var m = JsonSerializer.Deserialize<T>(File.ReadAllText(item), SerializerOptions);
+                        if (m == null) throw new InvalidOperationException($"File \"{item}\" deserializes as NULL.");
+                        result.Add(m);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogEvent?.Invoke(name, ex.ToString());
+                    }
                 }
-                catch (Exception ex)
-                {
-                    LogEvent?.Invoke("Config folder reader", ex.ToString());
-                }
+            }
+            catch (Exception ex)
+            {
+                LogEvent?.Invoke(name, ex.ToString());
             }
             return result;
         }
@@ -83,6 +107,19 @@ namespace RRGControl
         public static List<MyModbus.RRGUnitMapping> ReadUnitMappings(string folder)
         {
             return ReadConfigFiles<MyModbus.RRGUnitMapping>(folder);
+        }
+        public static void ReadGeneralSettings(string filePath)
+        {
+            GeneralSettings? t = null;
+            try
+            {
+                t = JsonSerializer.Deserialize<GeneralSettings>(File.ReadAllText(filePath), SerializerOptions);
+            }
+            catch (Exception ex)
+            {
+                LogEvent?.Invoke("General settings deserializer", ex.ToString());
+            }
+            Settings = t ?? new GeneralSettings();
         }
     }
 }

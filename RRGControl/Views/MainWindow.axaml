@@ -1,17 +1,39 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:RRGControl.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="RRGControl.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="RRGControl">
-
-    <Design.DataContext>
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
-
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:vm="using:RRGControl.ViewModels"
+		xmlns:local="using:RRGControl.Views"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		x:Class="RRGControl.Views.MainWindow"
+		Icon="/Assets/avalonia-logo.ico"
+		Title="RRGControl">
+	<Grid ColumnDefinitions="*" RowDefinitions="auto,*,auto">
+		<Menu Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="Gray">
+			<MenuItem Header="Network">
+				<MenuItem Header="Rescan" Click="Rescan_Click"></MenuItem>
+				<MenuItem Header="Read All" Click="ReadAll_Click"></MenuItem>
+			</MenuItem>
+			<MenuItem Header="Help">
+				<MenuItem Header="Generate Example Files" Click="GenerateExamples_Click"></MenuItem>
+				<MenuItem Header="About" Click="About_Click"></MenuItem>
+			</MenuItem>
+		</Menu>
+		<TabControl Grid.Column="0" Grid.Row="1" DataContext="{Binding Connections}" Items="{Binding}">
+			<TabControl.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Port}"></TextBlock>
+				</DataTemplate>
+			</TabControl.ItemTemplate>
+			<TabControl.ContentTemplate>
+				<DataTemplate>
+					<local:Connection DataContext="{Binding}"></local:Connection>
+				</DataTemplate>
+			</TabControl.ContentTemplate>
+		</TabControl>
+		<ItemsControl Grid.Column="0" Grid.Row="2" Margin="5">
+			<TextBlock>Status: </TextBlock>
+			<TextBlock Text="{Binding Status}"></TextBlock>
+		</ItemsControl>
+	</Grid>
 </Window>

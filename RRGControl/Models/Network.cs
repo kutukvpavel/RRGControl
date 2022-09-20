@@ -8,18 +8,34 @@ namespace RRGControl.Models
 {
     public class Network
     {
+        public static event EventHandler<string>? LogEvent;
+
         public Network(MyModbus.ModbusProvider p, List<MyModbus.RRGUnitMapping> m)
         {
             Provider = p;
-            Connections = new MyModbus.Connection[m.Count];
-            int i = 0;
+            Connections = new List<MyModbus.Connection>(m.Count);
             foreach (var item in m)
             {
-                Connections[i++] = new MyModbus.Connection(p, item);
+                try
+                {
+                    Connections.Add(new MyModbus.Connection(p, item));
+                }
+                catch (Exception ex)
+                {
+                    LogEvent?.Invoke(this, $"Can't create connection: {ex}");
+                }
             }
         }
 
-        public MyModbus.Connection[] Connections { get; }
+        public List<MyModbus.Connection> Connections { get; }
         public MyModbus.ModbusProvider Provider { get; }
+
+        public void Scan()
+        {
+            foreach (var item in Connections)
+            {
+                item.Scan();
+            }
+        }
     }
 }

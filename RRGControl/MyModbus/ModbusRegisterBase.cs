@@ -23,11 +23,17 @@ namespace RRGControl.MyModbus
     public enum RegisterValueType
     {
         Range,
-        Fixed,
+        Fixed
+    }
+    public enum RegisterType
+    {
+        ReadWrite,
         ReadOnly
     }
     public class ModbusRegisterBase
     {
+        private static readonly RegisterLimits DefaultLimits = new RegisterLimits(0, 65535);
+
         private ModbusRegisterBase(string name, ushort addr, ushort def) : this(name, addr)
         {
             DefaultValue = def;
@@ -39,12 +45,12 @@ namespace RRGControl.MyModbus
         }
         public ModbusRegisterBase(string name, ushort addr, ushort def, Dictionary<string, ushort> values) : this(name, addr, def)
         {
-            Type = RegisterValueType.Fixed;
+            ValueType = RegisterValueType.Fixed;
             Values = values;
         }
         public ModbusRegisterBase(string name, ushort addr, ushort def, RegisterLimits limits) : this(name, addr, def)
         {
-            Type = RegisterValueType.Range;
+            ValueType = RegisterValueType.Range;
             Limits = limits;
         }
         public ModbusRegisterBase(string name, ushort addr, ushort def, ushort min, ushort max) 
@@ -53,17 +59,18 @@ namespace RRGControl.MyModbus
 
         }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = "Example";
         public ushort Address { get; set; }
-        public RegisterValueType Type { get; set; } = RegisterValueType.ReadOnly;
+        public RegisterValueType ValueType { get; set; } = RegisterValueType.Range;
+        public RegisterType Type { get; set; } = RegisterType.ReadOnly;
         public Dictionary<string, ushort>? Values { get; set; }
-        public RegisterLimits? Limits { get; set; }
+        public RegisterLimits? Limits { get; set; } = DefaultLimits;
         public bool ShowInDashboard { get; set; } = true;
         public ushort DefaultValue { get; set; }
         
         public bool ValidateValue(ushort v)
         {
-            return Type switch
+            return ValueType switch
             {
                 RegisterValueType.Range => (v <= (Limits?.Max)) && (v >= (Limits?.Min)),
                 RegisterValueType.Fixed => Values?.Values.Any(x => x == v) ?? false,

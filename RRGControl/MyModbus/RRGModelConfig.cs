@@ -11,12 +11,6 @@ namespace RRGControl.MyModbus
     public class RRGModelConfig : List<ModbusRegisterBase>
     {
         public const char ModelPathSeparator = '/';
-        public const string AddressRegName = "NetworkAddress";
-        public const string OperationModeRegName = "OperationMode";
-        public const string SetpointRegName = "Setpoint";
-        public const string MeasuredRegName = "Measured";
-
-        public static event EventHandler<string>? LogEvent;
 
         public RRGModelConfig(string model, List<ModbusRegisterBase> regs) : base(regs)
         {
