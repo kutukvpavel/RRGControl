@@ -8,7 +8,7 @@ namespace RRGControl.ViewModels
     public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public static event EventHandler<string>? LogEvent;
-        public new event EventHandler<PropertyChangedEventArgs>? PropertyChanged;
+        public new event PropertyChangedEventHandler? PropertyChanged;
 
         private readonly Models.Network mNetwork;
         private string mStatus = "Ready.";
@@ -27,6 +27,7 @@ namespace RRGControl.ViewModels
                     LogEvent?.Invoke(this, ex.ToString());
                 }
             }
+            base.PropertyChanged += PropertyChanged;
         }
 
         public List<ConnectionViewModel> Connections { get; }

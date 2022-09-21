@@ -3,57 +3,70 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:local="using:RRGControl"
-			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
 			 x:Class="RRGControl.Views.Dashboard">
 	<UserControl.Styles>
 		<Style Selector="HeaderedContentControl">
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate>
-						<Grid>
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition Height="*"/>
-							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto"/>
-								<ColumnDefinition Width="*"/>
-							</Grid.ColumnDefinitions>
-							<Border ZIndex="1" Padding="3,0,3,0" Background="White" Margin="3,0,0,0">
-								<TextBlock TextBlock.FontWeight="Bold" Text="{TemplateBinding Header}" />
-							</Border>
-							<Border Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="0,5,0,0"
-								BorderBrush="{TemplateBinding Background}"
-								BorderThickness="1">
-								<ContentPresenter Content="{TemplateBinding Content}" />
-							</Border>
-						</Grid>
+						<Border>
+							<StackPanel>
+								<TextBlock FontWeight="Bold" Text="{TemplateBinding Header}"></TextBlock>
+								<Border
+									BorderBrush="Gray"
+									BorderThickness="2"
+									CornerRadius="5"
+									Padding="3,5"
+									Margin="3,0">
+									<ContentPresenter Content="{TemplateBinding Content}" />
+								</Border>
+							</StackPanel>
+						</Border>
 					</ControlTemplate>
 				</Setter.Value>
 			</Setter>
 		</Style>
 		<Style Selector="TextBox, Button, TextBlock">
 			<Setter Property="Margin" Value="3,0,3,3"></Setter>
+			<Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+			<Setter Property="VerticalAlignment" Value="Center"></Setter>
+		</Style>
+		<Style Selector="TextBox[IsReadOnly=true]">
+			<Setter Property="Background" Value="LightGray"></Setter>
+		</Style>
+		<Style Selector="Button">
+			<Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
 		</Style>
 	</UserControl.Styles>
-	<Grid Name="mainGrid" ColumnDefinitions="*,*" RowDefinitions="auto,auto,*">
+	<Grid Name="mainGrid" ColumnDefinitions="*,2*" RowDefinitions="auto,auto,*">
 		<TextBlock Grid.Column="0" Grid.Row="0" Text="Unit Address:"></TextBlock>
-		<TextBox Grid.Column="0" Grid.Row="1" Text="{Binding Address}" KeyDown="Address_OnKeyDown" 
+		<TextBox Grid.Column="0" Grid.Row="1" Text="{Binding Address, Mode=OneWay}" KeyDown="Address_OnKeyDown" 
 				 IsReadOnly="{Binding Source={x:Static local:ConfigProvider.Settings}, Path=AllowUnitAddressChange}"></TextBox>
 		<TextBlock Grid.Column="1" Grid.Row="0" Text="Unit Model:"></TextBlock>
 		<TextBox Grid.Column="1" Grid.Row="1" Text="{Binding UnitModel}" IsReadOnly="True"></TextBox>
 		<HeaderedContentControl Grid.Column="0" Grid.Row="2" Header="Mode" >
-			<Grid ColumnDefinitions="*" RowDefinitions="auto,auto,auto,auto">
-				<TextBox Grid.Column="0" Grid.Row="0" Text="{Binding Mode}"></TextBox>
-				<Button Grid.Column="0" Grid.Row="1" Content="{x:Static local:ConfigProvider.RegulateModeName}"></Button>
-				<Button Grid.Column="0" Grid.Row="2" Content="{x:Static local:ConfigProvider.OpenModeName}"></Button>
-				<Button Grid.Column="0" Grid.Row="3" Content="{x:Static local:ConfigProvider.ClosedModeName}"></Button>
+			<Grid ColumnDefinitions="*" RowDefinitions="auto,3,auto,auto,auto">
+				<TextBox Grid.Column="0" Grid.Row="0" Text="{Binding Mode}" IsReadOnly="True" FontWeight="Bold"></TextBox>
+				<Button Grid.Column="0" Grid.Row="2" Background="LightGreen" Content="{x:Static local:ConfigProvider.RegulateModeName}"></Button>
+				<Button Grid.Column="0" Grid.Row="3" Background="LightBlue" Content="{x:Static local:ConfigProvider.OpenModeName}"></Button>
+				<Button Grid.Column="0" Grid.Row="4" Background="LightSalmon" Content="{x:Static local:ConfigProvider.ClosedModeName}"></Button>
 			</Grid>
 		</HeaderedContentControl>
 		<HeaderedContentControl Grid.Column="1" Grid.Row="2" Header="Flowrate">
-			<Grid ColumnDefinitions="*" RowDefinitions="auto,auto">
-				<TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Measured}"></TextBlock>
-				<TextBox Grid.Column="0" Grid.Row="1" Text="{Binding Setpoint}" KeyDown="Setpoint_OnKeyDown"></TextBox>
+			<Grid ColumnDefinitions="auto,*,3,auto" RowDefinitions="auto,10,auto,10,auto">
+				<TextBlock Grid.Column="0" Grid.Row="0" Text="Measured:   "></TextBlock>
+				<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Measured}" FontSize="16" FontWeight="Bold"></TextBlock>
+				<TextBlock Grid.Column="0" Grid.Row="2">Setpoint: </TextBlock>
+				<TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Setpoint}" KeyDown="Setpoint_OnKeyDown"></TextBox>
+				<TextBlock Grid.Column="0" Grid.Row="4">Max (100%):  </TextBlock>
+				<TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding MaxFlow}"></TextBlock>
+				<StackPanel Margin="0" Grid.Column="3" Grid.Row="0" Orientation="Horizontal">
+					<TextBlock Text="{Binding Units}"></TextBlock>
+					<TextBlock Text="(%)"></TextBlock>
+				</StackPanel>
+				<TextBlock Grid.Column="3" Grid.Row="2" Text="{Binding Units}"></TextBlock>
+				<TextBlock Grid.Column="3" Grid.Row="4" Text="{Binding Units}"></TextBlock>
 			</Grid>
 		</HeaderedContentControl>
 	</Grid>

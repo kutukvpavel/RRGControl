@@ -2,10 +2,42 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:local="using:RRGControl.Views"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="RRGControl.Views.RRGUnit">
+	<UserControl.Styles>
+		<Style Selector="HeaderedContentControl">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate>
+						<Grid RowDefinitions="auto,*">
+							<TextBlock Grid.Row="0" Margin="5,5,0,3" FontWeight="Bold" Text="{TemplateBinding Header}"></TextBlock>
+							<Border Grid.Row="1"
+									BorderBrush="Gray"
+									BorderThickness="2"
+									CornerRadius="5"
+									Padding="3,3"
+									Margin="3,0">
+								<ScrollViewer>
+									<ContentPresenter Content="{TemplateBinding Content}" />
+								</ScrollViewer>
+							</Border>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</UserControl.Styles>
 	<Grid RowDefinitions="auto,*">
-		<ContentControl Grid.Row="0" Content="{Binding Dashboard}"></ContentControl>
-		<ItemsControl Grid.Row="1" Items="{Binding Registers}"></ItemsControl>
+		<local:Dashboard DataContext="{Binding Dashboard}"></local:Dashboard>
+		<HeaderedContentControl VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Row="1" Header="Register View">
+			<ItemsControl Items="{Binding Registers}" Margin="0,3,15,3">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<local:Register DataContext="{Binding}"></local:Register>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</HeaderedContentControl>
 	</Grid>
 </UserControl>

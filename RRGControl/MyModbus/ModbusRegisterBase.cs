@@ -4,21 +4,24 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace RRGControl.MyModbus
 {
+    [JsonObject]
     public class RegisterLimits
     {
+        [JsonConstructor]
+        public RegisterLimits() { }
         public RegisterLimits(ushort min, ushort max)
         {
-            T = new Tuple<ushort, ushort>(min, max);
+            Min = min;
+            Max = max;
         }
 
-        private Tuple<ushort, ushort> T;
-
-        public ushort Min { get => T.Item1; }
-        public ushort Max { get => T.Item2; }
+        public ushort Min { get; set; }
+        public ushort Max { get; set; }
     }
     public enum RegisterValueType
     {
@@ -39,6 +42,8 @@ namespace RRGControl.MyModbus
             DefaultValue = def;
             Type = RegisterType.ReadWrite;
         }
+        [JsonConstructor]
+        public ModbusRegisterBase() { }
         public ModbusRegisterBase(string name, ushort addr)
         {
             Name = name;
@@ -62,11 +67,13 @@ namespace RRGControl.MyModbus
 
         public string Name { get; set; } = "Example";
         public ushort Address { get; set; } = 0;
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonConverter(typeof(StringEnumConverter))]
         public RegisterValueType ValueType { get; set; } = RegisterValueType.Range;
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonConverter(typeof(StringEnumConverter))]
         public RegisterType Type { get; set; } = RegisterType.ReadOnly;
         public Dictionary<string, ushort>? Values { get; set; }
+        [JsonProperty(IsReference = false, DefaultValueHandling = DefaultValueHandling.Include, 
+            ObjectCreationHandling = ObjectCreationHandling.Replace)]
         public RegisterLimits? Limits { get; set; } = DefaultLimits;
         public bool ShowInDashboard { get; set; } = true;
         public ushort DefaultValue { get; set; } = 0;

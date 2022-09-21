@@ -44,14 +44,19 @@ namespace RRGControl.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AddressContention)));
             }
         }
-        public string CurrentState { get => mUnit.Mode; }
-        public string CurrentFlowrate { get => mUnit.Flowrate.ToString(ConfigProvider.Settings.FlowrateDisplayFormat); }
+        public string Mode { get => mUnit.Mode; }
+        public string Measured 
+        { 
+            get => $"{mUnit.Flowrate.ToString(ConfigProvider.Settings.FlowrateDisplayFormat)}  ({mUnit.Flowrate / mUnit.MaxFlowrate * 100:F1}%)"; 
+        }
         public string Setpoint 
         { 
             get => mUnit.Setpoint.ToString(ConfigProvider.Settings.FlowrateDisplayFormat);
             set => mUnit.Setpoint = double.Parse(value);
         }
         public string UnitModel => mUnit.UnitConfig.Model;
+        public string Units => mUnit.UnitConfig.ConversionUnits;
+        public string MaxFlow => mUnit.MaxFlowrate.ToString(ConfigProvider.Settings.FlowrateDisplayFormat);
 
         public void SetStateOpen()
         {

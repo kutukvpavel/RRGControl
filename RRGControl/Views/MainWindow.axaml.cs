@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using MessageBox.Avalonia;
 using System;
 
 namespace RRGControl.Views

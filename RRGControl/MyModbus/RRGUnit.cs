@@ -24,8 +24,8 @@ namespace RRGControl.MyModbus
 
         private void InitRegs()
         {
-            Registers = new Dictionary<string, ModbusRegister>(ModbusConfig.Count);
-            foreach (var item in ModbusConfig)
+            Registers = new Dictionary<string, ModbusRegister>(ModbusConfig.Registers.Count);
+            foreach (var item in ModbusConfig.Registers)
             {
                 var r = new ModbusRegister(item, Connection, Address);
                 r.PropertyChanged += RegisterChanged;
@@ -45,6 +45,7 @@ namespace RRGControl.MyModbus
         public Dictionary<string, ModbusRegister> Registers { get; private set; }
 
         //Default properties
+        public double MaxFlowrate => UnitConfig.ConversionFactor * Registers[ConfigProvider.SetpointRegName].Base.Limits.Max;
         public double Flowrate 
         { 
             get => Registers[ConfigProvider.MeasuredRegName].Value * UnitConfig.ConversionFactor;

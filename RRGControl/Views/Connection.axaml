@@ -5,7 +5,12 @@
 			 xmlns:local="using:RRGControl.Views"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="RRGControl.Views.Connection">
-	<TabControl DataContext="{Binding Units}" Items="{Binding}">
+	<UserControl.Styles>
+		<Style Selector="TabItem">
+			<Setter Property="Padding" Value="3,0,12,0"></Setter>
+		</Style>
+	</UserControl.Styles>
+	<TabControl Padding="0" DataContext="{Binding Units}" Items="{Binding}">
 		<TabControl.ItemTemplate>
 			<DataTemplate>
 				<TextBlock Text="{Binding Name}" Background="{Binding TabColor}"></TextBlock>

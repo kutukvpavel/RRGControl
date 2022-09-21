@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Text.Json.Serialization;
-using System.Text.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace RRGControl.MyModbus
 {
@@ -13,12 +13,19 @@ namespace RRGControl.MyModbus
         RTU,
         TCP
     }
-    public class RRGUnitMapping : Dictionary<ushort, RRGUnitConfig>
+
+    public class RRGUnitMapping
     {
-        public RRGUnitMapping(Dictionary<ushort, RRGUnitConfig> d) : base(d) { }
+        [JsonConstructor]
+        public RRGUnitMapping() { }
+        public RRGUnitMapping(Dictionary<ushort, RRGUnitConfig> d)
+        {
+            Units = d;
+        }
 
         public string Port { get; set; } = "COM1";
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonConverter(typeof(StringEnumConverter))]
         public ModbusType Type { get; set; } = ModbusType.RTU;
+        public Dictionary<ushort, RRGUnitConfig> Units { get; set; } = new Dictionary<ushort, RRGUnitConfig>();
     }
 }

@@ -4,11 +4,25 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 mc:Ignorable="d" d:DesignWidth="250"
 			 x:Class="RRGControl.Views.Register">
-	<Grid ColumnDefinitions="auto,*,30,30" RowDefinitions="auto,auto">
-		<Label Grid.Column="0" Grid.RowSpan="2" Content="{Binding Name}"></Label>
-		<MaskedTextBox Grid.Column="1" Grid.Row="0" IsVisible="{Binding ShowTextbox}" Mask="{Binding TextboxMask}"></MaskedTextBox>
-		<ComboBox Grid.Column="1" Grid.Row="1" IsVisible="{Binding ShowCombobox}" Items="{Binding ComboboxItems}"></ComboBox>
-		<Button Grid.Column="2" Grid.RowSpan="2">R</Button>
-		<Button Grid.Column="3" Grid.RowSpan="2">W</Button>
+	<UserControl.Styles>
+		<Style Selector="MaskedTextBox, TextBlock#txtName, ComboBox">
+			<Setter Property="Margin" Value="5"></Setter>
+			<Setter Property="VerticalAlignment" Value="Center"></Setter>
+		</Style>
+		<Style Selector="MaskedTextBox, TextBlock#txtName, ComboBox, Button">
+			<Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+		</Style>
+		<Style Selector="Button">
+			<Setter Property="FontStyle" Value="Oblique"></Setter>
+			<Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+			<Setter Property="Margin" Value="3,0"></Setter>
+		</Style>
+	</UserControl.Styles>
+	<Grid ColumnDefinitions="*,*,40,40" RowDefinitions="auto">
+		<TextBlock HorizontalAlignment="Right" Margin="0,5,15,5" Name="txtName" Grid.Column="0" Grid.RowSpan="2" Text="{Binding Name}"></TextBlock>
+		<MaskedTextBox Margin="5" Grid.Column="1" IsVisible="{Binding ShowTextbox}" Mask="{Binding TextboxMask}"></MaskedTextBox>
+		<ComboBox Padding="12,1,0,1" Grid.Column="1" IsVisible="{Binding ShowCombobox}" Items="{Binding ComboboxItems}"></ComboBox>
+		<Button Grid.Column="2" Background="LightBlue">R</Button>
+		<Button Grid.Column="3" Background="LightSalmon">W</Button>
 	</Grid>
 </UserControl>

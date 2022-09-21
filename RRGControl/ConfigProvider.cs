@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using System.Text.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace RRGControl
 {
@@ -24,10 +26,14 @@ namespace RRGControl
         public const string ClosedModeName = "Closed";
         public const string RegulateModeName = "Regulate";
 
-        public static JsonSerializerOptions SerializerOptions { get; set; } = new JsonSerializerOptions()
+        static ConfigProvider()
         {
-            WriteIndented = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            SerializerOptions.Converters.Add(new StringEnumConverter());
+        }
+        public static JsonSerializerSettings SerializerOptions { get; set; } = new JsonSerializerSettings()
+        {
+            Formatting = Formatting.Indented,
+            TypeNameHandling = TypeNameHandling.Auto
         };
         public static readonly MyModbus.RRGModelConfig RRG = new MyModbus.RRGModelConfig("RRG", new List<MyModbus.ModbusRegisterBase>()
         {
@@ -55,8 +61,16 @@ namespace RRGControl
         public static readonly MyModbus.RRGUnitMapping ExampleMapping = new MyModbus.RRGUnitMapping(
             new Dictionary<ushort, MyModbus.RRGUnitConfig>()
             {
-                { 1, new MyModbus.RRGUnitConfig() { ConversionFactor = 1, Model = "RRG20", Name = "Example1" } },
-                { 2, new MyModbus.RRGUnitConfig() { ConversionFactor = 1, Model = "RRG20", Name = "Example2" } }
+                { 
+                    1,
+                    new MyModbus.RRGUnitConfig() 
+                    { ConversionFactor = 0.0009, Model = "RRG20", Name = "Example1", ConversionUnits = "L/h" } 
+                },
+                { 
+                    2,
+                    new MyModbus.RRGUnitConfig() 
+                    { ConversionFactor = 0.015, Model = "RRG20", Name = "Example2", ConversionUnits = "mL/min" } 
+                }
             }
             )
         {
@@ -79,7 +93,7 @@ namespace RRGControl
                 {
                     try
                     {
-                        var m = JsonSerializer.Deserialize<T>(File.ReadAllText(item), SerializerOptions);
+                        var m = JsonConvert.DeserializeObject<T>(File.ReadAllText(item), SerializerOptions);
                         if (m == null) throw new InvalidOperationException($"File \"{item}\" deserializes as NULL.");
                         result.Add(m);
                     }
@@ -126,7 +140,7 @@ namespace RRGControl
             GeneralSettings? t = null;
             try
             {
-                t = JsonSerializer.Deserialize<GeneralSettings>(File.ReadAllText(filePath), SerializerOptions);
+                t = JsonConvert.DeserializeObject<GeneralSettings>(File.ReadAllText(filePath), SerializerOptions);
             }
             catch (Exception ex)
             {
@@ -136,7 +150,7 @@ namespace RRGControl
         }
         public static string Serialize<T>(T input)
         {
-            return JsonSerializer.Serialize(input, SerializerOptions);
+            return JsonConvert.SerializeObject(input, SerializerOptions);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace RRGControl.MyModbus
                     new TcpClient(IPEndPoint.Parse(m.Port)) { ReceiveTimeout = 500, SendTimeout = 500 }),
                 _ => throw new ArgumentOutOfRangeException(null, "ModbusType out of range.")
             };
-            Units = m.ToDictionary(x => x.Key, x => new RRGUnit(p.ConfigurationDatabase[x.Value.Model], x.Value, this, x.Key));
+            Units = m.Units.ToDictionary(x => x.Key, x => new RRGUnit(p.ConfigurationDatabase[x.Value.Model], x.Value, this, x.Key));
         }
 
         public IModbusMaster Master { get; }
