@@ -1,10 +1,10 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        x:Class="RRGControl.Views.AboutBox"
-        Title="AboutBox">
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		x:Class="RRGControl.Views.AboutBox"
+		Title="AboutBox" SizeToContent="WidthAndHeight">
 	<Grid>
-		<TextBlock Margin="10">Made by Kutukov Pavel, 2022</TextBlock>
+		<TextBlock Margin="10" TextWrapping="Wrap" Text="{Binding AboutAuthor}"></TextBlock>
 	</Grid>
 </Window>

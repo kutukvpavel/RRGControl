@@ -7,6 +7,7 @@ using CommandLine;
 using System;
 using System.IO;
 using LLibrary;
+using MessageBox.Avalonia;
 
 namespace RRGControl
 {
@@ -14,36 +15,33 @@ namespace RRGControl
     {
         private const string DefaultModelsSubfolder = "models";
         private const string DefaultUnitsSubfolder = "mapping";
+        private const string DefaultConfigFileName = "config.json";
         private class Options
         {
-            [Option('m', "models", Required = false, HelpText = "Folder containing model description files")]
-            public string? ModelsFolder { get; set; }
-            [Option('u', "units", Required = false, HelpText = "Folder containing unit mapping files")]
-            public string? UnitsFolder { get; set; }
-
-            public Options Process()
-            {
-                var res = new Options()
-                {
-                    ModelsFolder = Path.GetFullPath(ModelsFolder ?? DefaultModelsSubfolder),
-                    UnitsFolder = Path.GetFullPath(UnitsFolder ?? DefaultUnitsSubfolder)
-                };
-                return res;
-            }
+            [Option('m', "models", Required = false, HelpText = @"Folder containing model description files,
+can be absolute or relative to working directory.", Default = DefaultModelsSubfolder)]
+            public string ModelsFolder { get; set; } = DefaultModelsSubfolder;
+            [Option('u', "units", Required = false, HelpText = @"Folder containing unit mapping files,
+can be absolute or relative to working directory.", Default = DefaultUnitsSubfolder)]
+            public string UnitsFolder { get; set; } = DefaultUnitsSubfolder;
+            [Option('c', "config", Required = false, HelpText = @"General settings file path,
+can be absolute or relative to working directory.", Default = DefaultConfigFileName)]
+            public string SettingsFile { get; set; } = DefaultConfigFileName;
         }
 
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
         }
-
+        private Options CurrentOptions { get; set; } = new Options();
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var o = Parser.Default.ParseArguments<Options>(desktop.Args).Value.Process();
+                CurrentOptions = Parser.Default.ParseArguments<Options>(desktop.Args).Value;
                 InitLogs();
-                StartRRGServer(o.ModelsFolder, o.UnitsFolder);
+                ConfigProvider.ReadGeneralSettings(CurrentOptions.SettingsFile);
+                StartRRGServer(CurrentOptions.ModelsFolder, CurrentOptions.UnitsFolder);
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = new MainWindowViewModel(MyNetwork)
@@ -51,7 +49,23 @@ namespace RRGControl
             }
             base.OnFrameworkInitializationCompleted();
         }
+        public void GenerateExamples()
+        {
+            File.WriteAllText(ExampleHelper(CurrentOptions.UnitsFolder, "example.json"),
+                ConfigProvider.Serialize(ConfigProvider.ExampleMapping));
+            File.WriteAllText(ExampleHelper(CurrentOptions.ModelsFolder, "RRG.json"),
+                ConfigProvider.Serialize(ConfigProvider.RRG));
+            File.WriteAllText(ExampleHelper(CurrentOptions.ModelsFolder, "RRG20.json"),
+                ConfigProvider.Serialize(ConfigProvider.RRG20));
+            File.WriteAllText(CurrentOptions.SettingsFile, ConfigProvider.Serialize(ConfigProvider.Settings));
+        }
 
+
+        public static void ShowMessageBox(string title, string contents)
+        {
+            var w = MessageBoxManager.GetMessageBoxStandardWindow(title, contents);
+            w.Show();
+        }
         public static Models.Network MyNetwork { get; private set; }
         private static L LogInstance = new L();
         private static void StartRRGServer(string modelsFolder, string mappingsFolder)
@@ -63,8 +77,10 @@ namespace RRGControl
         {
             ConfigProvider.LogEvent += Log;
             Models.Network.LogEvent += Log;
+            MyModbus.Connection.LogEvent += Log;
             MyModbus.RRGUnit.LogEvent += Log;
             MyModbus.ModbusRegister.LogEvent += Log;
+            MainWindowViewModel.LogEvent += Log;
         }
         private static void Log(object? sender, string msg)
         {
@@ -72,10 +88,15 @@ namespace RRGControl
             var t = sender?.GetType();
             if (t != null)
             {
-                if (t == typeof(string)) lbl = (string)sender;
+                if (t == typeof(string)) lbl = (string?)sender ?? "";
                 else lbl = t.Name;
             }
             LogInstance.Log(lbl, msg);
+        }
+        private static string ExampleHelper(string dir, string f)
+        {
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            return Path.Combine(dir, f);
         }
     }
 }

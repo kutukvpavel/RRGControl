@@ -3,8 +3,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 mc:Ignorable="d" d:DesignWidth="250"
-			 x:Class="RRGControl.Views.Register"
-			 Content="{Binding }">
+			 x:Class="RRGControl.Views.Register">
 	<Grid ColumnDefinitions="auto,*,30,30" RowDefinitions="auto,auto">
 		<Label Grid.Column="0" Grid.RowSpan="2" Content="{Binding Name}"></Label>
 		<MaskedTextBox Grid.Column="1" Grid.Row="0" IsVisible="{Binding ShowTextbox}" Mask="{Binding TextboxMask}"></MaskedTextBox>

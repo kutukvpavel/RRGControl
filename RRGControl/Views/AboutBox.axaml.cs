@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 
 namespace RRGControl.Views
@@ -7,6 +8,12 @@ namespace RRGControl.Views
         public AboutBox()
         {
             InitializeComponent();
+            DataContext = this;
         }
+
+        private string AboutAuthor => @$"ÐÐÃ series mass flow controller software
+
+Kutukov Pavel, 2022-{DateTime.Today.Year}
+kutukovps@my.msu.ru";
     }
 }

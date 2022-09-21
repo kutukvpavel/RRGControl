@@ -37,5 +37,12 @@ namespace RRGControl.Models
                 item.Scan();
             }
         }
+        public void ReadAll()
+        {
+            foreach (var item in Connections)
+            {
+                item.ReadAll();
+            }
+        }
     }
 }

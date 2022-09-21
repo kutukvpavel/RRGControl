@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace RRGControl.MyModbus
 {
@@ -14,7 +15,10 @@ namespace RRGControl.MyModbus
     }
     public class RRGUnitMapping : Dictionary<ushort, RRGUnitConfig>
     {
-        public string Port { get; set; }
-        public ModbusType Type { get; set; }
+        public RRGUnitMapping(Dictionary<ushort, RRGUnitConfig> d) : base(d) { }
+
+        public string Port { get; set; } = "COM1";
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public ModbusType Type { get; set; } = ModbusType.RTU;
     }
 }

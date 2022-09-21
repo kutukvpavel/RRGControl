@@ -13,6 +13,8 @@ namespace RRGControl.MyModbus
 {
     public class Connection
     {
+        public static event EventHandler<string>? LogEvent;
+
         public Connection(ModbusProvider p, RRGUnitMapping m)
         {
             Mapping = m;
@@ -54,6 +56,20 @@ namespace RRGControl.MyModbus
             else
             {
                 throw new ArgumentException("Empty response.");
+            }
+        }
+        public void ReadAll()
+        {
+            foreach (var item in Units)
+            {
+                try
+                {
+                    item.Value.ReadAll();
+                }
+                catch (Exception ex)
+                {
+                    LogEvent?.Invoke(this, ex.ToString());
+                }
             }
         }
 

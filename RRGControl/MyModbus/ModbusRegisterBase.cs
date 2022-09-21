@@ -37,6 +37,7 @@ namespace RRGControl.MyModbus
         private ModbusRegisterBase(string name, ushort addr, ushort def) : this(name, addr)
         {
             DefaultValue = def;
+            Type = RegisterType.ReadWrite;
         }
         public ModbusRegisterBase(string name, ushort addr)
         {
@@ -60,13 +61,15 @@ namespace RRGControl.MyModbus
         }
 
         public string Name { get; set; } = "Example";
-        public ushort Address { get; set; }
+        public ushort Address { get; set; } = 0;
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public RegisterValueType ValueType { get; set; } = RegisterValueType.Range;
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public RegisterType Type { get; set; } = RegisterType.ReadOnly;
         public Dictionary<string, ushort>? Values { get; set; }
         public RegisterLimits? Limits { get; set; } = DefaultLimits;
         public bool ShowInDashboard { get; set; } = true;
-        public ushort DefaultValue { get; set; }
+        public ushort DefaultValue { get; set; } = 0;
         
         public bool ValidateValue(ushort v)
         {

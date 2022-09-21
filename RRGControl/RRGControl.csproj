@@ -21,13 +21,15 @@
 	<TrimmableAssembly Include="Avalonia.Themes.Default" />
   </ItemGroup>
   <ItemGroup>
-	<PackageReference Include="Avalonia" Version="0.10.14" />
-	<PackageReference Include="Avalonia.Desktop" Version="0.10.14" />
+	<PackageReference Include="Avalonia" Version="11.0.0-preview1" />
+	<PackageReference Include="Avalonia.Desktop" Version="11.0.0-preview1" />
 	<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-	<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.14" />
-	<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.14" />
+	<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0-preview1" />
+	<PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview1" />
+	<PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview1" />
 	<PackageReference Include="CommandLineParser" Version="2.9.1" />
 	<PackageReference Include="L" Version="5.0.0" />
+	<PackageReference Include="MessageBox.Avalonia" Version="2.2.0" />
 	<PackageReference Include="NModbus" Version="3.0.72" />
 	<PackageReference Include="NModbus.SerialPortStream" Version="3.0.72" />
 	<PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />

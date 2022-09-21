@@ -8,7 +8,7 @@
 	<TabControl DataContext="{Binding Units}" Items="{Binding}">
 		<TabControl.ItemTemplate>
 			<DataTemplate>
-				<TextBlock Text="{Binding Name}"></TextBlock>
+				<TextBlock Text="{Binding Name}" Background="{Binding TabColor}"></TextBlock>
 			</DataTemplate>
 		</TabControl.ItemTemplate>
 		<TabControl.ContentTemplate>

@@ -8,9 +8,9 @@ namespace RRGControl.MyModbus
 {
     public class RRGUnitConfig
     {
-        public string Name { get; set; }
-        public string Model { get; set; }
-        public double ConversionFactor { get; set; }
+        public string Name { get; set; } = "Example";
+        public string Model { get; set; } = "RRG20";
+        public double ConversionFactor { get; set; } = 1;
 
         /// <summary>
         /// Setpoint and measured flowrate conversion

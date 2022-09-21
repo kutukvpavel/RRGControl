@@ -76,8 +76,9 @@ namespace RRGControl.MyModbus
             get => mPresent;
             private set
             {
+                bool changed = mPresent != value;
                 mPresent = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Present)));
+                if (changed) PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Present)));
             }
         }
 
@@ -156,6 +157,14 @@ namespace RRGControl.MyModbus
                 Present = false;
             }
             return Present;
+        }
+        public void ReadAll()
+        {
+            if (!Present) return;
+            foreach (var item in Registers)
+            {
+                item.Value.Read();
+            }
         }
     }
 }

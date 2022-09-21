@@ -54,5 +54,18 @@ namespace RRGControl.ViewModels
                 Status = "Network scan failed";
             }
         }
+        public void ReadAll()
+        {
+            try
+            {
+                mNetwork.ReadAll();
+                Status = "Reading all units finished.";
+            }
+            catch (Exception ex)
+            {
+                LogEvent?.Invoke(this, ex.ToString());
+                Status = "Reading all units failed";
+            }
+        }
     }
 }

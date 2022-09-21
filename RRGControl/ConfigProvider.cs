@@ -52,6 +52,18 @@ namespace RRGControl
                 { "Disable", 0 }
             })
         });
+        public static readonly MyModbus.RRGUnitMapping ExampleMapping = new MyModbus.RRGUnitMapping(
+            new Dictionary<ushort, MyModbus.RRGUnitConfig>()
+            {
+                { 1, new MyModbus.RRGUnitConfig() { ConversionFactor = 1, Model = "RRG20", Name = "Example1" } },
+                { 2, new MyModbus.RRGUnitConfig() { ConversionFactor = 1, Model = "RRG20", Name = "Example2" } }
+            }
+            )
+        {
+            Port = "COM1",
+            Type = MyModbus.ModbusType.RTU
+        };
+
 
         public static event EventHandler<string>? LogEvent;
         public static GeneralSettings Settings { get; private set; }
@@ -87,6 +99,7 @@ namespace RRGControl
         public static List<MyModbus.RRGModelConfig> ReadModelConfigurations(string folder)
         {
             var raw = ReadConfigFiles<MyModbus.RRGModelConfig>(folder);
+            if (raw.Count == 0) return raw;
             //Process inheritance
             var totalGenerations = raw.Max(x => x.InheritanceLevel);
             var lastGen = raw.Where(x => x.InheritanceLevel == 0);
@@ -120,6 +133,10 @@ namespace RRGControl
                 LogEvent?.Invoke("General settings deserializer", ex.ToString());
             }
             Settings = t ?? new GeneralSettings();
+        }
+        public static string Serialize<T>(T input)
+        {
+            return JsonSerializer.Serialize(input, SerializerOptions);
         }
     }
 }
