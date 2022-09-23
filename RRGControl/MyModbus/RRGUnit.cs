@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using NModbus;
 
 namespace RRGControl.MyModbus
 {
     public class RRGUnit : INotifyPropertyChanged
     {
         public static event EventHandler<string>? LogEvent;
+
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event EventHandler<ModbusRegister>? RegisterChanged;
 
         public RRGUnit(RRGModelConfig mcfg, RRGUnitConfig ucfg, Connection c, ushort addr)
         {
@@ -28,13 +27,29 @@ namespace RRGControl.MyModbus
             foreach (var item in ModbusConfig.Registers)
             {
                 var r = new ModbusRegister(item, Connection, Address);
-                r.PropertyChanged += RegisterChanged;
+                r.PropertyChanged += OnPropertyChanged;
+                r.RegisterChanged += OnRegisterChanged;
                 Registers.Add(item.Name, r);
             }
         }
-        private void RegisterChanged(object? sender, PropertyChangedEventArgs e)
+
+        private void OnRegisterChanged(object? sender, EventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+            if (sender == null) return;
+            RegisterChanged?.Invoke(this, (ModbusRegister)sender);
+        }
+
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            string? pn = (sender as ModbusRegister)?.Base.Name switch
+            { 
+                ConfigProvider.AddressRegName => nameof(Address),
+                ConfigProvider.MeasuredRegName => nameof(Measured),
+                ConfigProvider.OperationModeRegName => nameof(Mode),
+                ConfigProvider.SetpointRegName => nameof(Setpoint),
+                _ => null
+            };
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(pn));
         }
 
         public ushort Address { get; private set; }
@@ -46,7 +61,7 @@ namespace RRGControl.MyModbus
 
         //Default properties
         public double MaxFlowrate => UnitConfig.ConversionFactor * Registers[ConfigProvider.SetpointRegName].Base.Limits.Max;
-        public double Flowrate 
+        public double Measured 
         { 
             get => Registers[ConfigProvider.MeasuredRegName].Value * UnitConfig.ConversionFactor;
         }
@@ -109,7 +124,8 @@ namespace RRGControl.MyModbus
             //Then update register DB
             foreach (var item in Registers)
             {
-                item.Value.PropertyChanged -= RegisterChanged;
+                item.Value.PropertyChanged -= OnPropertyChanged;
+                item.Value.RegisterChanged -= OnRegisterChanged;
             }
             InitRegs();
             return true;

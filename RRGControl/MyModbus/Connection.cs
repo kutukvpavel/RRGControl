@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NModbus;
+﻿using NModbus;
 using NModbus.SerialPortStream;
 using RJCP.IO.Ports;
-using System.Net.Sockets;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace RRGControl.MyModbus
 {
@@ -26,7 +25,7 @@ namespace RRGControl.MyModbus
                 ModbusType.RTU => p.Factory.CreateRtuMaster(new SerialPortStreamAdapter(
                     mPort = new SerialPortStream(m.Port, m.Baudrate) { ReadTimeout = Timeout, WriteTimeout = Timeout })),
                 ModbusType.TCP => p.Factory.CreateMaster(
-                    new TcpClient(IPEndPoint.Parse(m.Port)) { ReceiveTimeout = Timeout, SendTimeout = Timeout }),
+                    mTcpClient = new TcpClient(IPEndPoint.Parse(m.Port)) { ReceiveTimeout = Timeout, SendTimeout = Timeout }),
                 _ => throw new ArgumentOutOfRangeException(null, "ModbusType out of range.")
             };
             Master.Transport.Retries = 1;
@@ -37,18 +36,25 @@ namespace RRGControl.MyModbus
         public IModbusMaster Master { get; }
         public RRGUnitMapping Mapping { get; }
         public Dictionary<ushort, RRGUnit> Units { get; }
+        public bool IsUp { get => (Mapping.Type == ModbusType.TCP ? mTcpClient?.Connected : mPort?.IsOpen) ?? false; }
 
         public async Task Scan()
         {
-            if (Mapping.Type == ModbusType.RTU)
+            switch (Mapping.Type)
             {
-                if (mPort?.IsOpen ?? false)
-                {
-                    mPort.DiscardInBuffer();
-                    mPort.DiscardOutBuffer();
-                    mPort.Close();
-                }
-                mPort?.Open();
+                case ModbusType.RTU:
+                    if (mPort?.IsOpen ?? false)
+                    {
+                        mPort.DiscardInBuffer();
+                        mPort.DiscardOutBuffer();
+                        mPort.Close();
+                    }
+                    mPort?.Open();
+                    break;
+                case ModbusType.TCP:
+                    throw new NotImplementedException();
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             foreach (var item in Units)
             {
@@ -110,5 +116,6 @@ namespace RRGControl.MyModbus
         }
         private SerialPortStream? mPort;
         private SemaphoreSlim mSemaphore = new SemaphoreSlim(1, 1);
+        private TcpClient? mTcpClient;
     }
 }

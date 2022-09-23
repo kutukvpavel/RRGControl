@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace RRGControl
 {
@@ -16,9 +13,12 @@ namespace RRGControl
         {
             private const string DefaultModelsSubfolder = "models";
             private const string DefaultUnitsSubfolder = "mapping";
-            public bool DisableUnitAddressChange { get; set; } = true;
             public string ModelsFolder { get; set; } = DefaultModelsSubfolder;
             public string UnitsFolder { get; set; } = DefaultUnitsSubfolder;
+            public bool DisableUnitAddressChange { get; set; } = true;
+            public bool AutoScanOnStartup { get; set; } = true;
+            public int AutoUpdateIntervalMs { get; set; } = 500;
+            public string PipeName { get; set; } = "RRGControl_Pipe";
         }
 
         public const string AddressRegName = "NetworkAddress";

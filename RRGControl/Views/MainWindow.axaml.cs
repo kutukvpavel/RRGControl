@@ -13,6 +13,15 @@ namespace RRGControl.Views
 
         private ViewModels.MainWindowViewModel MyVM { get => (ViewModels.MainWindowViewModel)DataContext; }
 
+
+        private async void OnStartup(object sender, EventArgs e)
+        {
+            if (ConfigProvider.Settings.AutoScanOnStartup)
+            {
+                await MyVM.RescanNetwork();
+                await MyVM.ReadAll();
+            }
+        }
         private async void Rescan_Click(object sender, RoutedEventArgs e)
         {
             await MyVM.RescanNetwork();

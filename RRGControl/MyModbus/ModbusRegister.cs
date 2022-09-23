@@ -1,9 +1,7 @@
 ﻿using Avalonia.Threading;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RRGControl.MyModbus
@@ -11,6 +9,7 @@ namespace RRGControl.MyModbus
     public class ModbusRegister : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event EventHandler? RegisterChanged;
         public static event EventHandler<string>? LogEvent;
 
         public ModbusRegister(ModbusRegisterBase b, Connection c, ushort unitAddr)
@@ -26,13 +25,24 @@ namespace RRGControl.MyModbus
         public ushort Value { get => _value ?? Base.DefaultValue; }
 
         private ushort? _value = null;
-        private object _lock = new object();
         private void NonFixedTypeThrow()
         {
             if (Base.ValueType != RegisterValueType.Fixed)
                 throw new InvalidOperationException($"No string representation for value '{Value}' of '{Base.Name}' exits.");
         }
 
+        public string GetValueStringRepresentation()
+        {
+            switch (Base.ValueType)
+            {
+                case RegisterValueType.Range:
+                    return Value.ToString();
+                case RegisterValueType.Fixed:
+                    return GetValueName();
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(Base.ValueType));
+            }
+        }
         public string GetValueName()
         {
             NonFixedTypeThrow();
@@ -47,6 +57,7 @@ namespace RRGControl.MyModbus
                 {
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
                 });
+                RegisterChanged?.Invoke(this, new EventArgs());
                 return true;
             }
             catch (Exception ex)
@@ -78,6 +89,26 @@ namespace RRGControl.MyModbus
                 NonFixedTypeThrow();
                 await Write(Base.Values[n]);
                 return true;
+            }
+            catch (Exception ex)
+            {
+                LogEvent?.Invoke(this, ex.ToString());
+                return false;
+            }
+        }
+        public async Task<bool> WriteStringRepresentation(string s)
+        {
+            try
+            {
+                switch (Base.ValueType)
+                {
+                    case RegisterValueType.Range:
+                        return await Write(ushort.Parse(s));
+                    case RegisterValueType.Fixed:
+                        return await WriteByName(s);
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(Base.ValueType));
+                }
             }
             catch (Exception ex)
             {

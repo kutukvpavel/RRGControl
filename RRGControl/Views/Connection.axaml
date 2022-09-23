@@ -9,6 +9,9 @@
 		<Style Selector="TabItem">
 			<Setter Property="Padding" Value="3,0,12,0"></Setter>
 		</Style>
+		<Style Selector="TabControl ItemsPresenter > WrapPanel">
+			<Setter Property="Background" Value="White"></Setter>
+		</Style>
 	</UserControl.Styles>
 	<TabControl Padding="0" DataContext="{Binding Units}" Items="{Binding}">
 		<TabControl.ItemTemplate>

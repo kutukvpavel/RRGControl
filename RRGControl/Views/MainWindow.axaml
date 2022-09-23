@@ -7,7 +7,7 @@
 		Width="450" Height="600"
 		x:Class="RRGControl.Views.MainWindow"
 		Icon="/Assets/avalonia-logo.ico"
-		Title="RRGControl">
+		Title="RRGControl" Opened="OnStartup">
 	<Grid ColumnDefinitions="*" RowDefinitions="auto,*,auto">
 		<Menu Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="Gray">
 			<MenuItem Header="Network">
@@ -19,10 +19,21 @@
 				<MenuItem Header="About" Click="About_Click"></MenuItem>
 			</MenuItem>
 		</Menu>
-		<TabControl Padding="5" Grid.Column="0" Grid.Row="1" DataContext="{Binding Connections}" Items="{Binding}">
+		<TabControl Name="tabConnections" Padding="5" Grid.Column="0" Grid.Row="1" DataContext="{Binding Connections}" Items="{Binding}">
+			<TabControl.Styles>
+				<Style Selector="TabControl#tabConnections > Border > DockPanel > ItemsPresenter > WrapPanel">
+					<Setter Property="Background" Value="#DFEFF4"></Setter>
+				</Style>
+				<Style Selector="TabControl#tabConnections > Border > DockPanel > ContentPresenter">
+					<Setter Property="Margin" Value="5,0,5,5"></Setter>
+				</Style>
+				<Style Selector="TabControl#tabConnections TabItem">
+					<Setter Property="Margin" Value="0,0,0,5"></Setter>
+				</Style>
+			</TabControl.Styles>
 			<TabControl.ItemTemplate>
 				<DataTemplate>
-					<TextBlock Text="{Binding Port}"></TextBlock>
+					<TextBlock Text="{Binding Port}" Background="{Binding TabColor}"></TextBlock>
 				</DataTemplate>
 			</TabControl.ItemTemplate>
 			<TabControl.ContentTemplate>

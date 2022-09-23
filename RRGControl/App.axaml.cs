@@ -1,13 +1,12 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using RRGControl.ViewModels;
-using RRGControl.Views;
 using CommandLine;
-using System;
-using System.IO;
 using LLibrary;
 using MessageBox.Avalonia;
+using RRGControl.ViewModels;
+using RRGControl.Views;
+using System.IO;
 
 namespace RRGControl
 {
@@ -63,7 +62,8 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
         private static void StartRRGServer()
         {
             var p = new MyModbus.ModbusProvider(ConfigProvider.ReadModelConfigurations());
-            MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings());
+            var a = new Adapters.IAdapter[] { new Adapters.NamedPipeAdapter(ConfigProvider.Settings.PipeName) };
+            MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings(), a);
         }
         private static void InitLogs()
         {

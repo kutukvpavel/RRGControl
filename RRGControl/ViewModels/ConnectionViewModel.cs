@@ -1,9 +1,6 @@
-﻿using System;
+﻿using Avalonia.Media;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RRGControl.ViewModels
 {
@@ -30,6 +27,7 @@ namespace RRGControl.ViewModels
 
         private MyModbus.Connection mConnection;
 
+        public IBrush TabColor { get => mConnection.IsUp ? Brushes.LightGreen : Brushes.LightSalmon; }
         public bool Remote { get => mConnection.Mapping.Type == MyModbus.ModbusType.TCP; }
         public bool Local { get => mConnection.Mapping.Type == MyModbus.ModbusType.RTU; }
         public string Port { get => mConnection.Mapping.Port; }

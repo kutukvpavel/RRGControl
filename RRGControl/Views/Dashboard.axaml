@@ -57,7 +57,7 @@
 			</Grid>
 		</HeaderedContentControl>
 		<HeaderedContentControl Grid.Column="1" Grid.Row="2" Header="Flowrate">
-			<Grid ColumnDefinitions="auto,*,3,auto" RowDefinitions="auto,10,auto,10,auto">
+			<Grid ColumnDefinitions="auto,*,3,auto" RowDefinitions="auto,10,auto,10,auto,7,auto">
 				<TextBlock Grid.Column="0" Grid.Row="0" Text="Measured:   "></TextBlock>
 				<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Measured}" FontSize="16" FontWeight="Bold"></TextBlock>
 				<TextBlock Grid.Column="0" Grid.Row="2">Setpoint: </TextBlock>
@@ -70,6 +70,10 @@
 				</StackPanel>
 				<TextBlock Grid.Column="3" Grid.Row="2" Text="{Binding Units}"></TextBlock>
 				<TextBlock Grid.Column="3" Grid.Row="4" Text="{Binding Units}"></TextBlock>
+				<CheckBox Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="6" Margin="10,0" IsThreeState="False"
+						  IsChecked="{Binding AutoUpdate, Mode=TwoWay}">
+					Auto Update
+				</CheckBox>
 			</Grid>
 		</HeaderedContentControl>
 	</Grid>

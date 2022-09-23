@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace RRGControl.MyModbus
 {
@@ -17,6 +13,7 @@ namespace RRGControl.MyModbus
         public double ConversionFactor { get; set; } = 1;
         public string ConversionUnits { get; set; } = "N/A";
         public string FlowrateNumberFormat { get; set; } = "F2";
+        public bool EnableAutoupdate { get; set; } = true;
 
         /// <summary>
         /// Setpoint and measured flowrate conversion

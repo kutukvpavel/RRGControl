@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -56,7 +55,7 @@ namespace RRGControl.ViewModels
             {
                 Status = "Scanning network...";
                 await mNetwork.Scan();
-                Status = "Network scan finished.";
+                Status = "Network scan OK.";
             }
             catch (Exception ex)
             {
@@ -70,7 +69,7 @@ namespace RRGControl.ViewModels
             {
                 Status = "Reading all unit registers, please wait...";
                 await mNetwork.ReadAll();
-                Status = "Reading all units finished.";
+                Status = "Reading all units OK.";
             }
             catch (Exception ex)
             {

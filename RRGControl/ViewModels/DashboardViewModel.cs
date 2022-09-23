@@ -20,21 +20,32 @@ namespace RRGControl.ViewModels
             mUnit = u;
             mUnit.PropertyChanged += MUnit_PropertyChanged;
             base.PropertyChanged += PropertyChanged;
-            mTimer = new DispatcherTimer(new TimeSpan(0, 0, 0, 0, 1000), DispatcherPriority.Background, Timer_Callback);
+            mTimer = new DispatcherTimer(new TimeSpan(0, 0, 0, 0, ConfigProvider.Settings.AutoUpdateIntervalMs), 
+                DispatcherPriority.Background, Timer_Callback);
+            if (u.UnitConfig.EnableAutoupdate) mTimer.Start();
         }
 
         private void MUnit_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+            PropertyChanged?.Invoke(this, e); //Keep same property names for simplicity!
         }
         private void Timer_Callback(object sender, EventArgs e)
         {
-            mUnit.Registers[ConfigProvider.MeasuredRegName].Read(); //Intentional
+            if (mUnit.Present) mUnit.Registers[ConfigProvider.MeasuredRegName].Read(); //Intentional
         }
         private void AddError(string prop, string msg)
         {
             if (!Errors.ContainsKey(prop)) Errors.Add(prop, string.Empty);
             Errors[prop] = msg;
+            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(prop));
+        }
+        private void RemoveError(string prop)
+        {
+            if (Errors.ContainsKey(prop))
+            {
+                Errors.Remove(prop);
+                ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(prop));
+            }
         }
 
         private readonly MyModbus.RRGUnit mUnit;
@@ -62,7 +73,7 @@ namespace RRGControl.ViewModels
         public string Mode { get => mUnit.Mode; }
         public string Measured 
         { 
-            get => $"{mUnit.Flowrate.ToString(mUnit.UnitConfig.FlowrateNumberFormat)}  ({mUnit.Flowrate / mUnit.MaxFlowrate * 100:F1}%)"; 
+            get => $"{mUnit.Measured.ToString(mUnit.UnitConfig.FlowrateNumberFormat)}  ({mUnit.Measured / mUnit.MaxFlowrate * 100:F1}%)"; 
         }
         public string Setpoint 
         { 
@@ -92,13 +103,15 @@ namespace RRGControl.ViewModels
         public bool ValidateSetpoint(string s)
         {
             bool res = double.TryParse(s, out double v) && mUnit.ValidateSetpoint(v);
-            if (!res) AddError(nameof(Setpoint), "Invalid value");
+            if (res) RemoveError(nameof(Setpoint));
+            else AddError(nameof(Setpoint), "Invalid value");
             return res;
         }
         public bool ValidateAddress(string s)
         {
             bool res = ushort.TryParse(s, out ushort v) && mUnit.ValidateAddress(v);
-            if (!res) AddError(nameof(Address), "Invalid value");
+            if (res) RemoveError(nameof(Address));
+            else AddError(nameof(Address), "Invalid value");
             return res;
         }
 
