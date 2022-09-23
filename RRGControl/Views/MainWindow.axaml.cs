@@ -11,15 +11,15 @@ namespace RRGControl.Views
             InitializeComponent();
         }
 
-        private ViewModels.MainWindowViewModel? MyVM { get => DataContext as ViewModels.MainWindowViewModel; }
+        private ViewModels.MainWindowViewModel MyVM { get => (ViewModels.MainWindowViewModel)DataContext; }
 
-        private void Rescan_Click(object sender, RoutedEventArgs e)
+        private async void Rescan_Click(object sender, RoutedEventArgs e)
         {
-            MyVM?.RescanNetwork();
+            await MyVM.RescanNetwork();
         }
-        private void ReadAll_Click(object sender, RoutedEventArgs e)
+        private async void ReadAll_Click(object sender, RoutedEventArgs e)
         {
-            MyVM?.ReadAll();
+            await MyVM.ReadAll();
         }
         private void About_Click(object sender, RoutedEventArgs e)
         {

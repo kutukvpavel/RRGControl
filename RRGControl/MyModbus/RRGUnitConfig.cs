@@ -16,6 +16,7 @@ namespace RRGControl.MyModbus
         public string Model { get; set; } = "RRG20";
         public double ConversionFactor { get; set; } = 1;
         public string ConversionUnits { get; set; } = "N/A";
+        public string FlowrateNumberFormat { get; set; } = "F2";
 
         /// <summary>
         /// Setpoint and measured flowrate conversion

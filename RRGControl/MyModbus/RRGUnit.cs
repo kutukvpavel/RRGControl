@@ -83,10 +83,10 @@ namespace RRGControl.MyModbus
             }
         }
 
-        public bool ChangeAddress(ushort a)
+        public async Task<bool> ChangeAddress(ushort a)
         {
             var addrReg = Registers[ConfigProvider.AddressRegName];
-            addrReg.Write(a);
+            await addrReg.Write(a);
             //Check whether the new address is now available
             try
             {
@@ -94,7 +94,7 @@ namespace RRGControl.MyModbus
                 if (v != a)
                 {
                     LogEvent?.Invoke(this, $"Address change for '{UnitConfig.Name}' failed.");
-                    if (!Probe())
+                    if (!(await Probe()))
                     {
                         LogEvent?.Invoke(this, "Address recovery failed.");
                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
@@ -138,12 +138,12 @@ namespace RRGControl.MyModbus
                 return false;
             }
         }
-        public bool Probe()
+        public async Task<bool> Probe()
         {
             try
             {
                 var r = Registers[ConfigProvider.AddressRegName];
-                if (r.Read())
+                if (await r.Read())
                 {
                     Present = (Address == r.Value);
                 }
@@ -159,12 +159,12 @@ namespace RRGControl.MyModbus
             }
             return Present;
         }
-        public void ReadAll()
+        public async Task ReadAll()
         {
             if (!Present) return;
             foreach (var item in Registers)
             {
-                item.Value.Read();
+                await item.Value.Read();
             }
         }
     }

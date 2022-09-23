@@ -13,17 +13,9 @@ namespace RRGControl
 {
     public partial class App : Application
     {
-        private const string DefaultModelsSubfolder = "models";
-        private const string DefaultUnitsSubfolder = "mapping";
         private const string DefaultConfigFileName = "config.json";
         private class Options
         {
-            [Option('m', "models", Required = false, HelpText = @"Folder containing model description files,
-can be absolute or relative to working directory.", Default = DefaultModelsSubfolder)]
-            public string ModelsFolder { get; set; } = DefaultModelsSubfolder;
-            [Option('u', "units", Required = false, HelpText = @"Folder containing unit mapping files,
-can be absolute or relative to working directory.", Default = DefaultUnitsSubfolder)]
-            public string UnitsFolder { get; set; } = DefaultUnitsSubfolder;
             [Option('c', "config", Required = false, HelpText = @"General settings file path,
 can be absolute or relative to working directory.", Default = DefaultConfigFileName)]
             public string SettingsFile { get; set; } = DefaultConfigFileName;
@@ -41,7 +33,7 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
                 CurrentOptions = Parser.Default.ParseArguments<Options>(desktop.Args).Value;
                 InitLogs();
                 ConfigProvider.ReadGeneralSettings(CurrentOptions.SettingsFile);
-                StartRRGServer(CurrentOptions.ModelsFolder, CurrentOptions.UnitsFolder);
+                StartRRGServer();
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = new MainWindowViewModel(MyNetwork)
@@ -51,11 +43,11 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
         }
         public void GenerateExamples()
         {
-            File.WriteAllText(ExampleHelper(CurrentOptions.UnitsFolder, "example.json"),
+            File.WriteAllText(ExampleHelper(ConfigProvider.Settings.UnitsFolder, "example.json"),
                 ConfigProvider.Serialize(ConfigProvider.ExampleMapping));
-            File.WriteAllText(ExampleHelper(CurrentOptions.ModelsFolder, "RRG.json"),
+            File.WriteAllText(ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG.json"),
                 ConfigProvider.Serialize(ConfigProvider.RRG));
-            File.WriteAllText(ExampleHelper(CurrentOptions.ModelsFolder, "RRG20.json"),
+            File.WriteAllText(ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG20.json"),
                 ConfigProvider.Serialize(ConfigProvider.RRG20));
             File.WriteAllText(CurrentOptions.SettingsFile, ConfigProvider.Serialize(ConfigProvider.Settings));
         }
@@ -68,10 +60,10 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
         }
         public static Models.Network MyNetwork { get; private set; }
         private static L LogInstance = new L();
-        private static void StartRRGServer(string modelsFolder, string mappingsFolder)
+        private static void StartRRGServer()
         {
-            var p = new MyModbus.ModbusProvider(ConfigProvider.ReadModelConfigurations(modelsFolder));
-            MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings(mappingsFolder));
+            var p = new MyModbus.ModbusProvider(ConfigProvider.ReadModelConfigurations());
+            MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings());
         }
         private static void InitLogs()
         {

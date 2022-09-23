@@ -30,18 +30,18 @@ namespace RRGControl.Models
         public List<MyModbus.Connection> Connections { get; }
         public MyModbus.ModbusProvider Provider { get; }
 
-        public void Scan()
+        public async Task Scan()
         {
             foreach (var item in Connections)
             {
-                item.Scan();
+                await item.Scan();
             }
         }
-        public void ReadAll()
+        public async Task ReadAll()
         {
             foreach (var item in Connections)
             {
-                item.ReadAll();
+                await item.ReadAll();
             }
         }
     }

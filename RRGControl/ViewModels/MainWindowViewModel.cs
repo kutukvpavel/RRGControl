@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace RRGControl.ViewModels
 {
@@ -20,7 +21,9 @@ namespace RRGControl.ViewModels
             {
                 try
                 {
-                    Connections.Add(new ConnectionViewModel(item));
+                    var c = new ConnectionViewModel(item);
+                    c.PropertyChanged += C_PropertyChanged;
+                    Connections.Add(c);
                 }
                 catch (Exception ex)
                 {
@@ -28,6 +31,11 @@ namespace RRGControl.ViewModels
                 }
             }
             base.PropertyChanged += PropertyChanged;
+        }
+
+        private void C_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
         }
 
         public List<ConnectionViewModel> Connections { get; }
@@ -42,11 +50,12 @@ namespace RRGControl.ViewModels
             }
         }
 
-        public void RescanNetwork()
+        public async Task RescanNetwork()
         {
             try
             {
-                mNetwork.Scan();
+                Status = "Scanning network...";
+                await mNetwork.Scan();
                 Status = "Network scan finished.";
             }
             catch (Exception ex)
@@ -55,11 +64,12 @@ namespace RRGControl.ViewModels
                 Status = "Network scan failed";
             }
         }
-        public void ReadAll()
+        public async Task ReadAll()
         {
             try
             {
-                mNetwork.ReadAll();
+                Status = "Reading all unit registers, please wait...";
+                await mNetwork.ReadAll();
                 Status = "Reading all units finished.";
             }
             catch (Exception ex)

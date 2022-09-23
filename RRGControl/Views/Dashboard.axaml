@@ -42,15 +42,18 @@
 	<Grid Name="mainGrid" ColumnDefinitions="*,2*" RowDefinitions="auto,auto,*">
 		<TextBlock Grid.Column="0" Grid.Row="0" Text="Unit Address:"></TextBlock>
 		<TextBox Grid.Column="0" Grid.Row="1" Text="{Binding Address, Mode=OneWay}" KeyDown="Address_OnKeyDown" 
-				 IsReadOnly="{Binding Source={x:Static local:ConfigProvider.Settings}, Path=AllowUnitAddressChange}"></TextBox>
+				 IsReadOnly="{Binding Source={x:Static local:ConfigProvider.Settings}, Path=DisableUnitAddressChange}"></TextBox>
 		<TextBlock Grid.Column="1" Grid.Row="0" Text="Unit Model:"></TextBlock>
 		<TextBox Grid.Column="1" Grid.Row="1" Text="{Binding UnitModel}" IsReadOnly="True"></TextBox>
 		<HeaderedContentControl Grid.Column="0" Grid.Row="2" Header="Mode" >
 			<Grid ColumnDefinitions="*" RowDefinitions="auto,3,auto,auto,auto">
 				<TextBox Grid.Column="0" Grid.Row="0" Text="{Binding Mode}" IsReadOnly="True" FontWeight="Bold"></TextBox>
-				<Button Grid.Column="0" Grid.Row="2" Background="LightGreen" Content="{x:Static local:ConfigProvider.RegulateModeName}"></Button>
-				<Button Grid.Column="0" Grid.Row="3" Background="LightBlue" Content="{x:Static local:ConfigProvider.OpenModeName}"></Button>
-				<Button Grid.Column="0" Grid.Row="4" Background="LightSalmon" Content="{x:Static local:ConfigProvider.ClosedModeName}"></Button>
+				<Button Grid.Column="0" Grid.Row="2" Background="LightGreen" Content="{x:Static local:ConfigProvider.RegulateModeName}"
+						Click="Regulate_Click"></Button>
+				<Button Grid.Column="0" Grid.Row="3" Background="LightBlue" Content="{x:Static local:ConfigProvider.OpenModeName}"
+						Click="Open_Click"></Button>
+				<Button Grid.Column="0" Grid.Row="4" Background="LightSalmon" Content="{x:Static local:ConfigProvider.ClosedModeName}"
+						Click="Close_Click"></Button>
 			</Grid>
 		</HeaderedContentControl>
 		<HeaderedContentControl Grid.Column="1" Grid.Row="2" Header="Flowrate">
@@ -58,7 +61,7 @@
 				<TextBlock Grid.Column="0" Grid.Row="0" Text="Measured:   "></TextBlock>
 				<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Measured}" FontSize="16" FontWeight="Bold"></TextBlock>
 				<TextBlock Grid.Column="0" Grid.Row="2">Setpoint: </TextBlock>
-				<TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Setpoint}" KeyDown="Setpoint_OnKeyDown"></TextBox>
+				<TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Setpoint, Mode=OneWay}" KeyDown="Setpoint_OnKeyDown"></TextBox>
 				<TextBlock Grid.Column="0" Grid.Row="4">Max (100%):  </TextBlock>
 				<TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding MaxFlow}"></TextBlock>
 				<StackPanel Margin="0" Grid.Column="3" Grid.Row="0" Orientation="Horizontal">

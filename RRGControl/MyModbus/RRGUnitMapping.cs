@@ -24,6 +24,7 @@ namespace RRGControl.MyModbus
         }
 
         public string Port { get; set; } = "COM1";
+        public int Baudrate { get; set; } = 19200;
         [JsonConverter(typeof(StringEnumConverter))]
         public ModbusType Type { get; set; } = ModbusType.RTU;
         public Dictionary<ushort, RRGUnitConfig> Units { get; set; } = new Dictionary<ushort, RRGUnitConfig>();

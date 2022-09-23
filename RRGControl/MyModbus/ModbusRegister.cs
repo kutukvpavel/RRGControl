@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Avalonia.Threading;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace RRGControl.MyModbus
         public ushort Value { get => _value ?? Base.DefaultValue; }
 
         private ushort? _value = null;
+        private object _lock = new object();
         private void NonFixedTypeThrow()
         {
             if (Base.ValueType != RegisterValueType.Fixed)
@@ -36,12 +38,15 @@ namespace RRGControl.MyModbus
             NonFixedTypeThrow();
             return Base.Values.First(x => x.Value == Value).Key;
         }
-        public bool Read()
+        public async Task<bool> Read()
         {
             try
             {
-                _value = Connection.ReadRegister(this);
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                _value = await Connection.ReadRegister(this);
+                Dispatcher.UIThread.Post(() =>
+                {
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                });
                 return true;
             }
             catch (Exception ex)
@@ -50,30 +55,34 @@ namespace RRGControl.MyModbus
                 return false;
             }
         }
-        public void Write(ushort v)
+        public async Task<bool> Write(ushort v)
         {
             if (Base.Type == RegisterType.ReadOnly) 
                 throw new InvalidOperationException("Attempt to write into a read-only register.");
             if (Base.ValidateValue(v))
             {
-                Connection.WriteRegister(this, v);
-                Read();
+                await Connection.WriteRegister(this, v);
+                await Read();
+                return true;
             }
             else
             {
                 LogEvent?.Invoke(this, $"Invalid value to be written to '{Base.Name}': {v}.");
+                return false;
             }
         }
-        public void WriteByName(string n)
+        public async Task<bool> WriteByName(string n)
         {
             try
             {
                 NonFixedTypeThrow();
-                Write(Base.Values[n]);
+                await Write(Base.Values[n]);
+                return true;
             }
             catch (Exception ex)
             {
                 LogEvent?.Invoke(this, ex.ToString());
+                return false;
             }
         }
     }

@@ -14,8 +14,11 @@ namespace RRGControl
     {
         public class GeneralSettings
         {
-            public string FlowrateDisplayFormat { get; set; } = "F1";
-            public bool AllowUnitAddressChange { get; set; } = false;
+            private const string DefaultModelsSubfolder = "models";
+            private const string DefaultUnitsSubfolder = "mapping";
+            public bool DisableUnitAddressChange { get; set; } = true;
+            public string ModelsFolder { get; set; } = DefaultModelsSubfolder;
+            public string UnitsFolder { get; set; } = DefaultUnitsSubfolder;
         }
 
         public const string AddressRegName = "NetworkAddress";
@@ -110,9 +113,9 @@ namespace RRGControl
             return result;
         }
 
-        public static List<MyModbus.RRGModelConfig> ReadModelConfigurations(string folder)
+        public static List<MyModbus.RRGModelConfig> ReadModelConfigurations()
         {
-            var raw = ReadConfigFiles<MyModbus.RRGModelConfig>(folder);
+            var raw = ReadConfigFiles<MyModbus.RRGModelConfig>(Settings.ModelsFolder);
             if (raw.Count == 0) return raw;
             //Process inheritance
             var totalGenerations = raw.Max(x => x.InheritanceLevel);
@@ -131,9 +134,9 @@ namespace RRGControl
             }
             return raw;
         }
-        public static List<MyModbus.RRGUnitMapping> ReadUnitMappings(string folder)
+        public static List<MyModbus.RRGUnitMapping> ReadUnitMappings()
         {
-            return ReadConfigFiles<MyModbus.RRGUnitMapping>(folder);
+            return ReadConfigFiles<MyModbus.RRGUnitMapping>(Settings.UnitsFolder);
         }
         public static void ReadGeneralSettings(string filePath)
         {
