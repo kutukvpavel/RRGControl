@@ -10,6 +10,7 @@ namespace RRGControl.ViewModels
         public ConnectionViewModel(MyModbus.Connection c)
         {
             mConnection = c;
+            mConnection.PropertyChanged += MConnection_PropertyChanged;
             Units = new ObservableCollection<RRGUnitViewModel>();
             foreach (var item in c.Units)
             {
@@ -20,6 +21,11 @@ namespace RRGControl.ViewModels
             base.PropertyChanged += PropertyChanged;
         }
 
+        private void MConnection_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(mConnection.IsUp)) 
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TabColor)));
+        }
         private void U_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));

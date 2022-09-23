@@ -80,7 +80,14 @@ namespace RRGControl.Models
             if (sender == null) return;
             foreach (var item in mAdapters)
             {
-                item.Send(Adapters.Packet.FromRegister(((MyModbus.RRGUnit)sender).UnitConfig.Name, e));
+                try
+                {
+                    item.Send(Adapters.Packet.FromRegister(((MyModbus.RRGUnit)sender).UnitConfig.Name, e));
+                }
+                catch (Exception ex)
+                {
+                    LogEvent?.Invoke(this, ex.ToString());
+                }
             }
         }
     }

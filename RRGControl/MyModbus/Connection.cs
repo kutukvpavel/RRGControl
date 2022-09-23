@@ -3,6 +3,7 @@ using NModbus.SerialPortStream;
 using RJCP.IO.Ports;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -11,11 +12,13 @@ using System.Threading.Tasks;
 
 namespace RRGControl.MyModbus
 {
-    public class Connection
+    public class Connection : INotifyPropertyChanged
     {
         public static int Timeout { get; set; } = 300;
 
         public static event EventHandler<string>? LogEvent;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public Connection(ModbusProvider p, RRGUnitMapping m)
         {
@@ -40,22 +43,38 @@ namespace RRGControl.MyModbus
 
         public async Task Scan()
         {
-            switch (Mapping.Type)
+            try
             {
-                case ModbusType.RTU:
-                    if (mPort?.IsOpen ?? false)
-                    {
-                        mPort.DiscardInBuffer();
-                        mPort.DiscardOutBuffer();
-                        mPort.Close();
-                    }
-                    mPort?.Open();
-                    break;
-                case ModbusType.TCP:
-                    throw new NotImplementedException();
-                default:
-                    throw new ArgumentOutOfRangeException();
+                switch (Mapping.Type)
+                {
+                    case ModbusType.RTU:
+                        if (mPort?.IsOpen ?? false)
+                        {
+                            mPort.DiscardInBuffer();
+                            mPort.DiscardOutBuffer();
+                            mPort.Close();
+                        }
+                        try
+                        {
+                            mPort?.Open();
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            mPort?.Close();
+                            mPort?.Open();
+                        }
+                        break;
+                    case ModbusType.TCP:
+                        throw new NotImplementedException();
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
+            catch (Exception ex)
+            {
+                LogEvent?.Invoke(this, ex.ToString());
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsUp)));
             foreach (var item in Units)
             {
                 await item.Value.Probe();
@@ -97,6 +116,7 @@ namespace RRGControl.MyModbus
         }
         public async Task ReadAll()
         {
+            if (!IsUp) return;
             foreach (var item in Units)
             {
                 try

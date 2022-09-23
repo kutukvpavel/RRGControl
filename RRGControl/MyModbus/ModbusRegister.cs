@@ -32,6 +32,10 @@ namespace RRGControl.MyModbus
             if (Base.ValueType != RegisterValueType.Fixed)
                 throw new InvalidOperationException($"No string representation for value '{Value}' of '{Base.Name}' exits.");
         }
+        private void RaiseReadTimeout()
+        {
+            Dispatcher.UIThread.Post(() => ReadTimeout?.Invoke(this, new EventArgs()));
+        }
 
         public string GetValueStringRepresentation()
         {
@@ -62,9 +66,14 @@ namespace RRGControl.MyModbus
                 RegisterChanged?.Invoke(this, new EventArgs());
                 return true;
             }
+            catch (System.IO.IOException)
+            {
+                RaiseReadTimeout();
+                return false;
+            }
             catch (TimeoutException)
             {
-                Dispatcher.UIThread.Post(() => ReadTimeout?.Invoke(this, new EventArgs()));
+                RaiseReadTimeout();
                 return false;
             }
             catch (Exception ex)
