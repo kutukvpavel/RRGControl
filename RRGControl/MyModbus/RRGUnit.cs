@@ -29,10 +29,16 @@ namespace RRGControl.MyModbus
                 var r = new ModbusRegister(item, Connection, Address);
                 r.PropertyChanged += OnPropertyChanged;
                 r.RegisterChanged += OnRegisterChanged;
+                r.ReadTimeout += OnReadTimeout;
                 Registers.Add(item.Name, r);
             }
         }
 
+        private void OnReadTimeout(object? sender, EventArgs e)
+        {
+            if (sender == null) return;
+            Present = false;
+        }
         private void OnRegisterChanged(object? sender, EventArgs e)
         {
             if (sender == null) return;

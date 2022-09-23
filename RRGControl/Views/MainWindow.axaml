@@ -6,8 +6,8 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		Width="450" Height="600"
 		x:Class="RRGControl.Views.MainWindow"
-		Icon="/Assets/avalonia-logo.ico"
-		Title="RRGControl" Opened="OnStartup">
+		Icon="/Assets/c.png"
+		Title="RRG Control" Opened="OnStartup">
 	<Grid ColumnDefinitions="*" RowDefinitions="auto,*,auto">
 		<Menu Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="Gray">
 			<MenuItem Header="Network">
@@ -27,16 +27,13 @@
 				<Style Selector="TabControl#tabConnections > Border > DockPanel > ItemsPresenter > WrapPanel">
 					<Setter Property="Background" Value="#DFEFF4"></Setter>
 				</Style>
-				<Style Selector="TabControl#tabConnections > Border > DockPanel > ContentPresenter">
-					<Setter Property="Margin" Value="5,0,5,5"></Setter>
-				</Style>
 				<Style Selector="TabControl#tabConnections TabItem">
 					<Setter Property="Margin" Value="0,0,0,5"></Setter>
 				</Style>
 			</TabControl.Styles>
 			<TabControl.ItemTemplate>
 				<DataTemplate>
-					<TextBlock Text="{Binding Port}" Background="{Binding TabColor}"></TextBlock>
+					<TextBlock FontSize="20" Text="{Binding Port}" Background="{Binding TabColor}" Padding="4,2"></TextBlock>
 				</DataTemplate>
 			</TabControl.ItemTemplate>
 			<TabControl.ContentTemplate>

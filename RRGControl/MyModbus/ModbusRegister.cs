@@ -8,9 +8,11 @@ namespace RRGControl.MyModbus
 {
     public class ModbusRegister : INotifyPropertyChanged
     {
+        public static event EventHandler<string>? LogEvent;
+
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler? RegisterChanged;
-        public static event EventHandler<string>? LogEvent;
+        public event EventHandler? ReadTimeout;
 
         public ModbusRegister(ModbusRegisterBase b, Connection c, ushort unitAddr)
         {
@@ -59,6 +61,11 @@ namespace RRGControl.MyModbus
                 });
                 RegisterChanged?.Invoke(this, new EventArgs());
                 return true;
+            }
+            catch (TimeoutException)
+            {
+                Dispatcher.UIThread.Post(() => ReadTimeout?.Invoke(this, new EventArgs()));
+                return false;
             }
             catch (Exception ex)
             {

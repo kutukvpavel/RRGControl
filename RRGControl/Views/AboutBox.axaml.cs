@@ -14,6 +14,12 @@ namespace RRGControl.Views
         private string AboutAuthor => @$"ÐÐÃ series mass flow controller software
 
 Kutukov Pavel, 2022-{DateTime.Today.Year}
-kutukovps@my.msu.ru";
+kutukovps@my.msu.ru
+
+Attributions:
+Microsoft .NET Framework
+Avalonia UI Framework
+NuGet Packages: NamedPipeWrapper, LLibrary
+Icons: freepik.com";
     }
 }

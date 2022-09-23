@@ -3,9 +3,9 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="using:RRGControl.Views"
-		mc:Ignorable="d"
+		Icon="/Assets/s.png"
 		x:Class="RRGControl.Views.FlowrateSummary"
-		Title="FlowrateSummary" MinWidth="300"
+		Title="Flowrate Summary" MinWidth="300"
 		Width="400" SizeToContent="Height">
 	<ItemsControl Items="{Binding Units}" Margin="10">
 		<ItemsControl.ItemTemplate>
