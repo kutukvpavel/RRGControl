@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -14,20 +14,22 @@ namespace RRGControl.Adapters
 
         public event EventHandler<Packet>? PacketReceived;
 
-        public NamedPipeAdapter(string pipeName)
+        public NamedPipeAdapter(string pipeName, CancellationToken t)
         {
             mServer = new NamedPipeServer<Packet>(pipeName);
             mServer.ClientConnected += MServer_ClientConnected;
             mServer.ClientMessage += MServer_ClientMessage;
             mServer.ClientDisconnected += MServer_ClientDisconnected;
+            mQueueThread = new Thread(ProcessQueue);
+            mQueueThread.Start(t);
         }
 
         public bool IsConnected { get => mClients > 0; }
 
-        public async Task Send(Packet p)
+        public void Send(Packet p)
         {
             if (!IsConnected) return;
-            await Task.Run(() => { mServer.PushMessage(p); });
+            mQueue.Add(p);
         }
 
         private void MServer_ClientDisconnected(NamedPipeConnection<Packet, Packet> connection)
@@ -42,8 +44,27 @@ namespace RRGControl.Adapters
         {
             mClients++;
         }
+        private void ProcessQueue(object? arg)
+        {
+            var t = (CancellationToken)(arg ?? new CancellationToken());
+            while (!t.IsCancellationRequested)
+            {
+                try
+                {
+                    mServer.PushMessage(mQueue.Take(t));
+                }
+                catch (OperationCanceledException)
+                { }
+                catch (Exception ex)
+                {
+                    LogEvent?.Invoke(this, ex.ToString());
+                }
+            }
+        }
 
         private readonly NamedPipeServer<Packet> mServer;
         private int mClients = 0;
+        private readonly BlockingCollection<Packet> mQueue = new BlockingCollection<Packet>();
+        private readonly Thread mQueueThread;
     }
 }

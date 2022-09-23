@@ -64,13 +64,11 @@ namespace RRGControl.ViewModels
                 {
                     case MyModbus.RegisterValueType.Range:
                         pn = nameof(TextboxValue);
-                        if (mWriteTxt != null) success = await mRegister.Write(ushort.Parse(mWriteTxt));
-                        else success = await mRegister.Write(mRegister.Base.DefaultValue);
+                        success = await mRegister.WriteStringRepresentation(mWriteTxt ?? mRegister.Base.DefaultValue.ToString());
                         break;
                     case MyModbus.RegisterValueType.Fixed:
                         pn = nameof(ComboboxValue);
-                        if (mWriteCmb != null) success = await mRegister.WriteByName(mWriteCmb);
-                        else success = await mRegister.Write(mRegister.Base.DefaultValue);
+                        success = await mRegister.WriteStringRepresentation(mWriteCmb ?? mRegister.Base.DefaultValue.ToString());
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(mRegister.Base.ValueType));

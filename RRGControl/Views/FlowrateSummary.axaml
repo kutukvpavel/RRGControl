@@ -1,0 +1,17 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="using:RRGControl.Views"
+		mc:Ignorable="d"
+		x:Class="RRGControl.Views.FlowrateSummary"
+		Title="FlowrateSummary" MinWidth="300"
+		Width="400" SizeToContent="Height">
+	<ItemsControl Items="{Binding Units}" Margin="10">
+		<ItemsControl.ItemTemplate>
+			<DataTemplate>
+				<local:UnitFlowrate DataContext="{Binding}"></local:UnitFlowrate>
+			</DataTemplate>
+		</ItemsControl.ItemTemplate>
+	</ItemsControl>
+</Window>

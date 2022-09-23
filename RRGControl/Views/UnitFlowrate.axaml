@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d"
+			 x:Class="RRGControl.Views.UnitFlowrate">
+	<UserControl.Styles>
+		<Style Selector="TextBlock">
+			<Setter Property="FontSize" Value="20"></Setter>
+		</Style>
+	</UserControl.Styles>
+	<Grid ColumnDefinitions="2*,2*,*" RowDefinitions="auto">
+		<TextBlock Grid.Column="0" Text="{Binding Name}"></TextBlock>
+		<TextBlock Grid.Column="1" Text="{Binding Flowrate}" FontStyle="Oblique"></TextBlock>
+		<TextBlock Grid.Column="2" Text="{Binding Units}"></TextBlock>
+	</Grid>
+</UserControl>

@@ -9,6 +9,6 @@ namespace RRGControl.Adapters
     public interface IAdapter
     {
         public event EventHandler<Packet> PacketReceived;
-        public Task Send(Packet p);
+        public void Send(Packet p);
     }
 }

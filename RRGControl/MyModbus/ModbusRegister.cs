@@ -98,22 +98,14 @@ namespace RRGControl.MyModbus
         }
         public async Task<bool> WriteStringRepresentation(string s)
         {
-            try
+            switch (Base.ValueType)
             {
-                switch (Base.ValueType)
-                {
-                    case RegisterValueType.Range:
-                        return await Write(ushort.Parse(s));
-                    case RegisterValueType.Fixed:
-                        return await WriteByName(s);
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(Base.ValueType));
-                }
-            }
-            catch (Exception ex)
-            {
-                LogEvent?.Invoke(this, ex.ToString());
-                return false;
+                case RegisterValueType.Range:
+                    return await Write(ushort.Parse(s));
+                case RegisterValueType.Fixed:
+                    return await WriteByName(s);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(Base.ValueType));
             }
         }
     }

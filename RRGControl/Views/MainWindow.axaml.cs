@@ -12,8 +12,25 @@ namespace RRGControl.Views
         }
 
         private ViewModels.MainWindowViewModel MyVM { get => (ViewModels.MainWindowViewModel)DataContext; }
+        private FlowrateSummary? SummaryWindow;
 
-
+        private void Summary_Click(object sender, RoutedEventArgs e)
+        {
+            if (SummaryWindow == null)
+            {
+                SummaryWindow = new FlowrateSummary()
+                {
+                    DataContext = new ViewModels.FlowrateSummaryViewModel(MyVM.Connections),
+                    ShowActivated = true
+                };
+                SummaryWindow.Closed += (o, e) => SummaryWindow = null;
+                SummaryWindow.Show(this);
+            }
+            else
+            {
+                SummaryWindow.Activate();
+            }
+        }
         private async void OnStartup(object sender, EventArgs e)
         {
             if (ConfigProvider.Settings.AutoScanOnStartup)

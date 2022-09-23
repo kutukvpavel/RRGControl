@@ -73,17 +73,18 @@ namespace RRGControl.ViewModels
         public string Mode { get => mUnit.Mode; }
         public string Measured 
         { 
-            get => $"{mUnit.Measured.ToString(mUnit.UnitConfig.FlowrateNumberFormat)}  ({mUnit.Measured / mUnit.MaxFlowrate * 100:F1}%)"; 
+            get => $"{mUnit.Measured.ToString(NumberFormat)}  ({mUnit.Measured / mUnit.MaxFlowrate * 100:F1}%)"; 
         }
         public string Setpoint 
         { 
-            get => mUnit.Setpoint.ToString(mUnit.UnitConfig.FlowrateNumberFormat);
+            get => mUnit.Setpoint.ToString(NumberFormat);
             set => mUnit.Setpoint = double.Parse(value);
         }
         public string UnitModel => mUnit.UnitConfig.Model;
         public string Units => mUnit.UnitConfig.ConversionUnits;
-        public string MaxFlow => mUnit.MaxFlowrate.ToString(mUnit.UnitConfig.FlowrateNumberFormat);
+        public string MaxFlow => mUnit.MaxFlowrate.ToString(NumberFormat);
         public bool AutoUpdate { get => mTimer.IsEnabled; set => mTimer.IsEnabled = value; }
+        public string NumberFormat { get => mUnit.UnitConfig.FlowrateNumberFormat; }
 
         public bool HasErrors => Errors.Count > 0;
         private Dictionary<string, string> Errors = new Dictionary<string, string>();

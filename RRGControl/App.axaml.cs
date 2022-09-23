@@ -7,6 +7,7 @@ using MessageBox.Avalonia;
 using RRGControl.ViewModels;
 using RRGControl.Views;
 using System.IO;
+using System.Threading;
 
 namespace RRGControl
 {
@@ -24,7 +25,6 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
         {
             AvaloniaXamlLoader.Load(this);
         }
-        private Options CurrentOptions { get; set; } = new Options();
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -33,6 +33,7 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
                 InitLogs();
                 ConfigProvider.ReadGeneralSettings(CurrentOptions.SettingsFile);
                 StartRRGServer();
+                desktop.ShutdownRequested += Desktop_ShutdownRequested;
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = new MainWindowViewModel(MyNetwork)
@@ -50,22 +51,21 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
                 ConfigProvider.Serialize(ConfigProvider.RRG20));
             File.WriteAllText(CurrentOptions.SettingsFile, ConfigProvider.Serialize(ConfigProvider.Settings));
         }
+        public Models.Network MyNetwork { get; private set; }
+        public CancellationTokenSource Cancellation { get; private set; }
 
-
-        public static void ShowMessageBox(string title, string contents)
-        {
-            var w = MessageBoxManager.GetMessageBoxStandardWindow(title, contents);
-            w.Show();
-        }
-        public static Models.Network MyNetwork { get; private set; }
-        private static L LogInstance = new L();
-        private static void StartRRGServer()
+        private void StartRRGServer()
         {
             var p = new MyModbus.ModbusProvider(ConfigProvider.ReadModelConfigurations());
-            var a = new Adapters.IAdapter[] { new Adapters.NamedPipeAdapter(ConfigProvider.Settings.PipeName) };
+            Cancellation = new CancellationTokenSource();
+            var a = new Adapters.IAdapter[] { new Adapters.NamedPipeAdapter(ConfigProvider.Settings.PipeName, Cancellation.Token) };
             MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings(), a);
         }
-        private static void InitLogs()
+        private void Desktop_ShutdownRequested(object? sender, ShutdownRequestedEventArgs e)
+        {
+            Cancellation.Cancel();
+        }
+        private void InitLogs()
         {
             ConfigProvider.LogEvent += Log;
             Models.Network.LogEvent += Log;
@@ -73,7 +73,16 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
             MyModbus.RRGUnit.LogEvent += Log;
             MyModbus.ModbusRegister.LogEvent += Log;
             MainWindowViewModel.LogEvent += Log;
+            Adapters.NamedPipeAdapter.LogEvent += Log;
         }
+        private Options CurrentOptions { get; set; } = new Options();
+
+        public static void ShowMessageBox(string title, string contents)
+        {
+            var w = MessageBoxManager.GetMessageBoxStandardWindow(title, contents);
+            w.Show();
+        }
+        private static L LogInstance = new L();
         private static void Log(object? sender, string msg)
         {
             string lbl = "";
