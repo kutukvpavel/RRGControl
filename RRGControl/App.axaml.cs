@@ -59,7 +59,7 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
             var p = new MyModbus.ModbusProvider(ConfigProvider.ReadModelConfigurations());
             Cancellation = new CancellationTokenSource();
             var a = new Adapters.IAdapter[] { new Adapters.NamedPipeAdapter(ConfigProvider.Settings.PipeName, Cancellation.Token) };
-            MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings(), a);
+            MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings(), a, ConfigProvider.Settings.AutoRescanIntervalS);
         }
         private void Desktop_ShutdownRequested(object? sender, ShutdownRequestedEventArgs e)
         {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Avalonia.Threading;
 
 namespace RRGControl.Models
 {
@@ -9,7 +10,8 @@ namespace RRGControl.Models
     {
         public static event EventHandler<string>? LogEvent;
 
-        public Network(MyModbus.ModbusProvider p, List<MyModbus.RRGUnitMapping> m, IEnumerable<Adapters.IAdapter> a)
+        public Network(MyModbus.ModbusProvider p, List<MyModbus.RRGUnitMapping> m, IEnumerable<Adapters.IAdapter> a,
+            int rescan)
         {
             Provider = p;
             Connections = new List<MyModbus.Connection>(m.Count);
@@ -39,6 +41,11 @@ namespace RRGControl.Models
             {
                 item.PacketReceived += Adapter_PacketReceived;
             }
+            if (rescan > 0)
+            {
+                mRescanTimer = new DispatcherTimer(new TimeSpan(0, 0, rescan), DispatcherPriority.Background, Rescan_Callback);
+                mRescanTimer.Start();
+            }
         }
 
         public List<MyModbus.Connection> Connections { get; }
@@ -61,7 +68,12 @@ namespace RRGControl.Models
 
         private IEnumerable<Adapters.IAdapter> mAdapters;
         private Dictionary<string, MyModbus.RRGUnit> mUnitsByName;
+        private DispatcherTimer? mRescanTimer;
 
+        private async void Rescan_Callback(object? sender, EventArgs e)
+        {
+            await Scan();
+        }
         private void Adapter_PacketReceived(object? sender, Adapters.Packet e)
         {
             try

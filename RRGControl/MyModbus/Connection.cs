@@ -43,6 +43,7 @@ namespace RRGControl.MyModbus
 
         public async Task Scan()
         {
+            await mSemaphore.WaitAsync();
             try
             {
                 switch (Mapping.Type)
@@ -72,7 +73,11 @@ namespace RRGControl.MyModbus
             }
             catch (Exception ex)
             {
-                LogEvent?.Invoke(this, ex.ToString());
+                LogEvent?.Invoke(this, ex.Message);
+            }
+            finally
+            {
+                mSemaphore.Release();
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsUp)));
             foreach (var item in Units)

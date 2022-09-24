@@ -78,7 +78,7 @@ namespace RRGControl.MyModbus
             }
             catch (Exception ex)
             {
-                LogEvent?.Invoke(this, ex.ToString());
+                LogEvent?.Invoke(this, ex.Message);
                 return false;
             }
         }

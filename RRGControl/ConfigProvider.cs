@@ -19,6 +19,7 @@ namespace RRGControl
             public bool AutoScanOnStartup { get; set; } = true;
             public int AutoUpdateIntervalMs { get; set; } = 500;
             public string PipeName { get; set; } = "RRGControl_Pipe";
+            public int AutoRescanIntervalS { get; set; } = 5;
         }
 
         public const string AddressRegName = "NetworkAddress";
@@ -77,7 +78,7 @@ namespace RRGControl
             }
             )
         {
-            Port = "COM1",
+            Port = "COM26",
             Type = MyModbus.ModbusType.RTU
         };
 

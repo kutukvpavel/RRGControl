@@ -100,7 +100,11 @@ namespace RRGControl.MyModbus
             {
                 bool changed = mPresent != value;
                 mPresent = value;
-                if (changed) PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Present)));
+                if (changed)
+                {
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Present)));
+                    LogEvent?.Invoke(this, $"Unit '{UnitConfig.Name}' went {(mPresent ? "ONline" : "OFFline")}.");
+                }
             }
         }
 
