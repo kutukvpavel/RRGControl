@@ -23,6 +23,10 @@ namespace RRGControl.ViewModels
         private void MUnit_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+            if (e.PropertyName == nameof(mUnit.Present))
+            {
+                mUnit.ReadAll();
+            }
         }
 
         private MyModbus.RRGUnit mUnit;

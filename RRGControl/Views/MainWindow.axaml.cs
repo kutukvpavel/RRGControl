@@ -36,7 +36,7 @@ namespace RRGControl.Views
             if (ConfigProvider.Settings.AutoScanOnStartup)
             {
                 await MyVM.RescanNetwork();
-                await MyVM.ReadAll();
+                //await MyVM.ReadAll();
             }
         }
         private async void Rescan_Click(object sender, RoutedEventArgs e)

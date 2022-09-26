@@ -16,16 +16,16 @@ namespace RRGControl.Adapters
             mSocket.Bind(new IPEndPoint(IPAddress.Loopback, portOut));
             Log($"Outbound socket server started at {mSocket.LocalEndPoint}");*/
             mSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            mSocket.Bind(new IPEndPoint(IPAddress.Any, portIn));
+            if (portIn > 0) mSocket.Bind(new IPEndPoint(IPAddress.Any, portIn));
             Log($"Inbound socket server started at {mSocket.LocalEndPoint}");
             mSocket.ReceiveTimeout = 1000;
             mSocket.SendTimeout = 500;
-            mEP = new IPEndPoint(IPAddress.Loopback, portOut);
+            if (portOut > 0) mEP = new IPEndPoint(IPAddress.Loopback, portOut);
         }
 
         public override void Send(Packet p)
         {
-            if (!mSocket.IsBound) return;
+            //if (!mSocket.IsBound) return;
             base.Send(p);
         }
         public void Dispose()
@@ -45,6 +45,7 @@ namespace RRGControl.Adapters
 
         protected override void SendItem(Packet p)
         {
+            if (mEP == null) return;
             byte[] b = Encoding.UTF8.GetBytes(p.GetJson());
             mSocket.SendTo(b, mEP);
         }
@@ -53,6 +54,11 @@ namespace RRGControl.Adapters
             Packet? p = null;
             while (p == null && !t.IsCancellationRequested)
             {
+                if (!mSocket.IsBound)
+                {
+                    Thread.Sleep(1000);
+                    continue;
+                }
                 try
                 {
                     int n = mSocket.Receive(mBuffer);
@@ -87,6 +93,6 @@ namespace RRGControl.Adapters
 
         private readonly Socket mSocket;
         private readonly byte[] mBuffer = new byte[4096];
-        private readonly IPEndPoint mEP;
+        private readonly IPEndPoint? mEP;
     }
 }

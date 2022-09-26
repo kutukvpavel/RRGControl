@@ -43,41 +43,44 @@ namespace RRGControl.MyModbus
 
         public async Task Scan()
         {
-            await mSemaphore.WaitAsync();
-            try
+            if (!IsUp)
             {
-                switch (Mapping.Type)
+                await mSemaphore.WaitAsync();
+                try
                 {
-                    case ModbusType.RTU:
-                        if (mPort?.IsOpen ?? false)
-                        {
-                            mPort.DiscardInBuffer();
-                            mPort.DiscardOutBuffer();
-                            mPort.Close();
-                        }
-                        try
-                        {
-                            mPort?.Open();
-                        }
-                        catch (InvalidOperationException)
-                        {
-                            mPort?.Close();
-                            mPort?.Open();
-                        }
-                        break;
-                    case ModbusType.TCP:
-                        throw new NotImplementedException();
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    switch (Mapping.Type)
+                    {
+                        case ModbusType.RTU:
+                            if (mPort?.IsOpen ?? false)
+                            {
+                                mPort.DiscardInBuffer();
+                                mPort.DiscardOutBuffer();
+                                mPort.Close();
+                            }
+                            try
+                            {
+                                mPort?.Open();
+                            }
+                            catch (InvalidOperationException)
+                            {
+                                mPort?.Close();
+                                mPort?.Open();
+                            }
+                            break;
+                        case ModbusType.TCP:
+                            throw new NotImplementedException();
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                LogEvent?.Invoke(this, ex.Message);
-            }
-            finally
-            {
-                mSemaphore.Release();
+                catch (Exception ex)
+                {
+                    LogEvent?.Invoke(this, ex.Message);
+                }
+                finally
+                {
+                    mSemaphore.Release();
+                }
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsUp)));
             foreach (var item in Units)

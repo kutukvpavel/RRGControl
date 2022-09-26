@@ -62,7 +62,7 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
             var a = new List<Adapters.IAdapter>();
             if (ConfigProvider.Settings.PipeName.Length > 0)
                 a.Add(new Adapters.NamedPipeAdapter(ConfigProvider.Settings.PipeName, Cancellation.Token));
-            if (ConfigProvider.Settings.OutboundSocketPort > 0) 
+            if (ConfigProvider.Settings.OutboundSocketPort > 0 || ConfigProvider.Settings.InboundSocketPort > 0) 
                 a.Add(new Adapters.SocketAdapter(ConfigProvider.Settings.InboundSocketPort, 
                     ConfigProvider.Settings.OutboundSocketPort, Cancellation.Token));
             MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings(), a, ConfigProvider.Settings.AutoRescanIntervalS);
