@@ -6,6 +6,7 @@ using LLibrary;
 using MessageBox.Avalonia;
 using RRGControl.ViewModels;
 using RRGControl.Views;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -58,7 +59,12 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
         {
             var p = new MyModbus.ModbusProvider(ConfigProvider.ReadModelConfigurations());
             Cancellation = new CancellationTokenSource();
-            var a = new Adapters.IAdapter[] { new Adapters.NamedPipeAdapter(ConfigProvider.Settings.PipeName, Cancellation.Token) };
+            var a = new List<Adapters.IAdapter>();
+            if (ConfigProvider.Settings.PipeName.Length > 0)
+                a.Add(new Adapters.NamedPipeAdapter(ConfigProvider.Settings.PipeName, Cancellation.Token));
+            if (ConfigProvider.Settings.OutboundSocketPort > 0) 
+                a.Add(new Adapters.SocketAdapter(ConfigProvider.Settings.InboundSocketPort, 
+                    ConfigProvider.Settings.OutboundSocketPort, Cancellation.Token));
             MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings(), a, ConfigProvider.Settings.AutoRescanIntervalS);
         }
         private void Desktop_ShutdownRequested(object? sender, ShutdownRequestedEventArgs e)
@@ -74,6 +80,7 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
             MyModbus.ModbusRegister.LogEvent += Log;
             MainWindowViewModel.LogEvent += Log;
             Adapters.NamedPipeAdapter.LogEvent += Log;
+            Adapters.SocketAdapter.LogEvent += Log;
         }
         private Options CurrentOptions { get; set; } = new Options();
 

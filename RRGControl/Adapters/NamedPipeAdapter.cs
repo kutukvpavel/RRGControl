@@ -5,63 +5,73 @@ using System.Threading;
 
 namespace RRGControl.Adapters
 {
-    public class NamedPipeAdapter : IAdapter
+    public class NamedPipeAdapter : AdapterBase, IAdapter, IDisposable
     {
         public static event EventHandler<string>? LogEvent;
 
-        public event EventHandler<Packet>? PacketReceived;
-
-        public NamedPipeAdapter(string pipeName, CancellationToken t)
+        public NamedPipeAdapter(string pipeName, CancellationToken t) : base(t)
         {
-            mServer = new NamedPipeServer<Packet>(pipeName);
+            mServer = new NamedPipeServer<string>(pipeName);
             mServer.ClientConnected += MServer_ClientConnected;
             mServer.ClientMessage += MServer_ClientMessage;
             mServer.ClientDisconnected += MServer_ClientDisconnected;
-            mQueueThread = new Thread(ProcessQueue);
-            mQueueThread.Start(t);
+            mServer.Error += MServer_Error;
+            mServer.Start();
         }
 
         public bool IsConnected { get => mClients > 0; }
 
-        public void Send(Packet p)
+        public override void Send(Packet p)
         {
             if (!IsConnected) return;
-            mQueue.Add(p);
+            base.Send(p);
         }
 
-        private void MServer_ClientDisconnected(NamedPipeConnection<Packet, Packet> connection)
+        private void MServer_Error(Exception exception)
+        {
+            LogEvent?.Invoke(this, exception.ToString());
+        }
+        private void MServer_ClientDisconnected(NamedPipeConnection<string, string> connection)
         {
             mClients--;
         }
-        private void MServer_ClientMessage(NamedPipeConnection<Packet, Packet> connection, Packet message)
+        private void MServer_ClientMessage(NamedPipeConnection<string, string> connection, string message)
         {
-            PacketReceived?.Invoke(this, message);
+            var p = Packet.FromJson(message);
+            if (p == null) LogEvent?.Invoke(this, $"Input packet deserialized as null, contents: {message}");
+            else mReceiverQueue.Add(p);
         }
-        private void MServer_ClientConnected(NamedPipeConnection<Packet, Packet> connection)
+        private void MServer_ClientConnected(NamedPipeConnection<string, string> connection)
         {
             mClients++;
         }
-        private void ProcessQueue(object? arg)
+        protected override void SendItem(Packet p)
         {
-            var t = (CancellationToken)(arg ?? new CancellationToken());
-            while (!t.IsCancellationRequested)
+            mServer.PushMessage(p.GetJson());
+        }
+        protected override Packet ReceiveItem(CancellationToken t)
+        {
+            return mReceiverQueue.Take(t);
+        }
+        protected override void Log(string msg)
+        {
+            LogEvent?.Invoke(this, msg);
+        }
+
+        public void Dispose()
+        {
+            try
             {
-                try
-                {
-                    mServer.PushMessage(mQueue.Take(t));
-                }
-                catch (OperationCanceledException)
-                { }
-                catch (Exception ex)
-                {
-                    LogEvent?.Invoke(this, ex.ToString());
-                }
+                mServer.Stop();
+            }
+            catch (ObjectDisposedException)
+            {
+
             }
         }
 
-        private readonly NamedPipeServer<Packet> mServer;
+        private readonly NamedPipeServer<string> mServer;
         private int mClients = 0;
-        private readonly BlockingCollection<Packet> mQueue = new BlockingCollection<Packet>();
-        private readonly Thread mQueueThread;
+        private readonly BlockingCollection<Packet> mReceiverQueue = new BlockingCollection<Packet>();
     }
 }

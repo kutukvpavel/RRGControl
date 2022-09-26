@@ -10,7 +10,7 @@ namespace RRGControl.ViewModels
 {
     public class DashboardViewModel : ViewModelBase, INotifyPropertyChanged, INotifyDataErrorInfo
     {
-        private static string[] UnknownError = { "Unknown error" };
+        private static readonly string[] UnknownError = { "Unknown error" };
 
         public new event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
@@ -73,7 +73,8 @@ namespace RRGControl.ViewModels
         public string Mode { get => mUnit.Mode; }
         public string Measured 
         { 
-            get => $"{mUnit.Measured.ToString(NumberFormat)}  ({mUnit.Measured / mUnit.MaxFlowrate * 100:F1}%)"; 
+            get => $"{mUnit.Measured.ToString(NumberFormat)}  " +
+                $"({(mUnit.Measured / mUnit.MaxFlowrate * 100).ToString(ConfigProvider.Settings.PercentFormat)}%)"; 
         }
         public string Setpoint 
         { 

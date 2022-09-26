@@ -19,7 +19,10 @@ namespace RRGControl
             public bool AutoScanOnStartup { get; set; } = true;
             public int AutoUpdateIntervalMs { get; set; } = 500;
             public string PipeName { get; set; } = "RRGControl_Pipe";
+            public int OutboundSocketPort { get; set; } = 44753;
+            public int InboundSocketPort { get; set; } = 44754;
             public int AutoRescanIntervalS { get; set; } = 5;
+            public string PercentFormat { get; set; } = "F1";
         }
 
         public const string AddressRegName = "NetworkAddress";
