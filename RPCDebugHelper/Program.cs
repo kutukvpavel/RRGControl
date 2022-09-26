@@ -1,10 +1,10 @@
-﻿using System;
+﻿using NamedPipeWrapper;
+using Newtonsoft.Json;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using NamedPipeWrapper;
-using Newtonsoft.Json;
 
 
 namespace RPCDebugHelper
@@ -81,7 +81,7 @@ namespace RPCDebugHelper
 
         private static void P_ServerMessage(NamedPipeConnection<string, string> connection, string message)
         {
-            //Console.WriteLine(Packet.FromJson(message).ToString());
+            Console.WriteLine(Packet.FromJson(message).ToString());
         }
 
         private static void ReadSocket(UdpClient s)

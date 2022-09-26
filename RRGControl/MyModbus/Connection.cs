@@ -22,13 +22,13 @@ namespace RRGControl.MyModbus
 
         public Connection(ModbusProvider p, RRGUnitMapping m)
         {
+            mProvider = p;
             Mapping = m;
             Master = m.Type switch
             {
                 ModbusType.RTU => p.Factory.CreateRtuMaster(new SerialPortStreamAdapter(
                     mPort = new SerialPortStream(m.Port, m.Baudrate) { ReadTimeout = Timeout, WriteTimeout = Timeout })),
-                ModbusType.TCP => p.Factory.CreateMaster(
-                    mTcpClient = new TcpClient(IPEndPoint.Parse(m.Port)) { ReceiveTimeout = Timeout, SendTimeout = Timeout }),
+                ModbusType.TCP => p.Factory.CreateMaster(mTcpClient = TcpClientFactory(m)),
                 _ => throw new ArgumentOutOfRangeException(null, "ModbusType out of range.")
             };
             Master.Transport.Retries = 1;
@@ -36,7 +36,7 @@ namespace RRGControl.MyModbus
             Units = m.Units.ToDictionary(x => x.Key, x => new RRGUnit(p.ConfigurationDatabase[x.Value.Model], x.Value, this, x.Key));
         }
 
-        public IModbusMaster Master { get; }
+        public IModbusMaster Master { get; private set; }
         public RRGUnitMapping Mapping { get; }
         public Dictionary<ushort, RRGUnit> Units { get; }
         public bool IsUp { get => (Mapping.Type == ModbusType.TCP ? mTcpClient?.Connected : mPort?.IsOpen) ?? false; }
@@ -68,7 +68,15 @@ namespace RRGControl.MyModbus
                             }
                             break;
                         case ModbusType.TCP:
-                            throw new NotImplementedException();
+                            try
+                            {
+                                mTcpClient?.Close();
+                            }
+                            catch (Exception)
+                            { }
+                            mTcpClient = TcpClientFactory(Mapping);
+                            Master = mProvider.Factory.CreateMaster(mTcpClient);
+                            break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -142,8 +150,14 @@ namespace RRGControl.MyModbus
         {
             if (r.UnitAddress > 0xFF) throw new NotImplementedException("NModbus library only supports 8-bit unit addresses.");
         }
-        private SerialPortStream? mPort;
-        private SemaphoreSlim mSemaphore = new SemaphoreSlim(1, 1);
+        private readonly SerialPortStream? mPort;
+        private readonly SemaphoreSlim mSemaphore = new SemaphoreSlim(1, 1);
         private TcpClient? mTcpClient;
+        private readonly ModbusProvider mProvider;
+
+        private static TcpClient TcpClientFactory(RRGUnitMapping m)
+        {
+            return new TcpClient(IPEndPoint.Parse(m.Port)) { ReceiveTimeout = Timeout, SendTimeout = Timeout };
+        }
     }
 }

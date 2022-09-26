@@ -32,6 +32,7 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
             {
                 CurrentOptions = Parser.Default.ParseArguments<Options>(desktop.Args).Value;
                 InitLogs();
+                Log(this, "Starting up.");
                 ConfigProvider.ReadGeneralSettings(CurrentOptions.SettingsFile);
                 StartRRGServer();
                 desktop.ShutdownRequested += Desktop_ShutdownRequested;
@@ -69,6 +70,7 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
         }
         private void Desktop_ShutdownRequested(object? sender, ShutdownRequestedEventArgs e)
         {
+            Log(this, "Shutdown requested.");
             Cancellation.Cancel();
         }
         private void InitLogs()
