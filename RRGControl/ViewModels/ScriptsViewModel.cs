@@ -33,6 +33,7 @@ namespace RRGControl.ViewModels
         {
             if (CanAdd)
             {
+                SelectedRight.Clear();
                 foreach (var item in SelectedLeft)
                 {
                     var i = ((SingleScriptViewModel)item);
@@ -47,7 +48,7 @@ namespace RRGControl.ViewModels
             if (CanRemove)
             {
                 var sel = SelectedRight.Cast<SingleScriptViewModel>().ToList();
-                SelectedRight = null;
+                SelectedRight.Clear();
                 RaisePropChangedCan();
                 for (int i = 0; i < sel.Count; i++)
                 {
@@ -81,9 +82,9 @@ namespace RRGControl.ViewModels
         public void Restore()
         {
             mModel.Pop();
+            SelectedLeft?.Clear();
+            SelectedRight?.Clear();
             ChosenItems = mChosenBcp;
-            SelectedLeft = null;
-            SelectedRight = null;
             RaisePropChangedCan();
         }
         public void Choose()
@@ -96,6 +97,7 @@ namespace RRGControl.ViewModels
 
         private void InitViewModels()
         {
+            SelectedLeft?.Clear();
             Items.Clear();
             foreach (var item in mModel.Items.Select(x => new SingleScriptViewModel(x)))
             {

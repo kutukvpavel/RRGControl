@@ -1,10 +1,10 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="using:RRGControl.Views"
-        x:Class="RRGControl.Views.Scripts"
-        Title="Scripts">
+		x:Class="RRGControl.Views.Scripts"
+		Title="Scripts">
 	<Window.Styles>
 		<Style Selector="ListBox">
 			<Setter Property="Margin" Value="5"></Setter>
@@ -13,14 +13,14 @@
 			<Setter Property="Margin" Value="3"></Setter>
 		</Style>
 	</Window.Styles>
-    <Grid RowDefinitions="auto,*,*,auto" ColumnDefinitions="*,auto,*" Margin="3">
+	<Grid RowDefinitions="auto,*,*,auto" ColumnDefinitions="*,auto,*" Margin="3">
 		<Grid Grid.Column="0" Grid.Row="0" ColumnDefinitions="2*,3*,*" HorizontalAlignment="Stretch">
 			<TextBlock Margin="15,0,0,0" Grid.Column="0">Name</TextBlock>
 			<TextBlock Grid.Column="1">Comment</TextBlock>
 			<TextBlock Margin="0,0,15,0" Grid.Column="2">Duration</TextBlock>
 		</Grid>
 		<ListBox x:Name="lstLeft" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Items="{Binding Items}" 
-				 SelectedItems="{Binding SelectedLeft, Mode=TwoWay}">
+				 SelectedItems="{Binding SelectedLeft, Mode=TwoWay}" SelectionMode="Toggle,Multiple">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<local:SingleScript DataContext="{Binding}"></local:SingleScript>
@@ -38,7 +38,7 @@
 			<TextBlock Grid.Column="2" Margin="0,0,15,0">Duration</TextBlock>
 		</Grid>
 		<ListBox x:Name="lstRight" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Items="{Binding ChosenItems}"
-				 SelectedItems="{Binding SelectedRight, Mode=TwoWay}">
+				 SelectedItems="{Binding SelectedRight, Mode=TwoWay}" SelectionMode="Toggle,Multiple">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<local:SingleScript DataContext="{Binding}"></local:SingleScript>
