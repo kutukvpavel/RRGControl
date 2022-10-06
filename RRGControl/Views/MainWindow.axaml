@@ -54,7 +54,7 @@
 				<TextBlock Text="{Binding Status}"></TextBlock>
 				<TextBlock Text=" | Script: " IsVisible="{Binding ShowProgressBar}"></TextBlock>
 				<ProgressBar Minimum="0" Maximum="100" ShowProgressText="True" Background="{Binding BarColor}"
-							 IsVisible="{Binding ShowProgressBar}" Value="{Binding ScriptProgress}"></ProgressBar>
+							 IsVisible="{Binding ShowProgressBar}" Value="{Binding ScriptProgress}" Foreground="LightBlue"></ProgressBar>
 			</StackPanel>
 		</Border>
 	</Grid>

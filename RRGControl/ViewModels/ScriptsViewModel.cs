@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using Avalonia.Controls.Selection;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -16,12 +19,15 @@ namespace RRGControl.ViewModels
             InitViewModels();
         }
 
-        public ObservableCollection<SingleScriptViewModel> Items { get; } = new ObservableCollection<SingleScriptViewModel>();
-        public ObservableCollection<SingleScriptViewModel> ChosenItems { get; } = new ObservableCollection<SingleScriptViewModel>();
+        public ObservableCollection<SingleScriptViewModel> Items { get; private set; } 
+            = new ObservableCollection<SingleScriptViewModel>();
+        public ObservableCollection<SingleScriptViewModel> ChosenItems { get; private set; }
+            = new ObservableCollection<SingleScriptViewModel>();
         public IList? SelectedLeft { get; set; }
         public IList? SelectedRight { get; set; }
         public bool CanAdd => (SelectedLeft?.Count ?? 0) > 0;
         public bool CanRemove => (SelectedRight?.Count ?? 0) > 0;
+        public Dictionary<int, Adapters.Packet> Compiled => mModel.Compiled;
 
         public void Add()
         {
@@ -40,10 +46,18 @@ namespace RRGControl.ViewModels
         {
             if (CanRemove)
             {
-                for (int i = 0; i < SelectedRight.Count; i++)
+                var sel = SelectedRight.Cast<SingleScriptViewModel>().ToList();
+                SelectedRight = null;
+                RaisePropChangedCan();
+                for (int i = 0; i < sel.Count; i++)
                 {
-                    SingleScriptViewModel s = (SingleScriptViewModel)(SelectedRight[i]);
-                    ChosenItems.Remove(s);
+                    SingleScriptViewModel s = sel[i];
+                    try
+                    {
+                        ChosenItems.Remove(s);
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    { }
                     if (!ChosenItems.Any(x => x.Name == s.Name)) s.IsSelected = false;
                 }
             }
@@ -59,12 +73,26 @@ namespace RRGControl.ViewModels
         {
             RaisePropChangedCan();
         }
+        public void Save()
+        {
+            mModel.Push();
+            mChosenBcp = ChosenItems;
+        }
+        public void Restore()
+        {
+            mModel.Pop();
+            ChosenItems = mChosenBcp;
+            SelectedLeft = null;
+            SelectedRight = null;
+            RaisePropChangedCan();
+        }
         public void Choose()
         {
             mModel.Choose(ChosenItems.Select(x => x.Name));
         }
 
-        private Models.Scripts mModel;
+        private readonly Models.Scripts mModel;
+        private ObservableCollection<SingleScriptViewModel> mChosenBcp = new ObservableCollection<SingleScriptViewModel>();
 
         private void InitViewModels()
         {
@@ -78,6 +106,8 @@ namespace RRGControl.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanRemove)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanAdd)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Items)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ChosenItems)));
         }
     }
 }

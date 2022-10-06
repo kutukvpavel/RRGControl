@@ -60,9 +60,18 @@ namespace RRGControl.Models
         {
             mAdapter.Stop();
         }
+        public void Push()
+        {
+            mAdapter.Push();
+        }
+        public void Pop()
+        {
+            mAdapter.Pop();
+        }
 
         private readonly Adapters.ScriptAdapter mAdapter;
         private DirectoryInfo mFolder;
+        private List<string[]> mUndoBuffer = new List<string[]>();
 
         private void MAdapter_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {

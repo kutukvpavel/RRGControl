@@ -3,7 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using CommandLine;
 using LLibrary;
-using MessageBox.Avalonia;
+using MessageBoxSlim.Avalonia;
 using RRGControl.ViewModels;
 using RRGControl.Views;
 using System.Collections.Generic;
@@ -95,8 +95,12 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
 
         public static void ShowMessageBox(string title, string contents)
         {
-            var w = MessageBoxManager.GetMessageBoxStandardWindow(title, contents);
-            w.Show();
+            var w = BoxedMessage.Create(new MessageBoxSlim.Avalonia.DTO.MessageBoxParams()
+            {
+                ContentTitle = title,
+                ContentMessage = contents
+            });
+            w.ShowAsync().Wait();
         }
         private static L LogInstance = new L();
         private static void Log(object? sender, string msg)

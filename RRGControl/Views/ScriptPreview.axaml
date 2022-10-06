@@ -2,8 +2,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:ScottPlot="using:ScottPlot.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="RRGControl.Views.ScriptPreview"
-        Title="ScriptPreview">
-  Welcome to Avalonia!
+        Title="ScriptPreview" Opened="OnOpened">
+	<ScottPlot:AvaPlot x:Name="Plot1"></ScottPlot:AvaPlot>
 </Window>

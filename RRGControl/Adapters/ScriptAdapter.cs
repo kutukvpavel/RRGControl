@@ -85,6 +85,14 @@ namespace RRGControl.Adapters
         {
             mTicks = targetTicks;
         }
+        public void Push()
+        {
+            mBackup = Script;
+        }
+        public void Pop()
+        {
+            Script = mBackup;
+        }
 
         private readonly CancellationToken mToken;
         private readonly BlockingCollection<Packet> mQueue = new BlockingCollection<Packet>();
@@ -95,6 +103,7 @@ namespace RRGControl.Adapters
         private int? mDuration;
         private Dictionary<int, Packet>? mCompiled = null;
         private ScriptAdapterState mState = ScriptAdapterState.Stopped;
+        private Script? mBackup;
 
         private void MTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {

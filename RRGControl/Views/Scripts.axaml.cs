@@ -12,12 +12,20 @@ namespace RRGControl.Views
             btnOK.Click += BtnOK_Click;
             btnAdd.Click += BtnAdd_Click;
             btnRemove.Click += BtnRemove_Click;
+            btnPreview.Click += BtnPreview_Click;
             lstLeft.SelectionChanged += LstLeft_SelectionChanged;
             lstRight.SelectionChanged += LstRight_SelectionChanged;
         }
 
         private ViewModels.ScriptsViewModel? ViewModel => DataContext as ViewModels.ScriptsViewModel;
 
+        private void BtnPreview_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (ViewModel == null) return;
+            ViewModel.Choose();
+            var w = new ScriptPreview() { DataContext = new ViewModels.ScriptPreviewViewModel(ViewModel.Compiled) };
+            w.ShowDialog(this);
+        }
         private void BtnRemove_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             ViewModel?.Remove();
@@ -31,6 +39,7 @@ namespace RRGControl.Views
         {
             if (ViewModel == null) return;
             ViewModel.Choose();
+            ViewModel.Save();
             Close();
         }
         private void BtnUpdate_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -41,6 +50,7 @@ namespace RRGControl.Views
         private void BtnCancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             if (ViewModel == null) return;
+            ViewModel.Restore();
             Close();
         }
         private void LstRight_SelectionChanged(object? sender, SelectionChangedEventArgs e)
