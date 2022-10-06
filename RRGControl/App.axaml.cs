@@ -66,6 +66,7 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
             if (ConfigProvider.Settings.OutboundSocketPort > 0 || ConfigProvider.Settings.InboundSocketPort > 0) 
                 a.Add(new Adapters.SocketAdapter(ConfigProvider.Settings.InboundSocketPort, 
                     ConfigProvider.Settings.OutboundSocketPort, Cancellation.Token));
+            a.Add(new Adapters.ScriptAdapter(Cancellation.Token));
             MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings(), a, ConfigProvider.Settings.AutoRescanIntervalS);
         }
         private void Desktop_ShutdownRequested(object? sender, ShutdownRequestedEventArgs e)
@@ -83,6 +84,7 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
             MainWindowViewModel.LogEvent += Log;
             Adapters.NamedPipeAdapter.LogEvent += Log;
             Adapters.SocketAdapter.LogEvent += Log;
+            Adapters.ScriptAdapter.LogEvent += Log;
         }
         private Options CurrentOptions { get; set; } = new Options();
 
