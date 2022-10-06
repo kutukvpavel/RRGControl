@@ -14,6 +14,12 @@
 				<MenuItem Header="Rescan" Click="Rescan_Click"></MenuItem>
 				<MenuItem Header="Read All" Click="ReadAll_Click"></MenuItem>
 			</MenuItem>
+			<MenuItem Header="Script">
+				<MenuItem Header="Start" Click="ScriptStart_Click" IsEnabled="{Binding ScriptStartEnable}"></MenuItem>
+				<MenuItem Header="Pause" Click="ScriptPause_Click" IsEnabled="{Binding ScriptPauseEnable}"></MenuItem>
+				<MenuItem Header="Stop" Click="ScriptStop_Click" IsEnabled="{Binding ScriptStopEnable}"></MenuItem>
+				<MenuItem Header="Configure..." Click="ScriptConfigure_Click" IsEnabled="{Binding ScriptConfigureEnable}"></MenuItem>
+			</MenuItem>
 			<MenuItem Header="View">
 				<MenuItem Header="Flowrate Summary" Click="Summary_Click"></MenuItem>
 			</MenuItem>
@@ -46,6 +52,9 @@
 			<StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
 				<TextBlock>Status:  </TextBlock>
 				<TextBlock Text="{Binding Status}"></TextBlock>
+				<TextBlock Text=" | Script: " IsVisible="{Binding ShowProgressBar}"></TextBlock>
+				<ProgressBar Minimum="0" Maximum="100" ShowProgressText="True" Background="{Binding BarColor}"
+							 IsVisible="{Binding ShowProgressBar}" Value="{Binding ScriptProgress}"></ProgressBar>
 			</StackPanel>
 		</Border>
 	</Grid>

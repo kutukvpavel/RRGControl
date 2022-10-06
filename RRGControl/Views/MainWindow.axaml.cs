@@ -71,5 +71,22 @@ Check working directory and its subfolders.");
 {ex}");
             }
         }
+        private void ScriptStart_Click(object sender, RoutedEventArgs e)
+        {
+            MyVM.ScriptStart();
+        }
+        private void ScriptPause_Click(object sender, RoutedEventArgs e)
+        {
+            MyVM.ScriptPause();
+        }
+        private void ScriptStop_Click(object sender, RoutedEventArgs e)
+        {
+            MyVM.ScriptStop();
+        }
+        private void ScriptConfigure_Click(object sender, RoutedEventArgs e)
+        {
+            var w = new Scripts() { DataContext = MyVM.Scripts };
+            w.ShowDialog(this);
+        }
     }
 }

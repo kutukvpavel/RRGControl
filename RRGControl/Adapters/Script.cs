@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RRGControl.Adapters
 {
@@ -27,9 +28,12 @@ namespace RRGControl.Adapters
 
         public string Name { get; set; } = "Example Script";
         public string Comment { get; set; } = "...";
-
         public List<Tuple<int, Packet>> Commands { get; set; } = new List<Tuple<int, Packet>>();
-
+        
+        public int GetDuration()
+        {
+            return Commands.Sum(x => x.Item1);
+        }
         public Dictionary<int, Packet> Compile()
         {
             var res = new Dictionary<int, Packet>(Commands.Count);
@@ -40,6 +44,11 @@ namespace RRGControl.Adapters
                 time += item.Item1;
             }
             return res;
+        }
+
+        public static Script? FromJson(string json)
+        {
+            return JsonConvert.DeserializeObject<Script>(json, ConfigProvider.SerializerOptions);
         }
     }
 }

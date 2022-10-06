@@ -38,7 +38,7 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
                 desktop.ShutdownRequested += Desktop_ShutdownRequested;
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = new MainWindowViewModel(MyNetwork)
+                    DataContext = new MainWindowViewModel(MyNetwork, MyScript)
                 };
             }
             base.OnFrameworkInitializationCompleted();
@@ -51,9 +51,12 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
                 ConfigProvider.Serialize(ConfigProvider.RRG));
             File.WriteAllText(ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG20.json"),
                 ConfigProvider.Serialize(ConfigProvider.RRG20));
+            File.WriteAllText(ExampleHelper(ConfigProvider.Settings.ScriptsFolder, "example.json"),
+                ConfigProvider.Serialize(ConfigProvider.ExampleScript));
             File.WriteAllText(CurrentOptions.SettingsFile, ConfigProvider.Serialize(ConfigProvider.Settings));
         }
         public Models.Network MyNetwork { get; private set; }
+        public Models.Scripts MyScript { get; private set; }
         public CancellationTokenSource Cancellation { get; private set; }
 
         private void StartRRGServer()
@@ -66,7 +69,9 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
             if (ConfigProvider.Settings.OutboundSocketPort > 0 || ConfigProvider.Settings.InboundSocketPort > 0) 
                 a.Add(new Adapters.SocketAdapter(ConfigProvider.Settings.InboundSocketPort, 
                     ConfigProvider.Settings.OutboundSocketPort, Cancellation.Token));
-            a.Add(new Adapters.ScriptAdapter(Cancellation.Token));
+            var s = new Adapters.ScriptAdapter(Cancellation.Token);
+            a.Add(s);
+            MyScript = new Models.Scripts(s, ConfigProvider.Settings.ScriptsFolder);
             MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings(), a, ConfigProvider.Settings.AutoRescanIntervalS);
         }
         private void Desktop_ShutdownRequested(object? sender, ShutdownRequestedEventArgs e)

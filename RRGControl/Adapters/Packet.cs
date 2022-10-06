@@ -1,10 +1,16 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System.Linq;
 
 namespace RRGControl.Adapters
 {
     public class Packet
     {
+        public static string[] ConvertibleRegisters { get; } =
+        {
+            ConfigProvider.MeasuredRegName,
+            ConfigProvider.SetpointRegName
+        };
+
         [JsonConstructor]
         public Packet()
         {
@@ -20,19 +26,32 @@ namespace RRGControl.Adapters
         public string UnitName { get; set; }
         public string RegisterName { get; set; }
         public string Value { get; set; }
+        /// <summary>
+        /// For inbound packets: when true, assume mapping units are used, when false, assume device units are used (10000)
+        /// For outbound packets: ignored
+        /// </summary>
+        public bool ConvertUnits { get; set; } = false;
 
         public string GetJson()
         {
             return JsonConvert.SerializeObject(this);
+        }
+        public string GetConvertedValue(MyModbus.RRGUnit u)
+        {
+            if (!ConvertUnits || !ConvertibleRegisters.Any(x => x == RegisterName)) return Value;
+            return (double.Parse(Value) / u.UnitConfig.ConversionFactor).ToString(u.UnitConfig.FlowrateNumberFormat);
         }
 
         public static Packet? FromJson(string json)
         {
             return JsonConvert.DeserializeObject<Packet>(json);
         }
-        public static Packet FromRegister(string unitName, MyModbus.ModbusRegister r)
+        public static Packet FromRegister(MyModbus.RRGUnit u, MyModbus.ModbusRegister r)
         {
-            return new Packet(unitName, r.Base.Name, r.GetValueStringRepresentation());
+            bool convert = false;
+            if (ConvertibleRegisters.Any(x => x == r.Base.Name)) convert = true;
+            return new Packet(u.UnitConfig.Name, r.Base.Name, 
+                convert ? (u.UnitConfig.ConversionFactor * r.Value).ToString() : r.GetValueStringRepresentation());
         }
     }
 }

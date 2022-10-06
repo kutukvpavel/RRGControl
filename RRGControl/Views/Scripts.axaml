@@ -1,14 +1,53 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 mc:Ignorable="d"
-			 x:Class="RRGControl.Views.Scripts">
-	<ListBox>
-		<ListBox.ItemTemplate>
-			<DataTemplate>
-				
-			</DataTemplate>
-		</ListBox.ItemTemplate>
-	</ListBox>
-</UserControl>
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="using:RRGControl.Views"
+        x:Class="RRGControl.Views.Scripts"
+        Title="Scripts">
+	<Window.Styles>
+		<Style Selector="ListBox">
+			<Setter Property="Margin" Value="5"></Setter>
+		</Style>
+		<Style Selector="Grid > Grid">
+			<Setter Property="Margin" Value="3"></Setter>
+		</Style>
+	</Window.Styles>
+    <Grid RowDefinitions="auto,*,*,auto" ColumnDefinitions="*,auto,*" Margin="3">
+		<Grid Grid.Column="0" Grid.Row="0" ColumnDefinitions="2*,3*,*" HorizontalAlignment="Stretch">
+			<TextBlock Margin="15,0,0,0" Grid.Column="0">Name</TextBlock>
+			<TextBlock Grid.Column="1">Comment</TextBlock>
+			<TextBlock Margin="0,0,15,0" Grid.Column="2">Duration</TextBlock>
+		</Grid>
+		<ListBox x:Name="lstLeft" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Items="{Binding Items}" 
+				 SelectedItems="{Binding SelectedLeft, Mode=TwoWay}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<local:SingleScript DataContext="{Binding}"></local:SingleScript>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<Button x:Name="btnAdd" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+				Content="&gt;&gt;" Background="LightGreen" IsEnabled="{Binding CanAdd}"></Button>
+		<Button x:Name="btnRemove" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center"
+				Content="&lt;&lt;" Background="LightSalmon" IsEnabled="{Binding CanRemove}"></Button>
+		<Grid Grid.Column="2" Grid.Row="0" ColumnDefinitions="2*,3*,*" HorizontalAlignment="Stretch">
+			<TextBlock Grid.Column="0" Margin="15,0,0,0">Name</TextBlock>
+			<TextBlock Grid.Column="1">Comment</TextBlock>
+			<TextBlock Grid.Column="2" Margin="0,0,15,0">Duration</TextBlock>
+		</Grid>
+		<ListBox x:Name="lstRight" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Items="{Binding ChosenItems}"
+				 SelectedItems="{Binding SelectedRight, Mode=TwoWay}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<local:SingleScript DataContext="{Binding}"></local:SingleScript>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<Button x:Name="btnCancel" Grid.Row="3" Grid.Column="0" Background="LightSalmon" 
+				HorizontalAlignment="Stretch" Margin="5,3,7,3" HorizontalContentAlignment="Center">Cancel</Button>
+		<Button x:Name="btnUpdate" Grid.Row="3" Grid.Column="1" Background="LightBlue">Update</Button>
+		<Button x:Name="btnOK" Grid.Row="3" Grid.Column="2" Background="LightGreen" 
+				HorizontalAlignment="Stretch" Margin="7,3,5,3" HorizontalContentAlignment="Center">OK</Button>
+	</Grid>
+</Window>

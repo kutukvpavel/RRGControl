@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Avalonia.Threading;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using Timer = System.Timers.Timer;
 
@@ -14,11 +16,14 @@ namespace RRGControl.Adapters
         Cancelled
     }
 
-    public class ScriptAdapter : IAdapter
+    public class ScriptAdapter : IAdapter, INotifyPropertyChanged
     {
         public static event EventHandler<string>? LogEvent;
 
         public event EventHandler<Packet>? PacketReceived;
+        public event EventHandler<Packet>? PacketSent;
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public event EventHandler? ExecutionFinished;
 
         public ScriptAdapter(CancellationToken t)
         {
@@ -37,14 +42,27 @@ namespace RRGControl.Adapters
             {
                 mScript = value;
                 mCompiled = mScript?.Compile();
+                mDuration = mScript?.GetDuration();
             }
         }
         public Dictionary<int, Packet>? Compiled { get => mCompiled; }
-        public ScriptAdapterState State { get; private set; }
+        public ScriptAdapterState State
+        {
+            get => mState;
+            private set
+            {
+                mState = value;
+                Dispatcher.UIThread.Post(() =>
+                {
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(State)));
+                });
+            }
+        }
+        public double? Progress => (double)mTicks / mDuration;
 
         public void Send(Packet p)
         {
-            //Do nothing
+            PacketSent?.Invoke(this, p);
         }
         public void Start()
         {
@@ -74,17 +92,35 @@ namespace RRGControl.Adapters
         private readonly Timer mTimer;
         private int mTicks = 0;
         private Script? mScript = null;
+        private int? mDuration;
         private Dictionary<int, Packet>? mCompiled = null;
+        private ScriptAdapterState mState = ScriptAdapterState.Stopped;
 
         private void MTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (State == ScriptAdapterState.Cancelled) return;
-            if (mCompiled == null) return;
-            if (mCompiled.TryGetValue(mTicks, out Packet? p))
+            if (mTicks > (mDuration ?? 0))
             {
-                if (p != null) mQueue.Add(p);
+                Stop();
+                Dispatcher.UIThread.Post(() => { ExecutionFinished?.Invoke(this, new EventArgs()); });
             }
-            mTicks++;
+            try
+            {
+                Dispatcher.UIThread.Post(() => { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress))); });
+                if (mCompiled == null) return;
+                if (mCompiled.TryGetValue(mTicks, out Packet? p))
+                {
+                    if (p != null) mQueue.Add(p);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogEvent?.Invoke(this, ex.ToString());
+            }
+            finally
+            {
+                mTicks++;
+            }
         }
         private void QueueThread(object? arg)
         {

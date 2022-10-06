@@ -80,7 +80,7 @@ namespace RRGControl.Models
             {
                 var u = mUnitsByName[e.UnitName];
                 var r = u.Registers[e.RegisterName];
-                r.WriteStringRepresentation(e.Value).Wait();
+                r.WriteStringRepresentation(e.GetConvertedValue(u)).Wait();
             }
             catch (Exception ex)
             {
@@ -94,7 +94,7 @@ namespace RRGControl.Models
             {
                 try
                 {
-                    item.Send(Adapters.Packet.FromRegister(((MyModbus.RRGUnit)sender).UnitConfig.Name, e));
+                    item.Send(Adapters.Packet.FromRegister((MyModbus.RRGUnit)sender, e));
                 }
                 catch (Exception ex)
                 {

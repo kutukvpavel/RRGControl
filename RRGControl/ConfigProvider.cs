@@ -9,12 +9,15 @@ namespace RRGControl
 {
     public static class ConfigProvider
     {
+        public const string FilenameFilter = "*.json";
         public class GeneralSettings
         {
             private const string DefaultModelsSubfolder = "models";
             private const string DefaultUnitsSubfolder = "mapping";
+            private const string DefaultScriptsFolder = "scripts";
             public string ModelsFolder { get; set; } = DefaultModelsSubfolder;
             public string UnitsFolder { get; set; } = DefaultUnitsSubfolder;
+            public string ScriptsFolder { get; set; } = DefaultScriptsFolder;
             public bool DisableUnitAddressChange { get; set; } = true;
             public bool AutoScanOnStartup { get; set; } = true;
             public int AutoUpdateIntervalMs { get; set; } = 500;
@@ -84,6 +87,14 @@ namespace RRGControl
             Port = "COM26",
             Type = MyModbus.ModbusType.RTU
         };
+        public static readonly Adapters.Script ExampleScript = new Adapters.Script(
+            "Example Script", "Example Comment", new List<Tuple<int, Adapters.Packet>>()
+            {
+                new Tuple<int, Adapters.Packet>(5, new Adapters.Packet("Gas", OperationModeRegName, RegulateModeName)),
+                new Tuple<int, Adapters.Packet>(10, new Adapters.Packet("Gas", SetpointRegName, "10") { ConvertUnits = true }),
+                new Tuple<int, Adapters.Packet>(10, new Adapters.Packet("Gas", SetpointRegName, "0") { ConvertUnits = true }),
+                new Tuple<int, Adapters.Packet>(5, new Adapters.Packet("Gas", OperationModeRegName, ClosedModeName))
+            });
 
 
         public static event EventHandler<string>? LogEvent;
@@ -96,7 +107,7 @@ namespace RRGControl
             List<T> result = new List<T>();
             try
             {
-                foreach (var item in Directory.EnumerateFiles(folder, "*.json", SearchOption.AllDirectories))
+                foreach (var item in Directory.EnumerateFiles(folder, FilenameFilter, SearchOption.AllDirectories))
                 {
                     try
                     {
