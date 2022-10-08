@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	<OutputType>WinExe</OutputType>
 	<TargetFramework>net5.0</TargetFramework>
@@ -9,6 +9,15 @@
 	<ApplicationIcon />
 	<StartupObject />
   </PropertyGroup>
+	<PropertyGroup>
+		<Deterministic>False</Deterministic>
+	</PropertyGroup>
+	<PropertyGroup>
+		<Company>MDC</Company>
+		<Copyright>Copyright Kutukov Pavel © 2022-2023</Copyright>
+		<ProductVersion>0.3-c</ProductVersion>
+		<InformationalVersion>0.3-c</InformationalVersion>
+	</PropertyGroup>
   <ItemGroup>
 	<AvaloniaResource Include="Assets\**" />
 	<None Remove=".gitignore" />
@@ -38,8 +47,8 @@
 	<PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\Register.axaml.cs">
-      <DependentUpon>Register.axaml</DependentUpon>
-    </Compile>
+	<Compile Update="Views\Register.axaml.cs">
+	  <DependentUpon>Register.axaml</DependentUpon>
+	</Compile>
   </ItemGroup>
 </Project>
