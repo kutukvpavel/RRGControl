@@ -107,16 +107,16 @@ namespace RRGControl
             Type = MyModbus.ModbusType.RTU
         };
         public static readonly Adapters.Script ExampleScript = new Adapters.Script(
-            "Example Script", "Example Comment", new List<Tuple<int, Adapters.Packet>>()
+            "Example Script", "Example Comment", new List<Adapters.Script.Element>()
             {
-                new Tuple<int, Adapters.Packet>(1, new Adapters.Packet("Gas", OperationModeRegName, RegulateModeName)),
-                new Tuple<int, Adapters.Packet>(5, new Adapters.Packet("Air", OperationModeRegName, RegulateModeName)),
-                new Tuple<int, Adapters.Packet>(1, new Adapters.Packet("Air", SetpointRegName, "10") { ConvertUnits = true }),
-                new Tuple<int, Adapters.Packet>(10, new Adapters.Packet("Gas", SetpointRegName, "100") { ConvertUnits = true }),
-                new Tuple<int, Adapters.Packet>(1, new Adapters.Packet("Air", SetpointRegName, "0") { ConvertUnits = true }),
-                new Tuple<int, Adapters.Packet>(10, new Adapters.Packet("Gas", SetpointRegName, "0") { ConvertUnits = true }),
-                new Tuple<int, Adapters.Packet>(1, new Adapters.Packet("Air", OperationModeRegName, RegulateModeName)),
-                new Tuple<int, Adapters.Packet>(5, new Adapters.Packet("Gas", OperationModeRegName, ClosedModeName))
+                new Adapters.Script.Element(1, new Adapters.Packet("Gas", OperationModeRegName, RegulateModeName)),
+                new Adapters.Script.Element(5, new Adapters.Packet("Air", OperationModeRegName, RegulateModeName)),
+                new Adapters.Script.Element(1, new Adapters.Packet("Air", SetpointRegName, "10") { ConvertUnits = true }),
+                new Adapters.Script.Element(10, new Adapters.Packet("Gas", SetpointRegName, "100") { ConvertUnits = true }),
+                new Adapters.Script.Element(1, new Adapters.Packet("Air", SetpointRegName, "0") { ConvertUnits = true }),
+                new Adapters.Script.Element(10, new Adapters.Packet("Gas", SetpointRegName, "0") { ConvertUnits = true }),
+                new Adapters.Script.Element(1, new Adapters.Packet("Air", OperationModeRegName, RegulateModeName)),
+                new Adapters.Script.Element(5, new Adapters.Packet("Gas", OperationModeRegName, ClosedModeName))
             });
 
 

@@ -31,6 +31,7 @@ namespace RRGControl.Adapters
         /// For inbound packets: when true, assume mapping units are used, when false, assume device units are used (10000)
         /// For outbound packets: ignored
         /// </summary>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool ConvertUnits { get; set; } = false;
 
         public string GetJson()

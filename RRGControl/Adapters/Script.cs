@@ -7,9 +7,27 @@ namespace RRGControl.Adapters
 {
     public class Script
     {
+        public class Element
+        {
+            [JsonConstructor]
+            public Element() : base() { }
+
+            public Element(int dur, Packet p)
+            {
+                Duration = dur;
+                Command = p;
+            }
+
+            [JsonProperty(Required = Required.Always)]
+            public int Duration { get; set; }
+            [JsonProperty(Required = Required.Always)]
+            public Packet Command { get; set; }
+        }
+
+
         [JsonConstructor]
         public Script() { }
-        public Script(string n, string c, List<Tuple<int, Packet>> src)
+        public Script(string n, string c, List<Element> src)
         {
             Name = n;
             Comment = c;
@@ -28,11 +46,11 @@ namespace RRGControl.Adapters
 
         public string Name { get; set; } = "Example Script";
         public string Comment { get; set; } = "...";
-        public List<Tuple<int, Packet>> Commands { get; set; } = new List<Tuple<int, Packet>>();
+        public List<Element> Commands { get; set; } = new List<Element>();
         
         public int GetDuration()
         {
-            return Commands.Sum(x => x.Item1);
+            return Commands.Sum(x => x.Duration);
         }
         public Dictionary<int, Packet> Compile()
         {
@@ -40,8 +58,8 @@ namespace RRGControl.Adapters
             int time = 0;
             foreach (var item in Commands)
             {
-                res.Add(time, item.Item2);
-                time += item.Item1;
+                res.Add(time, item.Command);
+                time += item.Duration;
             }
             return res;
         }
