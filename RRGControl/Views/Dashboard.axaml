@@ -3,7 +3,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:local="using:RRGControl"
-			 mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
+			 mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
 			 x:Class="RRGControl.Views.Dashboard">
 	<UserControl.Styles>
 		<Style Selector="HeaderedContentControl">
@@ -39,7 +39,7 @@
 			<Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
 		</Style>
 	</UserControl.Styles>
-	<Grid Name="mainGrid" ColumnDefinitions="*,2*" RowDefinitions="auto,auto,*">
+	<Grid Name="mainGrid" ColumnDefinitions="2*,5*" RowDefinitions="auto,auto,*">
 		<TextBlock Grid.Column="0" Grid.Row="0" Text="Unit Address:"></TextBlock>
 		<TextBox Grid.Column="0" Grid.Row="1" Text="{Binding Address, Mode=OneWay}" KeyDown="Address_OnKeyDown" 
 				 IsReadOnly="{Binding Source={x:Static local:ConfigProvider.Settings}, Path=DisableUnitAddressChange}"></TextBox>

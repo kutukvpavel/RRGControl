@@ -20,7 +20,7 @@ namespace RRGControl.MyModbus
         /// </summary>
         /// <param name="reg"></param>
         /// <returns></returns>
-        public double ConvertToUI(ushort reg)
+        public double ConvertToUI(short reg)
         {
             return reg * ConversionFactor;
         }
@@ -29,9 +29,9 @@ namespace RRGControl.MyModbus
         /// </summary>
         /// <param name="ui"></param>
         /// <returns></returns>
-        public ushort ConvertToRegister(double ui)
+        public short ConvertToRegister(double ui)
         {
-            return (ushort)Math.Round(ui / ConversionFactor);
+            return (short)Math.Round(ui / ConversionFactor);
         }
     }
 }

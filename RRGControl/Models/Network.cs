@@ -65,10 +65,15 @@ namespace RRGControl.Models
                 await item.ReadAll();
             }
         }
+        public MyModbus.RRGUnit? FindUnitByName(string name)
+        {
+            if (mUnitsByName.TryGetValue(name, out MyModbus.RRGUnit? unit)) return unit;
+            return null;
+        }
 
-        private IEnumerable<Adapters.IAdapter> mAdapters;
-        private Dictionary<string, MyModbus.RRGUnit> mUnitsByName;
-        private DispatcherTimer? mRescanTimer;
+        private readonly IEnumerable<Adapters.IAdapter> mAdapters;
+        private readonly Dictionary<string, MyModbus.RRGUnit> mUnitsByName;
+        private readonly DispatcherTimer? mRescanTimer;
 
         private async void Rescan_Callback(object? sender, EventArgs e)
         {
@@ -79,6 +84,7 @@ namespace RRGControl.Models
             try
             {
                 var u = mUnitsByName[e.UnitName];
+                if (!u.Present) return;
                 var r = u.Registers[e.RegisterName];
                 r.WriteStringRepresentation(e.GetConvertedValue(u)).Wait();
             }
@@ -98,7 +104,7 @@ namespace RRGControl.Models
                 }
                 catch (Exception ex)
                 {
-                    LogEvent?.Invoke(this, ex.ToString());
+                    LogEvent?.Invoke(this, $"For register '{e.Base.Name}': {ex}");
                 }
             }
         }

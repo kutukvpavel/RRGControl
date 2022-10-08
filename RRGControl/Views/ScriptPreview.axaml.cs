@@ -17,8 +17,13 @@ namespace RRGControl.Views
             if (ViewModel == null) return;
             foreach (var item in ViewModel.Data)
             {
-                Plot1.Plot.AddScatterStep(item.Value.Item1, item.Value.Item2, label: item.Key);
+                var p = Plot1.Plot.AddScatterStep(item.DataX, item.DataY, 
+                    label: item.LegendEntry, lineWidth: 1.5f);
+                p.LineStyle = item.Offline ? ScottPlot.LineStyle.Dash : ScottPlot.LineStyle.Solid;
             }
+            Plot1.Plot.XAxis.Label("Time (seconds)");
+            Plot1.Plot.YAxis.Label("Flow Rate");
+            Plot1.Plot.Legend(location: ScottPlot.Alignment.UpperRight);
             Plot1.Refresh();
         }
     }

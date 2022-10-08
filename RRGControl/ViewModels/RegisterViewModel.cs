@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Avalonia.Media;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,22 +15,26 @@ namespace RRGControl.ViewModels
         public RegisterViewModel(MyModbus.ModbusRegister r)
         {
             mRegister = r;
-            TextboxMask = GetMask(mRegister);
+            if (r.Base.Type != MyModbus.RegisterType.ReadOnly && r.Base.ValueType != MyModbus.RegisterValueType.Fixed)
+            {
+                TextboxMask = GetMask(mRegister);
+            }
             mRevLookup = mRegister.Base.Values?.ToDictionary(x => x.Value, x => x.Key);
             ComboboxItems = mRevLookup?.Values;
             mRegister.PropertyChanged += MRegister_PropertyChanged;
             base.PropertyChanged += PropertyChanged;
         }
 
-        private void MRegister_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void MRegister_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
         }
 
-        private MyModbus.ModbusRegister mRegister;
-        private Dictionary<ushort, string>? mRevLookup;
+        private readonly MyModbus.ModbusRegister mRegister;
+        private readonly Dictionary<short, string>? mRevLookup;
         private string? mWriteCmb;
         private string? mWriteTxt;
+        private bool? mCompleted = null;
 
         public bool ShowCombobox { get => mRegister.Base.ValueType == MyModbus.RegisterValueType.Fixed; }
         public IEnumerable<string>? ComboboxItems { get; }
@@ -43,12 +48,38 @@ namespace RRGControl.ViewModels
         }
         public string? ComboboxValue
         {
-            get => ShowCombobox ? mRevLookup?[mRegister.Value] : null;
+            get
+            {
+                if (!ShowCombobox) return null;
+                try
+                {
+                    return mRevLookup?[mRegister.Value];
+                }
+                catch (KeyNotFoundException)
+                {
+                    return null;
+                }
+            }
             set => mWriteCmb = value;
         }
-
+        public bool IsReadOnly => mRegister.Base.Type == MyModbus.RegisterType.ReadOnly;
         public bool HasErrors => Errors.Count > 0;
         public Dictionary<string, string> Errors { get; } = new Dictionary<string, string>();
+        public bool? MaskCompleted
+        {
+            get => mCompleted;
+            set
+            {
+                mCompleted = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MaskCompleted)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MaskColor)));
+            }
+        }
+        public IBrush MaskColor => MaskCompleted == null ? Brushes.DarkGray : 
+            (MaskCompleted ?? false ? Brushes.LightGreen : Brushes.LightSalmon);
+        public string LookupFailedValue => mRegister.Value.ToString();
+        public IBrush ComboboxBorderColor => mRevLookup?.ContainsKey(mRegister.Value) ?? false ?
+            Brushes.DarkGray : Brushes.LightCoral;
 
         public async Task Read()
         {
@@ -79,6 +110,16 @@ namespace RRGControl.ViewModels
                 if (!Errors.ContainsKey(pn)) Errors.Add(pn, string.Empty);
                 Errors[pn] = "Invalid format";
             }
+            catch (OverflowException)
+            {
+                if (!Errors.ContainsKey(pn)) Errors.Add(pn, string.Empty);
+                Errors[pn] = "Out of range";
+            }
+            catch (Exception)
+            {
+                if (!Errors.ContainsKey(pn)) Errors.Add(pn, string.Empty);
+                Errors[pn] = "Unknown error";
+            }
             if (success)
             {
                 if (Errors.ContainsKey(pn)) Errors.Remove(pn);
@@ -91,7 +132,7 @@ namespace RRGControl.ViewModels
         {
             var req = Enumerable.Repeat('0', mRegister.Base.Limits?.Min.ToString().Length ?? 0);
             var add = Enumerable.Repeat('9', (mRegister.Base.Limits?.Max.ToString().Length - req.Count()) ?? 0);
-            return new string(add.Concat(req).ToArray());
+            return new string(req.Concat(add).ToArray());
         }
         private static string[] UnknownError { get; } = { "Unknown error" };
 

@@ -119,7 +119,8 @@ namespace RRGControl.Adapters
                 if (mCompiled == null) return;
                 if (mCompiled.TryGetValue(mTicks, out Packet? p))
                 {
-                    if (p != null) mQueue.Add(p);
+                    if (p != null)
+                        mQueue.Add(p);
                 }
             }
             catch (Exception ex)
@@ -133,11 +134,12 @@ namespace RRGControl.Adapters
         }
         private void QueueThread(object? arg)
         {
-            while (mToken.IsCancellationRequested)
+            while (!mToken.IsCancellationRequested)
             {
                 try
                 {
-                    PacketReceived?.Invoke(this, mQueue.Take(mToken));
+                    var v = mQueue.Take(mToken);
+                    PacketReceived?.Invoke(this, v);
                 }
                 catch (OperationCanceledException) { }
                 catch (Exception ex)

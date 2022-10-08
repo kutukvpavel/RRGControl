@@ -7,21 +7,47 @@ namespace RRGControl.ViewModels
 {
     public class ScriptPreviewViewModel
     {
-        public ScriptPreviewViewModel(Dictionary<int, Adapters.Packet> compiled)
+        public class MyPlotData
+        {
+            public MyPlotData(string l, double[] x, double[] y, bool offline)
+            {
+                LegendEntry = l;
+                DataX = x;
+                DataY = y;
+                Offline = offline;
+            }
+
+            public string LegendEntry { get; }
+            public double[] DataX { get; }
+            public double[] DataY { get; }
+            public bool Offline { get; }
+        }
+
+        public ScriptPreviewViewModel(Dictionary<int, Adapters.Packet> compiled, int duration, Models.Network? n)
         {
             mScript = compiled;
             var units = mScript.Values.DistinctBy(x => x.UnitName).Select(x => x.UnitName);
-            Data = new Dictionary<string, Tuple<double[], double[]>>();
+            Data = new List<MyPlotData>();
             foreach (var item in units)
             {
                 var tmp = compiled.Where(x => x.Value.UnitName == item && x.Value.RegisterName == ConfigProvider.SetpointRegName)
                     .ToDictionary(x => (double)x.Key, x => double.Parse(x.Value.Value));
-                Data.Add(item, new Tuple<double[], double[]>(tmp.Keys.ToArray(), tmp.Values.ToArray()));
+                try
+                {
+                    var lst = tmp.Last();
+                    tmp.Add(duration, lst.Value);
+                }
+                catch (InvalidOperationException)
+                { }
+                var u = n?.FindUnitByName(item);
+                var ol = u?.Present ?? false ? "Online" : "Offline";
+                Data.Add(new MyPlotData($"{item}, {u?.UnitConfig?.ConversionUnits ?? "N/A"}, {ol}", 
+                    tmp.Keys.ToArray(), tmp.Values.ToArray(), !(u?.Present ?? false)));
             }
         }
 
-        public Dictionary<string, Tuple<double[], double[]>> Data { get; }
+        public List<MyPlotData> Data { get; }
 
-        private Dictionary<int, Adapters.Packet> mScript;
+        private readonly Dictionary<int, Adapters.Packet> mScript;
     }
 }

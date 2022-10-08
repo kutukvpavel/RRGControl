@@ -14,12 +14,14 @@ namespace RRGControl
 {
     public partial class App : Application
     {
-        private const string DefaultConfigFileName = "config.json";
         private class Options
         {
             [Option('c', "config", Required = false, HelpText = @"General settings file path,
-can be absolute or relative to working directory.", Default = DefaultConfigFileName)]
-            public string SettingsFile { get; set; } = DefaultConfigFileName;
+can be absolute or relative to working directory.", Default = ConfigProvider.GeneralSettings.DefaultFileName)]
+            public string SettingsFile { get; set; } = ConfigProvider.GeneralSettings.DefaultFileName;
+            [Option('s', "scripts", Required = false, HelpText = @"Last used scripts file path,
+can be absolute or relative to working directory.", Default = ConfigProvider.LastUsedScripts.DefaultFileName)]
+            public string LastScriptsFile { get; set; } = ConfigProvider.LastUsedScripts.DefaultFileName;
         }
 
         public override void Initialize()
@@ -34,6 +36,7 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
                 InitLogs();
                 Log(this, "Starting up.");
                 ConfigProvider.ReadGeneralSettings(CurrentOptions.SettingsFile);
+                ConfigProvider.ReadLastUsedScripts(CurrentOptions.LastScriptsFile);
                 StartRRGServer();
                 desktop.ShutdownRequested += Desktop_ShutdownRequested;
                 desktop.MainWindow = new MainWindow
@@ -51,9 +54,15 @@ can be absolute or relative to working directory.", Default = DefaultConfigFileN
                 ConfigProvider.Serialize(ConfigProvider.RRG));
             File.WriteAllText(ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG20.json"),
                 ConfigProvider.Serialize(ConfigProvider.RRG20));
+            File.WriteAllText(ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG12.json"),
+                ConfigProvider.Serialize(ConfigProvider.RRG12));
             File.WriteAllText(ExampleHelper(ConfigProvider.Settings.ScriptsFolder, "example.json"),
                 ConfigProvider.Serialize(ConfigProvider.ExampleScript));
             File.WriteAllText(CurrentOptions.SettingsFile, ConfigProvider.Serialize(ConfigProvider.Settings));
+        }
+        public void SaveLastUsedScripts()
+        {
+            ConfigProvider.SaveLastUsedScripts(CurrentOptions.LastScriptsFile);
         }
         public Models.Network MyNetwork { get; private set; }
         public Models.Scripts MyScript { get; private set; }

@@ -23,7 +23,11 @@ namespace RRGControl.Views
         {
             if (ViewModel == null) return;
             ViewModel.Choose();
-            var w = new ScriptPreview() { DataContext = new ViewModels.ScriptPreviewViewModel(ViewModel.Compiled) };
+            var w = new ScriptPreview() 
+            { 
+                DataContext = new ViewModels.ScriptPreviewViewModel(ViewModel.Compiled, ViewModel.Duration,
+                    (App.Current as App)?.MyNetwork)
+            };
             w.ShowDialog(this);
         }
         private void BtnRemove_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

@@ -111,7 +111,7 @@ namespace RRGControl.MyModbus
         public async Task<bool> ChangeAddress(ushort a)
         {
             var addrReg = Registers[ConfigProvider.AddressRegName];
-            await addrReg.Write(a);
+            await addrReg.Write((short)a);
             //Check whether the new address is now available
             try
             {
@@ -156,7 +156,7 @@ namespace RRGControl.MyModbus
         {
             try
             {
-                return Registers[ConfigProvider.AddressRegName].Base.ValidateValue(v);
+                return Registers[ConfigProvider.AddressRegName].Base.ValidateValue((short)v);
             }
             catch (Exception ex)
             {

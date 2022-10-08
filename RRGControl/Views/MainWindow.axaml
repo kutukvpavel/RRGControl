@@ -4,7 +4,7 @@
 		xmlns:local="using:RRGControl.Views"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		Width="450" Height="600"
+		Width="500" Height="600"
 		x:Class="RRGControl.Views.MainWindow"
 		Icon="/Assets/c.png"
 		Title="RRG Control" Opened="OnStartup">
@@ -50,7 +50,7 @@
 		</TabControl>
 		<Border Grid.Column="0" Grid.Row="2" Margin="0,1,0,0" Padding="3" BorderBrush="Gray" BorderThickness="1">
 			<StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
-				<TextBlock>Status:  </TextBlock>
+				<TextBlock Margin="0,0,5,0">Status:</TextBlock>
 				<TextBlock Text="{Binding Status}"></TextBlock>
 				<TextBlock Text=" | Script: " IsVisible="{Binding ShowProgressBar}"></TextBlock>
 				<ProgressBar Minimum="0" Maximum="100" ShowProgressText="True" Background="{Binding BarColor}"

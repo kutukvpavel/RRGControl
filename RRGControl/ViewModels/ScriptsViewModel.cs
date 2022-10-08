@@ -1,6 +1,4 @@
-﻿using Avalonia.Controls.Selection;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -17,6 +15,12 @@ namespace RRGControl.ViewModels
             mModel = s;
             mModel.Update();
             InitViewModels();
+            foreach (var item in mModel.LastChosenNames)
+            {
+                var i = Items.FirstOrDefault(x => x.Name == item);
+                if (i != null) mChosenBcp.Add(i);
+            }
+            Restore();
         }
 
         public ObservableCollection<SingleScriptViewModel> Items { get; private set; } 
@@ -28,6 +32,7 @@ namespace RRGControl.ViewModels
         public bool CanAdd => (SelectedLeft?.Count ?? 0) > 0;
         public bool CanRemove => (SelectedRight?.Count ?? 0) > 0;
         public Dictionary<int, Adapters.Packet> Compiled => mModel.Compiled;
+        public int Duration => mModel.Duration;
 
         public void Add()
         {
@@ -53,12 +58,7 @@ namespace RRGControl.ViewModels
                 for (int i = 0; i < sel.Count; i++)
                 {
                     SingleScriptViewModel s = sel[i];
-                    try
-                    {
-                        ChosenItems.Remove(s);
-                    }
-                    catch (ArgumentOutOfRangeException)
-                    { }
+                    ChosenItems.Remove(s);
                     if (!ChosenItems.Any(x => x.Name == s.Name)) s.IsSelected = false;
                 }
             }
@@ -76,15 +76,25 @@ namespace RRGControl.ViewModels
         }
         public void Save()
         {
-            mModel.Push();
-            mChosenBcp = ChosenItems;
+            mModel.Save();
+            mChosenBcp.Clear();
+            mChosenBcp.AddRange(ChosenItems);
         }
         public void Restore()
         {
-            mModel.Pop();
             SelectedLeft?.Clear();
             SelectedRight?.Clear();
-            ChosenItems = mChosenBcp;
+            mModel.Recall();
+            foreach (var item in ChosenItems)
+            {
+                item.IsSelected = false;
+            }
+            ChosenItems.Clear();
+            foreach (var item in mChosenBcp)
+            {
+                item.IsSelected = true;
+                ChosenItems.Add(item);
+            }
             RaisePropChangedCan();
         }
         public void Choose()
@@ -93,7 +103,7 @@ namespace RRGControl.ViewModels
         }
 
         private readonly Models.Scripts mModel;
-        private ObservableCollection<SingleScriptViewModel> mChosenBcp = new ObservableCollection<SingleScriptViewModel>();
+        private readonly List<SingleScriptViewModel> mChosenBcp = new List<SingleScriptViewModel>();
 
         private void InitViewModels()
         {
@@ -108,8 +118,8 @@ namespace RRGControl.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanRemove)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanAdd)));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Items)));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ChosenItems)));
+            //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Items)));
+            //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ChosenItems)));
         }
     }
 }

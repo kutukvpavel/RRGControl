@@ -15,6 +15,9 @@ namespace RRGControl
             private const string DefaultModelsSubfolder = "models";
             private const string DefaultUnitsSubfolder = "mapping";
             private const string DefaultScriptsFolder = "scripts";
+
+            public const string DefaultFileName = "config.json";
+
             public string ModelsFolder { get; set; } = DefaultModelsSubfolder;
             public string UnitsFolder { get; set; } = DefaultUnitsSubfolder;
             public string ScriptsFolder { get; set; } = DefaultScriptsFolder;
@@ -26,6 +29,13 @@ namespace RRGControl
             public int InboundSocketPort { get; set; } = 44754;
             public int AutoRescanIntervalS { get; set; } = 5;
             public string PercentFormat { get; set; } = "F1";
+        }
+        public class LastUsedScripts : List<string> 
+        {
+            public const string DefaultFileName = "last_used.json";
+
+            [JsonConstructor]
+            public LastUsedScripts() : base() { }
         }
 
         public const string AddressRegName = "NetworkAddress";
@@ -47,58 +57,72 @@ namespace RRGControl
         };
         public static readonly MyModbus.RRGModelConfig RRG = new MyModbus.RRGModelConfig("RRG", new List<MyModbus.ModbusRegisterBase>()
         {
-            new MyModbus.ModbusRegisterBase(AddressRegName, 0, 0, 1, 65535),
-            new MyModbus.ModbusRegisterBase(OperationModeRegName, 2, 19, new Dictionary<string, ushort>()
+            new MyModbus.ModbusRegisterBase(AddressRegName, 0, 0, 1, 255),
+            new MyModbus.ModbusRegisterBase(OperationModeRegName, 2, 19, new Dictionary<string, short>()
             {
                 { RegulateModeName, 19 },
                 { OpenModeName, 6 },
                 { ClosedModeName, 10 }
             }),
             new MyModbus.ModbusRegisterBase(SetpointRegName, 4, 0, 0, 10000),
-            new MyModbus.ModbusRegisterBase(MeasuredRegName, 5)
+            new MyModbus.ModbusRegisterBase(MeasuredRegName, 5) { FirstBitAsSign = true }
         });
         public static readonly MyModbus.RRGModelConfig RRG20 = new MyModbus.RRGModelConfig(
             $"RRG{MyModbus.RRGModelConfig.ModelPathSeparator}RRG20", new List<MyModbus.ModbusRegisterBase>()
-        {
-            new MyModbus.ModbusRegisterBase("SoftStartTime", 19, 200, 30, 10000),
-            new MyModbus.ModbusRegisterBase("SoftStartStep", 20, 10, 2, 10),
-            new MyModbus.ModbusRegisterBase("SoftStartEnable", 21, 1, new Dictionary<string, ushort>()
             {
-                { "Enable", 1 },
-                { "Disable", 0 }
-            })
-        });
+                new MyModbus.ModbusRegisterBase("SoftStartTime", 19, 200, 30, 10000),
+                new MyModbus.ModbusRegisterBase("SoftStartStep", 20, 10, 2, 10),
+                new MyModbus.ModbusRegisterBase("SoftStartEnable", 21, 1, new Dictionary<string, short>()
+                {
+                    { "Enable", 1 },
+                    { "Disable", 0 }
+                })
+            });
+        public static readonly MyModbus.RRGModelConfig RRG12 = new MyModbus.RRGModelConfig(
+            $"RRG{MyModbus.RRGModelConfig.ModelPathSeparator}RRG12", new List<MyModbus.ModbusRegisterBase>()
+            {
+                new MyModbus.ModbusRegisterBase("SerialNumber", 1),
+                new MyModbus.ModbusRegisterBase("StatusFlags", 3),
+                new MyModbus.ModbusRegisterBase("Baudrate", 6, 0xFF, new Dictionary<string, short>()
+                {
+                    { "9600", 0x00 },
+                    { "38400", 0x01 },
+                    { "19200", 0xFF }
+                })
+            });
         public static readonly MyModbus.RRGUnitMapping ExampleMapping = new MyModbus.RRGUnitMapping(
             new Dictionary<ushort, MyModbus.RRGUnitConfig>()
             {
                 { 
-                    1,
-                    new MyModbus.RRGUnitConfig() 
-                    { ConversionFactor = 0.0009, Model = "RRG20", Name = "Example1", ConversionUnits = "L/h" } 
+                    1, new MyModbus.RRGUnitConfig() 
+                    { ConversionFactor = 0.06, Model = "RRG12", Name = "Air", ConversionUnits = "mL/min" } 
                 },
                 { 
-                    2,
-                    new MyModbus.RRGUnitConfig() 
-                    { ConversionFactor = 0.015, Model = "RRG20", Name = "Example2", ConversionUnits = "mL/min" } 
+                    2, new MyModbus.RRGUnitConfig() 
+                    { ConversionFactor = 0.015, Model = "RRG20", Name = "Gas", ConversionUnits = "mL/min" } 
                 }
-            }
-            )
+            })
         {
-            Port = "COM26",
+            Port = "COM2",
             Type = MyModbus.ModbusType.RTU
         };
         public static readonly Adapters.Script ExampleScript = new Adapters.Script(
             "Example Script", "Example Comment", new List<Tuple<int, Adapters.Packet>>()
             {
-                new Tuple<int, Adapters.Packet>(5, new Adapters.Packet("Gas", OperationModeRegName, RegulateModeName)),
-                new Tuple<int, Adapters.Packet>(10, new Adapters.Packet("Gas", SetpointRegName, "10") { ConvertUnits = true }),
+                new Tuple<int, Adapters.Packet>(1, new Adapters.Packet("Gas", OperationModeRegName, RegulateModeName)),
+                new Tuple<int, Adapters.Packet>(5, new Adapters.Packet("Air", OperationModeRegName, RegulateModeName)),
+                new Tuple<int, Adapters.Packet>(1, new Adapters.Packet("Air", SetpointRegName, "10") { ConvertUnits = true }),
+                new Tuple<int, Adapters.Packet>(10, new Adapters.Packet("Gas", SetpointRegName, "100") { ConvertUnits = true }),
+                new Tuple<int, Adapters.Packet>(1, new Adapters.Packet("Air", SetpointRegName, "0") { ConvertUnits = true }),
                 new Tuple<int, Adapters.Packet>(10, new Adapters.Packet("Gas", SetpointRegName, "0") { ConvertUnits = true }),
+                new Tuple<int, Adapters.Packet>(1, new Adapters.Packet("Air", OperationModeRegName, RegulateModeName)),
                 new Tuple<int, Adapters.Packet>(5, new Adapters.Packet("Gas", OperationModeRegName, ClosedModeName))
             });
 
 
         public static event EventHandler<string>? LogEvent;
         public static GeneralSettings Settings { get; private set; }
+        public static LastUsedScripts LastScripts { get; private set; }
 
         private static List<T> ReadConfigFiles<T>(string folder)
         {
@@ -126,6 +150,19 @@ namespace RRGControl
                 LogEvent?.Invoke(name, ex.ToString());
             }
             return result;
+        }
+        private static T DeserializeSettingsFile<T>(string filePath) where T : new()
+        {
+            T? t = default;
+            try
+            {
+                t = JsonConvert.DeserializeObject<T>(File.ReadAllText(filePath), SerializerOptions);
+            }
+            catch (Exception ex)
+            {
+                LogEvent?.Invoke("Settings deserializer", $"For file '{filePath}': {ex}");
+            }
+            return t ?? new T();
         }
 
         public static List<MyModbus.RRGModelConfig> ReadModelConfigurations()
@@ -155,16 +192,22 @@ namespace RRGControl
         }
         public static void ReadGeneralSettings(string filePath)
         {
-            GeneralSettings? t = null;
+            Settings = DeserializeSettingsFile<GeneralSettings>(filePath);
+        }
+        public static void ReadLastUsedScripts(string filePath)
+        {
+            LastScripts = DeserializeSettingsFile<LastUsedScripts>(filePath);
+        }
+        public static void SaveLastUsedScripts(string filePath)
+        {
             try
             {
-                t = JsonConvert.DeserializeObject<GeneralSettings>(File.ReadAllText(filePath), SerializerOptions);
+                File.WriteAllText(filePath, Serialize(LastScripts));
             }
             catch (Exception ex)
             {
-                LogEvent?.Invoke("General settings deserializer", ex.ToString());
+                LogEvent?.Invoke("Last used scripts serializer", $"{ex}");
             }
-            Settings = t ?? new GeneralSettings();
         }
         public static string Serialize<T>(T input)
         {

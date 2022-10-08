@@ -6,7 +6,7 @@
 		Icon="/Assets/s.png"
 		x:Class="RRGControl.Views.FlowrateSummary"
 		Title="Flowrate Summary" MinWidth="300"
-		Width="400" SizeToContent="Height">
+		Width="500" SizeToContent="Height">
 	<ItemsControl Items="{Binding Units}" Margin="10">
 		<ItemsControl.ItemTemplate>
 			<DataTemplate>

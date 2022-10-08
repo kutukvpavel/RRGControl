@@ -15,13 +15,17 @@ namespace RRGControl.Views
         private async void Textbox_KeyDown(object sender, KeyEventArgs e)
         {
             var vm = DataContext as ViewModels.RegisterViewModel;
-            var tb = sender as TextBox;
+            var tb = sender as MaskedTextBox;
             if (tb?.Text != null && vm != null)
             {
-                vm.TextboxValue = tb.Text.Trim('_');
-                if (e.Key == Key.Enter)
+                if (!tb.IsReadOnly)
                 {
-                    await vm.Write();
+                    vm.MaskCompleted = (tb.Mask?.Length > 0) ? tb.MaskCompleted : null;
+                    vm.TextboxValue = tb.Text.Trim('_');
+                    if (e.Key == Key.Enter)
+                    {
+                        await vm.Write();
+                    }
                 }
             }
         }

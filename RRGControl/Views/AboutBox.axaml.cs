@@ -16,10 +16,18 @@ namespace RRGControl.Views
 Kutukov Pavel, 2022-{DateTime.Today.Year}
 kutukovps@my.msu.ru
 
-Attributions:
-Microsoft .NET Framework
-Avalonia UI Framework
-NuGet Packages: NamedPipeWrapper, LLibrary
-Icons: freepik.com";
+    Attributions
+Frameworks:
+    Microsoft .NET Framework
+    Avalonia UI Framework
+    Newtonsoft.JSON
+    ScottPlot
+NuGet Packages: 
+    MessageBox.Avalonia
+    NamedPipeWrapper
+    LLibrary
+Icons:
+    freepik.com
+    iconleak.com";
     }
 }

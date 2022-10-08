@@ -24,9 +24,9 @@ namespace RRGControl.MyModbus
         public Connection Connection { get; }
         public ushort UnitAddress { get; }
         public ModbusRegisterBase Base { get; }
-        public ushort Value { get => _value ?? Base.DefaultValue; }
+        public short Value { get => _value ?? Base.DefaultValue; }
 
-        private ushort? _value = null;
+        private short? _value = null;
         private void NonFixedTypeThrow()
         {
             if (Base.ValueType != RegisterValueType.Fixed)
@@ -82,7 +82,7 @@ namespace RRGControl.MyModbus
                 return false;
             }
         }
-        public async Task<bool> Write(ushort v)
+        public async Task<bool> Write(short v)
         {
             if (Base.Type == RegisterType.ReadOnly) 
                 throw new InvalidOperationException("Attempt to write into a read-only register.");
@@ -117,7 +117,7 @@ namespace RRGControl.MyModbus
             switch (Base.ValueType)
             {
                 case RegisterValueType.Range:
-                    return await Write(ushort.Parse(s));
+                    return await Write(short.Parse(s, System.Globalization.CultureInfo.InvariantCulture));
                 case RegisterValueType.Fixed:
                     return await WriteByName(s);
                 default:

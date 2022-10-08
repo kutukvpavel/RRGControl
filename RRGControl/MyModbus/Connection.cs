@@ -33,7 +33,16 @@ namespace RRGControl.MyModbus
             };
             Master.Transport.Retries = 1;
             Master.Transport.WaitToRetryMilliseconds = Timeout;
-            Units = m.Units.ToDictionary(x => x.Key, x => new RRGUnit(p.ConfigurationDatabase[x.Value.Model], x.Value, this, x.Key));
+            try
+            {
+                Units = m.Units.ToDictionary(x => x.Key, 
+                    x => new RRGUnit(p.ConfigurationDatabase[x.Value.Model], x.Value, this, x.Key));
+            }
+            catch (Exception ex)
+            {
+                LogEvent?.Invoke(this, $"Invalid mapping file: {ex}");
+                Units = new Dictionary<ushort, RRGUnit>();
+            }
         }
 
         public IModbusMaster Master { get; private set; }
@@ -96,20 +105,24 @@ namespace RRGControl.MyModbus
                 await item.Value.Probe();
             }
         }
-        public async Task WriteRegister(ModbusRegister r, ushort v)
+        public async Task WriteRegister(ModbusRegister r, short v)
         {
             await mSemaphore.WaitAsync();
             try
             {
                 ThrowHelper(r);
-                await Master.WriteSingleRegisterAsync((byte)r.UnitAddress, r.Base.Address, v);
+                unchecked
+                {
+                    var wrt = (ushort)v;
+                    await Master.WriteSingleRegisterAsync((byte)r.UnitAddress, r.Base.Address, wrt);
+                }
             }
             finally
             {
                 mSemaphore.Release();
             }
         }
-        public async Task<ushort> ReadRegister(ModbusRegister r)
+        public async Task<short> ReadRegister(ModbusRegister r)
         {
             await mSemaphore.WaitAsync();
             try
@@ -118,7 +131,19 @@ namespace RRGControl.MyModbus
                 var ret = await Master.ReadHoldingRegistersAsync((byte)r.UnitAddress, r.Base.Address, 1);
                 if (ret?.Length > 0)
                 {
-                    return ret[0];
+                    if (r.Base.FirstBitAsSign)
+                    {
+                        bool invert = (ret[0] & (ushort)(1 << 15)) > 0;
+                        short magnitude = (short)(ret[0] & 0x7FFF);
+                        return invert ? (short)(-1 * magnitude) : magnitude;
+                    }
+                    else
+                    {
+                        unchecked
+                        {
+                            return (short)ret[0];
+                        }
+                    }
                 }
                 else
                 {

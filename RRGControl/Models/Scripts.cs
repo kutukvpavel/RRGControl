@@ -8,7 +8,7 @@ namespace RRGControl.Models
 {
     public class Scripts : INotifyPropertyChanged
     {
-        public static event EventHandler<string> LogEvent;
+        public static event EventHandler<string>? LogEvent;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler? ExecutionFinished;
@@ -18,11 +18,13 @@ namespace RRGControl.Models
             mAdapter = a;
             mFolder = new DirectoryInfo(folder);
             mAdapter.PropertyChanged += MAdapter_PropertyChanged;
-            mAdapter.ExecutionFinished += ExecutionFinished;
+            mAdapter.ExecutionFinished += MAdapter_ExecutionFinished;
         }
 
+        public int Duration => mAdapter.Script?.GetDuration() ?? 0;
         public Dictionary<int, Adapters.Packet> Compiled => mAdapter.Compiled ?? new Dictionary<int, Adapters.Packet>();
         public List<Adapters.Script> Items { get; private set; } = new List<Adapters.Script>();
+        public List<string> LastChosenNames => ConfigProvider.LastScripts;
 
         public void Update()
         {
@@ -39,10 +41,12 @@ namespace RRGControl.Models
         public void Choose(IEnumerable<string> names)
         {
             List<Adapters.Script> l = new List<Adapters.Script>();
+            LastChosenNames.Clear();
             foreach (var item in names)
             {
                 var cur = Items.FirstOrDefault(x => x.Name == item);
                 if (cur != null) l.Add(cur);
+                LastChosenNames.Add(item);
             }
             mAdapter.Script = new Adapters.Script(l);
         }
@@ -60,22 +64,25 @@ namespace RRGControl.Models
         {
             mAdapter.Stop();
         }
-        public void Push()
+        public void Save()
         {
-            mAdapter.Push();
+            (App.Current as App)?.SaveLastUsedScripts();
         }
-        public void Pop()
+        public void Recall()
         {
-            mAdapter.Pop();
+            Choose(ConfigProvider.LastScripts);
         }
 
         private readonly Adapters.ScriptAdapter mAdapter;
-        private DirectoryInfo mFolder;
-        private List<string[]> mUndoBuffer = new List<string[]>();
+        private readonly DirectoryInfo mFolder;
 
         private void MAdapter_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+        }
+        private void MAdapter_ExecutionFinished(object? sender, EventArgs e)
+        {
+            ExecutionFinished?.Invoke(this, new EventArgs());
         }
     }
 }

@@ -10,7 +10,7 @@
 			<Setter Property="VerticalAlignment" Value="Center"></Setter>
 		</Style>
 	</UserControl.Styles>
-	<Grid ColumnDefinitions="2*,2*,*" RowDefinitions="auto">
+	<Grid ColumnDefinitions="2*,3*,*" RowDefinitions="auto">
 		<TextBlock Grid.Column="0" Text="{Binding Name}" Background="{Binding Color}" Margin="0,3,10,3" Padding="5,3"></TextBlock>
 		<TextBlock Grid.Column="1" Text="{Binding Flowrate}" FontSize="22"></TextBlock>
 		<TextBlock Grid.Column="2" Text="{Binding Units}"></TextBlock>

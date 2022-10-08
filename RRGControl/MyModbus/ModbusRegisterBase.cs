@@ -11,14 +11,14 @@ namespace RRGControl.MyModbus
     {
         [JsonConstructor]
         public RegisterLimits() { }
-        public RegisterLimits(ushort min, ushort max)
+        public RegisterLimits(short min, short max)
         {
             Min = min;
             Max = max;
         }
 
-        public ushort Min { get; set; }
-        public ushort Max { get; set; }
+        public short Min { get; set; }
+        public short Max { get; set; }
     }
     public enum RegisterValueType
     {
@@ -32,9 +32,9 @@ namespace RRGControl.MyModbus
     }
     public class ModbusRegisterBase
     {
-        private static readonly RegisterLimits DefaultLimits = new RegisterLimits(0, 65535);
+        private static readonly RegisterLimits DefaultLimits = new RegisterLimits(0, short.MaxValue);
 
-        private ModbusRegisterBase(string name, ushort addr, ushort def) : this(name, addr)
+        private ModbusRegisterBase(string name, ushort addr, short def) : this(name, addr)
         {
             DefaultValue = def;
             Type = RegisterType.ReadWrite;
@@ -46,17 +46,17 @@ namespace RRGControl.MyModbus
             Name = name;
             Address = addr;
         }
-        public ModbusRegisterBase(string name, ushort addr, ushort def, Dictionary<string, ushort> values) : this(name, addr, def)
+        public ModbusRegisterBase(string name, ushort addr, short def, Dictionary<string, short> values) : this(name, addr, def)
         {
             ValueType = RegisterValueType.Fixed;
             Values = values;
         }
-        public ModbusRegisterBase(string name, ushort addr, ushort def, RegisterLimits limits) : this(name, addr, def)
+        public ModbusRegisterBase(string name, ushort addr, short def, RegisterLimits limits) : this(name, addr, def)
         {
             ValueType = RegisterValueType.Range;
             Limits = limits;
         }
-        public ModbusRegisterBase(string name, ushort addr, ushort def, ushort min, ushort max) 
+        public ModbusRegisterBase(string name, ushort addr, short def, short min, short max) 
             : this(name, addr, def, new RegisterLimits(min, max))
         {
 
@@ -68,14 +68,15 @@ namespace RRGControl.MyModbus
         public RegisterValueType ValueType { get; set; } = RegisterValueType.Range;
         [JsonConverter(typeof(StringEnumConverter))]
         public RegisterType Type { get; set; } = RegisterType.ReadOnly;
-        public Dictionary<string, ushort>? Values { get; set; }
+        public Dictionary<string, short>? Values { get; set; }
         [JsonProperty(IsReference = false, DefaultValueHandling = DefaultValueHandling.Include, 
             ObjectCreationHandling = ObjectCreationHandling.Replace)]
         public RegisterLimits? Limits { get; set; } = DefaultLimits;
         public bool ShowInDashboard { get; set; } = true;
-        public ushort DefaultValue { get; set; } = 0;
+        public short DefaultValue { get; set; } = 0;
+        public bool FirstBitAsSign { get; set; } = false;
         
-        public bool ValidateValue(ushort v)
+        public bool ValidateValue(short v)
         {
             return ValueType switch
             {
