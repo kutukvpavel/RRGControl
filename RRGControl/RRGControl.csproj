@@ -18,6 +18,9 @@
 		<ProductVersion>0.3-c</ProductVersion>
 		<InformationalVersion>0.3-c</InformationalVersion>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <Optimize>true</Optimize>
+	</PropertyGroup>
   <ItemGroup>
 	<AvaloniaResource Include="Assets\**" />
 	<None Remove=".gitignore" />
