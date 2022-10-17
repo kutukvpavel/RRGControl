@@ -35,7 +35,15 @@ namespace RRGControl.Models
             {
                 item.RegisterChanged += Item_RegisterChanged;
             }
-            mUnitsByName = units.ToDictionary(x => x.UnitConfig.Name, x => x);
+            try
+            {
+                mUnitsByName = units.ToDictionary(x => x.UnitConfig.Name, x => x);
+            }
+            catch (ArgumentException)
+            {
+                LogEvent?.Invoke(this, $"Non-bijective device mapping. Check for duplicates.");
+                Connections = new List<MyModbus.Connection>();
+            }
             mAdapters = a;
             foreach (var item in mAdapters)
             {

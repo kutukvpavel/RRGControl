@@ -30,12 +30,25 @@ namespace RRGControl.Models
         {
             try
             {
-                Items = mFolder.EnumerateFiles(ConfigProvider.FilenameFilter, SearchOption.AllDirectories)
-                    .Select(x => Adapters.Script.FromJson(File.ReadAllText(x.FullName))).Where(x => x != null).Reverse().ToList();
+                var res = new List<Adapters.Script>(Items.Capacity);
+                foreach (var item in mFolder.EnumerateFiles(ConfigProvider.FilenameFilter, SearchOption.AllDirectories))
+                {
+                    try
+                    {
+                        var s = Adapters.Script.FromJson(File.ReadAllText(item.FullName));
+                        if (s != null) res.Add(s);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogEvent?.Invoke(this, ex.Message);
+                    }
+                }
+                Items = res;
             }
-            catch (DirectoryNotFoundException ex)
+            catch (Exception ex)
             {
                 LogEvent?.Invoke(this, ex.Message);
+                Items = new List<Adapters.Script>();
             }
         }
         public void Choose(IEnumerable<string> names)

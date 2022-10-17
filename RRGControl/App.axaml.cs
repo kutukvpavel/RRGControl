@@ -6,6 +6,7 @@ using LLibrary;
 using MessageBox.Avalonia;
 using RRGControl.ViewModels;
 using RRGControl.Views;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -35,14 +36,23 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
                 CurrentOptions = Parser.Default.ParseArguments<Options>(desktop.Args).Value;
                 InitLogs();
                 Log(this, "Starting up.");
-                ConfigProvider.ReadGeneralSettings(CurrentOptions.SettingsFile);
-                ConfigProvider.ReadLastUsedScripts(CurrentOptions.LastScriptsFile);
-                StartRRGServer();
-                desktop.ShutdownRequested += Desktop_ShutdownRequested;
-                desktop.MainWindow = new MainWindow
+                try
                 {
-                    DataContext = new MainWindowViewModel(MyNetwork, MyScript)
-                };
+                    ConfigProvider.ReadGeneralSettings(CurrentOptions.SettingsFile);
+                    ConfigProvider.ReadLastUsedScripts(CurrentOptions.LastScriptsFile);
+                    StartRRGServer();
+                    desktop.ShutdownRequested += Desktop_ShutdownRequested;
+                    desktop.MainWindow = new MainWindow
+                    {
+                        DataContext = new MainWindowViewModel(MyNetwork, MyScript)
+                    };
+                }
+                catch (System.Exception ex)
+                {
+                    Log(this, ex.ToString());
+                    ShowMessageBox("Unhandled Error", $"Unhandled error occurred. The following message was logged: {ex}.");
+                    throw;
+                }
             }
             base.OnFrameworkInitializationCompleted();
         }
@@ -70,14 +80,36 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
 
         private void StartRRGServer()
         {
-            var p = new MyModbus.ModbusProvider(ConfigProvider.ReadModelConfigurations());
+            MyModbus.ModbusProvider p;
+            try
+            {
+                p = new MyModbus.ModbusProvider(ConfigProvider.ReadModelConfigurations());
+            }
+            catch (ArgumentException)
+            {
+                throw new Exception("Model database is invalid. Check for duplicates.");
+            }
             Cancellation = new CancellationTokenSource();
             var a = new List<Adapters.IAdapter>();
-            if (ConfigProvider.Settings.PipeName.Length > 0)
-                a.Add(new Adapters.NamedPipeAdapter(ConfigProvider.Settings.PipeName, Cancellation.Token));
-            if (ConfigProvider.Settings.OutboundSocketPort > 0 || ConfigProvider.Settings.InboundSocketPort > 0) 
-                a.Add(new Adapters.SocketAdapter(ConfigProvider.Settings.InboundSocketPort, 
-                    ConfigProvider.Settings.OutboundSocketPort, Cancellation.Token));
+            try
+            {
+                if (ConfigProvider.Settings.PipeName.Length > 0)
+                    a.Add(new Adapters.NamedPipeAdapter(ConfigProvider.Settings.PipeName, Cancellation.Token));
+            }
+            catch (Exception ex)
+            {
+                Log(this, $"Failed to initialize named pipe provider: {ex}");
+            }
+            try
+            {
+                if (ConfigProvider.Settings.OutboundSocketPort > 0 || ConfigProvider.Settings.InboundSocketPort > 0)
+                    a.Add(new Adapters.SocketAdapter(ConfigProvider.Settings.InboundSocketPort,
+                        ConfigProvider.Settings.OutboundSocketPort, Cancellation.Token));
+            }
+            catch (Exception ex)
+            {
+                Log(this, $"Failed to initialize socket provider: {ex}");
+            }
             var s = new Adapters.ScriptAdapter(Cancellation.Token);
             a.Add(s);
             MyScript = new Models.Scripts(s, ConfigProvider.Settings.ScriptsFolder);
@@ -91,6 +123,7 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
         private void InitLogs()
         {
             ConfigProvider.LogEvent += Log;
+            Adapters.Script.LogEvent += Log;
             Models.Network.LogEvent += Log;
             MyModbus.Connection.LogEvent += Log;
             MyModbus.RRGUnit.LogEvent += Log;

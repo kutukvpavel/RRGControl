@@ -29,6 +29,7 @@ namespace RRGControl
             public int InboundSocketPort { get; set; } = 44754;
             public int AutoRescanIntervalS { get; set; } = 5;
             public string PercentFormat { get; set; } = "F1";
+            public bool ExampleGenerationAvailable { get; set; } = true;
         }
         public class LastUsedScripts : List<string> 
         {

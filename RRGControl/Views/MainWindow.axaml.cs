@@ -63,6 +63,7 @@ namespace RRGControl.Views
                 App.ShowMessageBox(App.Current?.Name ?? "", 
 @"Successfully generated example files.
 Check working directory and its subfolders.");
+                ConfigProvider.Settings.ExampleGenerationAvailable = false;
             }
             catch (Exception ex)
             {

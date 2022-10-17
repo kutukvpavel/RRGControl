@@ -97,6 +97,7 @@ namespace RRGControl.ViewModels
         public int ScriptProgress => mScript.Progress;
         public bool ShowProgressBar => ScriptStopEnable;
         public IBrush BarColor => mScript.State == Adapters.ScriptAdapterState.Running ? Brushes.LightGreen : Brushes.LightSalmon;
+        public bool ShowGenerateExamples => ConfigProvider.Settings.ExampleGenerationAvailable;
 
         public void ScriptStart()
         {

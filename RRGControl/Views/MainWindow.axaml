@@ -24,7 +24,8 @@
 				<MenuItem Header="Flowrate Summary" Click="Summary_Click"></MenuItem>
 			</MenuItem>
 			<MenuItem Header="Help">
-				<MenuItem Header="Generate Example Files" Click="GenerateExamples_Click"></MenuItem>
+				<MenuItem Header="Generate Example Files" Click="GenerateExamples_Click"
+						  IsEnabled="{Binding ShowGenerateExamples}"></MenuItem>
 				<MenuItem Header="About" Click="About_Click"></MenuItem>
 			</MenuItem>
 		</Menu>
