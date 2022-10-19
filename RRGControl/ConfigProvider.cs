@@ -15,12 +15,14 @@ namespace RRGControl
             private const string DefaultModelsSubfolder = "models";
             private const string DefaultUnitsSubfolder = "mapping";
             private const string DefaultScriptsFolder = "scripts";
+            private const string DefaultCsvsFolder = "csvs";
 
             public const string DefaultFileName = "config.json";
 
             public string ModelsFolder { get; set; } = DefaultModelsSubfolder;
             public string UnitsFolder { get; set; } = DefaultUnitsSubfolder;
             public string ScriptsFolder { get; set; } = DefaultScriptsFolder;
+            public string CsvFolder { get; set; } = DefaultCsvsFolder;
             public bool DisableUnitAddressChange { get; set; } = true;
             public bool AutoScanOnStartup { get; set; } = true;
             public int AutoUpdateIntervalMs { get; set; } = 500;
@@ -30,6 +32,7 @@ namespace RRGControl
             public int AutoRescanIntervalS { get; set; } = 5;
             public string PercentFormat { get; set; } = "F1";
             public bool ExampleGenerationAvailable { get; set; } = true;
+            public int TimeoutMs { get; set; } = 400;
         }
         public class LastUsedScripts : List<string> 
         {

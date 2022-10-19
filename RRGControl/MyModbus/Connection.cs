@@ -14,7 +14,8 @@ namespace RRGControl.MyModbus
 {
     public class Connection : INotifyPropertyChanged
     {
-        public static int Timeout { get; set; } = 300;
+        //TODO: per-connection override in mapping
+        public static int Timeout => ConfigProvider.Settings.TimeoutMs;
 
         public static event EventHandler<string>? LogEvent;
 

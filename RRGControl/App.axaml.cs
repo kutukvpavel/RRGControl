@@ -112,8 +112,10 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
             }
             var s = new Adapters.ScriptAdapter(Cancellation.Token);
             a.Add(s);
-            MyScript = new Models.Scripts(s, ConfigProvider.Settings.ScriptsFolder);
-            MyNetwork = new Models.Network(p, ConfigProvider.ReadUnitMappings(), a, ConfigProvider.Settings.AutoRescanIntervalS);
+            var mapping = ConfigProvider.ReadUnitMappings();
+            MyScript = new Models.Scripts(s, ConfigProvider.Settings.ScriptsFolder, ConfigProvider.Settings.CsvFolder,
+                mapping, Cancellation.Token);
+            MyNetwork = new Models.Network(p, mapping, a, ConfigProvider.Settings.AutoRescanIntervalS);
         }
         private void Desktop_ShutdownRequested(object? sender, ShutdownRequestedEventArgs e)
         {
@@ -129,6 +131,7 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
             MyModbus.RRGUnit.LogEvent += Log;
             MyModbus.ModbusRegister.LogEvent += Log;
             MainWindowViewModel.LogEvent += Log;
+            Models.Scripts.LogEvent += Log;
             Adapters.NamedPipeAdapter.LogEvent += Log;
             Adapters.SocketAdapter.LogEvent += Log;
             Adapters.ScriptAdapter.LogEvent += Log;

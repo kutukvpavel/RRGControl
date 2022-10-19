@@ -1,8 +1,12 @@
-﻿using System;
+﻿using MoreLinq;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.ComponentModel;
+using System.Text;
+using System.Threading;
 
 namespace RRGControl.Models
 {
@@ -13,12 +17,19 @@ namespace RRGControl.Models
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler? ExecutionFinished;
 
-        public Scripts(Adapters.ScriptAdapter a, string folder)
+        public Scripts(Adapters.ScriptAdapter a, string scriptsFolder, string csvsFolder, List<MyModbus.RRGUnitMapping> m,
+            CancellationToken t)
         {
+            mToken = t;
             mAdapter = a;
-            mFolder = new DirectoryInfo(folder);
+            mFolder = new DirectoryInfo(scriptsFolder);
             mAdapter.PropertyChanged += MAdapter_PropertyChanged;
             mAdapter.ExecutionFinished += MAdapter_ExecutionFinished;
+            mAdapter.PacketSent += MAdapter_PacketSent;
+            mCsvsFolder = csvsFolder;
+            mUnitNames = m.Select(x => x.Units.Select(x => x.Value.Name)).Flatten().Cast<string>().ToArray();
+            mCsvThread = new Thread(CsvThread);
+            mCsvThread.Start();
         }
 
         public int Duration => mAdapter.Script?.GetDuration() ?? 0;
@@ -67,6 +78,25 @@ namespace RRGControl.Models
         public int Progress => (int)Math.Round((mAdapter.Progress ?? 0) * 100);
         public void Start()
         {
+            if (State == Adapters.ScriptAdapterState.Stopped)
+            {
+                lock (mCsvQueue)
+                {
+                    try
+                    {
+                        string name = ReplaceAll(mAdapter.Script?.Name ?? "null", Path.GetInvalidFileNameChars(), '_');
+                        mCurrentCsv = new FileInfo(Path.Combine(mCsvsFolder, $"{DateTime.Now:yyyy-MM-dd HH-mm-ss} - {name}.csv"));
+                        mCurrentCsv.Directory?.Create();
+                        File.WriteAllText(mCurrentCsv.FullName, "Timestamp,ScriptProgress,UnitName,RegisterName,RegisterValue," +
+                            string.Join(',', mUnitNames));
+                    }
+                    catch (Exception ex)
+                    {
+                        mCurrentCsv = null;
+                        LogEvent?.Invoke(this, ex.ToString());
+                    }
+                }
+            }
             mAdapter.Start();
         }
         public void Pause()
@@ -88,6 +118,12 @@ namespace RRGControl.Models
 
         private readonly Adapters.ScriptAdapter mAdapter;
         private readonly DirectoryInfo mFolder;
+        private readonly string mCsvsFolder;
+        private readonly string[] mUnitNames;
+        private readonly BlockingCollection<string> mCsvQueue = new BlockingCollection<string>();
+        private readonly CancellationToken mToken;
+        private readonly Thread mCsvThread;
+        private FileInfo? mCurrentCsv = null;
 
         private void MAdapter_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -96,6 +132,54 @@ namespace RRGControl.Models
         private void MAdapter_ExecutionFinished(object? sender, EventArgs e)
         {
             ExecutionFinished?.Invoke(this, new EventArgs());
+        }
+        private void MAdapter_PacketSent(object? sender, Adapters.Packet e)
+        {
+            //time, unit, reg, value, [setpoints per unit]
+            var line = new StringBuilder($"{DateTime.Now},{mAdapter.Progress},{e.UnitName},{e.RegisterName},{e.Value}");
+            foreach (var item in mUnitNames)
+            {
+                if (e.RegisterName == ConfigProvider.MeasuredRegName && item == e.UnitName)
+                {
+                    line.Append($",{e.Value}");
+                }
+                else
+                {
+                    line.Append(',');
+                }
+            }
+            line.Append('\n');
+            mCsvQueue.Add(line.ToString());
+        }
+        private void CsvThread()
+        {
+            while (mAdapter.State != Adapters.ScriptAdapterState.Cancelled && !mToken.IsCancellationRequested)
+            {
+                try
+                {
+                    string line = mCsvQueue.Take(mToken);
+                    try
+                    {
+                        lock (mCsvQueue)
+                        {
+                            if (mCurrentCsv == null) continue;
+                            File.AppendAllText(mCurrentCsv.FullName, line);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogEvent?.Invoke(this, $"CsvThread: {ex}");
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+            }
+        }
+        private static string ReplaceAll(string seed, char[] chars, char replacementCharacter)
+        {
+            return chars.Aggregate(seed, (str, cItem) => str.Replace(cItem, replacementCharacter));
         }
     }
 }
