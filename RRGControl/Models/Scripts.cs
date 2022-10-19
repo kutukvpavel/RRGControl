@@ -87,8 +87,8 @@ namespace RRGControl.Models
                         string name = ReplaceAll(mAdapter.Script?.Name ?? "null", Path.GetInvalidFileNameChars(), '_');
                         mCurrentCsv = new FileInfo(Path.Combine(mCsvsFolder, $"{DateTime.Now:yyyy-MM-dd HH-mm-ss} - {name}.csv"));
                         mCurrentCsv.Directory?.Create();
-                        File.WriteAllText(mCurrentCsv.FullName, "Timestamp,ScriptProgress,UnitName,RegisterName,RegisterValue," +
-                            string.Join(',', mUnitNames));
+                        File.WriteAllText(mCurrentCsv.FullName, FormattableString.Invariant(
+                            $"Timestamp,ScriptProgress,UnitName,RegisterName,RegisterValue,{string.Join(',', mUnitNames)}\n"));
                     }
                     catch (Exception ex)
                     {
@@ -136,7 +136,8 @@ namespace RRGControl.Models
         private void MAdapter_PacketSent(object? sender, Adapters.Packet e)
         {
             //time, unit, reg, value, [setpoints per unit]
-            var line = new StringBuilder($"{DateTime.Now},{mAdapter.Progress},{e.UnitName},{e.RegisterName},{e.Value}");
+            var line = new StringBuilder(FormattableString.Invariant(
+                $"{DateTime.Now},{mAdapter.Progress:F3},{e.UnitName},{e.RegisterName},{e.Value}"));
             foreach (var item in mUnitNames)
             {
                 if (e.RegisterName == ConfigProvider.MeasuredRegName && item == e.UnitName)
