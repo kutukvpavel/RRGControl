@@ -8,6 +8,7 @@
 	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	<ApplicationIcon>i.ico</ApplicationIcon>
 	<StartupObject />
+	<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
   </PropertyGroup>
 	<PropertyGroup>
 		<Deterministic>False</Deterministic>
