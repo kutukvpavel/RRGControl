@@ -142,7 +142,7 @@ namespace RRGControl.Models
             {
                 if (e.RegisterName == ConfigProvider.MeasuredRegName && item == e.UnitName)
                 {
-                    line.Append($",{e.Value}");
+                    line.Append(FormattableString.Invariant($",{e.Value}"));
                 }
                 else
                 {

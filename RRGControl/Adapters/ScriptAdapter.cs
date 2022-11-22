@@ -62,7 +62,7 @@ namespace RRGControl.Adapters
 
         public void Send(Packet p)
         {
-            PacketSent?.Invoke(this, p);
+            if (State == ScriptAdapterState.Running) PacketSent?.Invoke(this, p);
         }
         public void Start()
         {
