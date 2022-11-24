@@ -113,6 +113,18 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
             var s = new Adapters.ScriptAdapter(Cancellation.Token);
             a.Add(s);
             var mapping = ConfigProvider.ReadUnitMappings();
+            foreach (var item in mapping)
+            {
+                foreach (var unit in item.Units)
+                {
+                    if (unit.Value.GasName == null) continue;
+                    var props = ConfigProvider.TryGetGas(unit.Value.GasName);
+                    if (props != null)
+                    {
+                        unit.Value.GasFactor = props.Factor;
+                    }
+                }
+            }
             MyScript = new Models.Scripts(s, ConfigProvider.Settings.ScriptsFolder, ConfigProvider.Settings.CsvFolder,
                 mapping, Cancellation.Token);
             MyNetwork = new Models.Network(p, mapping, a, ConfigProvider.Settings.AutoRescanIntervalS);

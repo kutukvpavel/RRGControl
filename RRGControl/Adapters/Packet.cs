@@ -38,10 +38,32 @@ namespace RRGControl.Adapters
         {
             return JsonConvert.SerializeObject(this);
         }
+        public bool TryConvertValueToDouble(out double d)
+        {
+            try
+            {
+                d = ConvertValueToDouble();
+                return true;
+            }
+            catch (Exception)
+            {
+                d = double.NaN;
+                return false;
+            }
+        }
+        public double ConvertValueToDouble()
+        {
+            if (double.TryParse(Value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, 
+                out double v))
+            {
+                return v;
+            }
+            return double.Parse(Value);
+        }
         public string GetConvertedValue(MyModbus.RRGUnit u)
         {
             if (!ConvertUnits || !ConvertibleRegisters.Any(x => x == RegisterName)) return Value;
-            return Math.Round(double.Parse(Value) / u.UnitConfig.ConversionFactor)
+            return Math.Round(ConvertValueToDouble() / u.UnitConfig.ConversionFactor)
                 .ToString("F0", System.Globalization.CultureInfo.InvariantCulture);
         }
 

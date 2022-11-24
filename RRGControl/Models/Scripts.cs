@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -136,13 +137,14 @@ namespace RRGControl.Models
         private void MAdapter_PacketSent(object? sender, Adapters.Packet e)
         {
             //time, unit, reg, value, [setpoints per unit]
-            var line = new StringBuilder(FormattableString.Invariant(
-                $"{DateTime.Now},{mAdapter.Progress:F3},{e.UnitName},{e.RegisterName},{e.Value}"));
+            var line = new StringBuilder(
+                $"{DateTime.Now.ToString(CultureInfo.InvariantCulture)},{mAdapter.Progress:F3},{e.UnitName},{e.RegisterName},{e.Value.ToString(CultureInfo.InvariantCulture)}"
+                );
             foreach (var item in mUnitNames)
             {
                 if (e.RegisterName == ConfigProvider.MeasuredRegName && item == e.UnitName)
                 {
-                    line.Append(FormattableString.Invariant($",{e.Value}"));
+                    line.Append($",{e.Value.ToString(CultureInfo.InvariantCulture)}");
                 }
                 else
                 {

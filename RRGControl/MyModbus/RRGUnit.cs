@@ -66,10 +66,10 @@ namespace RRGControl.MyModbus
         public Dictionary<string, ModbusRegister> Registers { get; private set; }
 
         //Default properties
-        public double MaxFlowrate => UnitConfig.ConversionFactor * Registers[ConfigProvider.SetpointRegName].Base.Limits.Max;
+        public double MaxFlowrate => UnitConfig.ConvertToUI(Registers[ConfigProvider.SetpointRegName].Base.Limits.Max);
         public double Measured 
         { 
-            get => Registers[ConfigProvider.MeasuredRegName].Value * UnitConfig.ConversionFactor;
+            get => UnitConfig.ConvertToUI(Registers[ConfigProvider.MeasuredRegName].Value);
         }
         public double Setpoint
         {

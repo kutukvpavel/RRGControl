@@ -1,8 +1,20 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 
 namespace RRGControl.MyModbus
 {
+    public class RRGGas
+    {
+        public RRGGas(double factor, params string[] aliases)
+        {
+            Factor = factor;
+            Aliases = aliases;
+        }
+        public string[] Aliases { get; }
+        public double Factor { get; }
+    }
+
     public class RRGUnitConfig
     {
         [JsonConstructor]
@@ -11,6 +23,9 @@ namespace RRGControl.MyModbus
         public string Name { get; set; } = "Example";
         public string Model { get; set; } = "RRG20";
         public double ConversionFactor { get; set; } = 1;
+        public double GasFactor { get; set; } = 1;
+        [JsonProperty(Required = Required.Default, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string? GasName { get; set; }
         public string ConversionUnits { get; set; } = "N/A";
         public string FlowrateNumberFormat { get; set; } = "F2";
         public bool EnableAutoupdate { get; set; } = true;
@@ -22,7 +37,7 @@ namespace RRGControl.MyModbus
         /// <returns></returns>
         public double ConvertToUI(short reg)
         {
-            return reg * ConversionFactor;
+            return reg * ConversionFactor * GasFactor;
         }
         /// <summary>
         /// Setpoint and measured flowrate conversion
@@ -31,7 +46,7 @@ namespace RRGControl.MyModbus
         /// <returns></returns>
         public short ConvertToRegister(double ui)
         {
-            return (short)Math.Round(ui / ConversionFactor);
+            return (short)Math.Round(ui / ConversionFactor / GasFactor);
         }
     }
 }

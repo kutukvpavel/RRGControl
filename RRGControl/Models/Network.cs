@@ -96,6 +96,10 @@ namespace RRGControl.Models
                 var r = u.Registers[e.RegisterName];
                 r.WriteStringRepresentation(e.GetConvertedValue(u)).Wait();
             }
+            catch (FormatException)
+            {
+                LogEvent?.Invoke(this, "Recevied an ill-formatted packet value from an adapter.");
+            }
             catch (Exception ex)
             {
                 LogEvent?.Invoke(this, ex.ToString());

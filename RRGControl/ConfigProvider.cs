@@ -7,6 +7,10 @@ using System.Linq;
 
 namespace RRGControl
 {
+    public class GasDatabase : List<MyModbus.RRGGas>
+    {
+        public GasDatabase() : base() { }
+    }
     public static class ConfigProvider
     {
         public const string FilenameFilter = "*.json";
@@ -16,6 +20,7 @@ namespace RRGControl
             private const string DefaultUnitsSubfolder = "mapping";
             private const string DefaultScriptsFolder = "scripts";
             private const string DefaultCsvsFolder = "csvs";
+            public const string DefaultGasFileName = "gases.json";
 
             public const string DefaultFileName = "config.json";
 
@@ -23,6 +28,7 @@ namespace RRGControl
             public string UnitsFolder { get; set; } = DefaultUnitsSubfolder;
             public string ScriptsFolder { get; set; } = DefaultScriptsFolder;
             public string CsvFolder { get; set; } = DefaultCsvsFolder;
+            public string GasFileName { get; set; } = DefaultGasFileName;
             public bool DisableUnitAddressChange { get; set; } = true;
             public bool AutoScanOnStartup { get; set; } = true;
             public int AutoUpdateIntervalMs { get; set; } = 500;
@@ -99,16 +105,34 @@ namespace RRGControl
             {
                 { 
                     1, new MyModbus.RRGUnitConfig() 
-                    { ConversionFactor = 0.06, Model = "RRG12", Name = "Air", ConversionUnits = "mL/min" } 
+                    {
+                        ConversionFactor = 0.015, Model = "RRG", 
+                        Name = "Air", 
+                        ConversionUnits = "mL/min"
+                    } 
                 },
                 { 
                     2, new MyModbus.RRGUnitConfig() 
-                    { ConversionFactor = 0.015, Model = "RRG20", Name = "Gas", ConversionUnits = "mL/min" } 
+                    { 
+                        ConversionFactor = 0.0015,
+                        Model = "RRG", 
+                        Name = "Gas", 
+                        ConversionUnits = "mL/min" 
+                    } 
                 }
             })
         {
             Port = "COM2",
             Type = MyModbus.ModbusType.RTU
+        };
+        public static readonly MyModbus.RRGGas[] ExampleGases = new MyModbus.RRGGas[]
+        {
+            new MyModbus.RRGGas(1, "Nitrogen", "N2"),
+            new MyModbus.RRGGas(1, "Air"),
+            new MyModbus.RRGGas(1.45, "Argon", "Ar"),
+            new MyModbus.RRGGas(0.74, "Carbon Dioxide", "CO2"),
+            new MyModbus.RRGGas(1.454, "Helium", "He"),
+            new MyModbus.RRGGas(1.01, "Hydrogen", "H2")
         };
         public static readonly Adapters.Script ExampleScript = new Adapters.Script(
             "Example Script", "Example Comment", new List<Adapters.Script.Element>()
@@ -127,6 +151,7 @@ namespace RRGControl
         public static event EventHandler<string>? LogEvent;
         public static GeneralSettings Settings { get; private set; }
         public static LastUsedScripts LastScripts { get; private set; }
+        public static GasDatabase KnownGases { get; private set; }
 
         private static List<T> ReadConfigFiles<T>(string folder)
         {
@@ -192,6 +217,14 @@ namespace RRGControl
         }
         public static List<MyModbus.RRGUnitMapping> ReadUnitMappings()
         {
+            KnownGases = DeserializeSettingsFile<GasDatabase>(Settings.GasFileName);
+            foreach (var item in KnownGases)
+            {
+                for (int i = 0; i < item.Aliases.Length; i++)
+                {
+                    item.Aliases[i] = item.Aliases[i].ToLowerInvariant();
+                }
+            }
             return ReadConfigFiles<MyModbus.RRGUnitMapping>(Settings.UnitsFolder);
         }
         public static void ReadGeneralSettings(string filePath)
@@ -216,6 +249,10 @@ namespace RRGControl
         public static string Serialize<T>(T input)
         {
             return JsonConvert.SerializeObject(input, SerializerOptions);
+        }
+        public static MyModbus.RRGGas? TryGetGas(string name)
+        {
+            return KnownGases.Where(x => x.Aliases.Any(y => y == name.ToLowerInvariant())).FirstOrDefault();
         }
     }
 }
