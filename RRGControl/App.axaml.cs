@@ -63,7 +63,10 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
             ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG20.json", ConfigProvider.RRG20);
             ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG12.json", ConfigProvider.RRG12);
             ExampleHelper(ConfigProvider.Settings.ScriptsFolder, "example.json", ConfigProvider.ExampleScript);
-            File.WriteAllText(CurrentOptions.SettingsFile, ConfigProvider.Serialize(ConfigProvider.Settings));
+            if (!File.Exists(ConfigProvider.Settings.GasFileName))
+                File.WriteAllText(ConfigProvider.Settings.GasFileName, ConfigProvider.Serialize(ConfigProvider.ExampleGases));
+            if (!File.Exists(CurrentOptions.SettingsFile))
+                File.WriteAllText(CurrentOptions.SettingsFile, ConfigProvider.Serialize(ConfigProvider.Settings));
         }
         public void SaveLastUsedScripts()
         {
