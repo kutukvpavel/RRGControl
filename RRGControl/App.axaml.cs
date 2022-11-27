@@ -68,6 +68,7 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
                 ConfigProvider.Serialize(ConfigProvider.RRG12));
             File.WriteAllText(ExampleHelper(ConfigProvider.Settings.ScriptsFolder, "example.json"),
                 ConfigProvider.Serialize(ConfigProvider.ExampleScript));
+            File.WriteAllText(ConfigProvider.Settings.GasFileName, ConfigProvider.Serialize(ConfigProvider.ExampleGases));
             File.WriteAllText(CurrentOptions.SettingsFile, ConfigProvider.Serialize(ConfigProvider.Settings));
         }
         public void SaveLastUsedScripts()
