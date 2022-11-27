@@ -58,16 +58,11 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
         }
         public void GenerateExamples()
         {
-            File.WriteAllText(ExampleHelper(ConfigProvider.Settings.UnitsFolder, "example.json"),
-                ConfigProvider.Serialize(ConfigProvider.ExampleMapping));
-            File.WriteAllText(ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG.json"),
-                ConfigProvider.Serialize(ConfigProvider.RRG));
-            File.WriteAllText(ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG20.json"),
-                ConfigProvider.Serialize(ConfigProvider.RRG20));
-            File.WriteAllText(ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG12.json"),
-                ConfigProvider.Serialize(ConfigProvider.RRG12));
-            File.WriteAllText(ExampleHelper(ConfigProvider.Settings.ScriptsFolder, "example.json"),
-                ConfigProvider.Serialize(ConfigProvider.ExampleScript));
+            ExampleHelper(ConfigProvider.Settings.UnitsFolder, "example.json", ConfigProvider.ExampleMapping);
+            ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG.json",ConfigProvider.RRG);
+            ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG20.json", ConfigProvider.RRG20);
+            ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG12.json", ConfigProvider.RRG12);
+            ExampleHelper(ConfigProvider.Settings.ScriptsFolder, "example.json", ConfigProvider.ExampleScript);
             File.WriteAllText(CurrentOptions.SettingsFile, ConfigProvider.Serialize(ConfigProvider.Settings));
         }
         public void SaveLastUsedScripts()
@@ -167,10 +162,12 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
             }
             LogInstance.Log(lbl, msg);
         }
-        private static string ExampleHelper(string dir, string f)
+        private static void ExampleHelper<T>(string dir, string f, T src)
         {
+            var p = Path.Combine(dir, f);
+            if (File.Exists(p)) return;
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-            return Path.Combine(dir, f);
+            File.WriteAllText(p, ConfigProvider.Serialize(src));
         }
     }
 }
