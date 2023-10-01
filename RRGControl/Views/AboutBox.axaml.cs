@@ -13,7 +13,7 @@ namespace RRGControl.Views
             DataContext = this;
         }
 
-        private string AboutAuthor => @$"ÐÐÃ series mass flow controller software
+        private string AboutAuthor => @$"Ð Ð Ð“ series mass flow controller software
 Version: {(Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false)
             .FirstOrDefault() as AssemblyInformationalVersionAttribute)?.InformationalVersion}
 
