@@ -59,7 +59,7 @@ namespace RRGControl.Adapters
             {
                 return v;
             }
-            return double.Parse(Value);
+            return double.Parse(Value, System.Globalization.CultureInfo.CurrentUICulture);
         }
         public string GetConvertedValue(MyModbus.RRGUnit u)
         {

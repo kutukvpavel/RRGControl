@@ -16,8 +16,8 @@
 	<PropertyGroup>
 		<Company>MDC</Company>
 		<Copyright>Copyright Kutukov Pavel © 2022-2023</Copyright>
-		<ProductVersion>0.3-c</ProductVersion>
-		<InformationalVersion>0.3-c</InformationalVersion>
+		<ProductVersion>0.5.1</ProductVersion>
+		<InformationalVersion>0.5.1</InformationalVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 	  <Optimize>true</Optimize>
