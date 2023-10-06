@@ -144,7 +144,7 @@ namespace RRGControl.Models
             {
                 if (e.RegisterName == ConfigProvider.MeasuredRegName && item == e.UnitName)
                 {
-                    line.Append($",{e.Value.ToString(CultureInfo.InvariantCulture)}");
+                    line.Append($",{e.Value}".ToString(CultureInfo.InvariantCulture));
                 }
                 else
                 {

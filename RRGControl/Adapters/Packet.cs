@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Globalization;
 using System.Linq;
 
 namespace RRGControl.Adapters
@@ -53,7 +54,7 @@ namespace RRGControl.Adapters
         }
         public double ConvertValueToDouble()
         {
-            if (double.TryParse(Value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, 
+            if (double.TryParse(Value, NumberStyles.Float, CultureInfo.InvariantCulture, 
                 out double v))
             {
                 return v;
@@ -64,7 +65,7 @@ namespace RRGControl.Adapters
         {
             if (!ConvertUnits || !ConvertibleRegisters.Any(x => x == RegisterName)) return Value;
             return Math.Round(ConvertValueToDouble() / u.UnitConfig.ConversionFactor)
-                .ToString("F0", System.Globalization.CultureInfo.InvariantCulture);
+                .ToString("F0", CultureInfo.InvariantCulture);
         }
 
         public static Packet? FromJson(string json)
@@ -76,7 +77,8 @@ namespace RRGControl.Adapters
             bool convert = false;
             if (ConvertibleRegisters.Any(x => x == r.Base.Name)) convert = true;
             return new Packet(u.UnitConfig.Name, r.Base.Name, 
-                convert ? (u.UnitConfig.ConversionFactor * r.Value).ToString() : r.GetValueStringRepresentation());
+                convert ? (u.UnitConfig.ConversionFactor * r.Value).ToString(CultureInfo.InvariantCulture) : 
+                r.GetValueStringRepresentation());
         }
     }
 }
