@@ -52,7 +52,20 @@ namespace RRGControl.MyModbus
         public string GetValueName()
         {
             NonFixedTypeThrow();
-            return Base.Values.First(x => x.Value == Value).Key;
+            try
+            {
+                var found = Base.Values.First(x => x.Value == Value);
+                return found.Key;
+            }
+            catch (InvalidOperationException)
+            {
+                if (Base.LastValueSpans)
+                {
+                    var lastValue = Base.Values.Last();
+                    if (Value >= lastValue.Value) return lastValue.Key;
+                }
+                throw;
+            }
         }
         public async Task<bool> Read()
         {

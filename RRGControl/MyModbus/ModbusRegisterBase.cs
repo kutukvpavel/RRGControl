@@ -34,6 +34,24 @@ namespace RRGControl.MyModbus
     {
         private static readonly RegisterLimits DefaultLimits = new RegisterLimits(0, short.MaxValue);
 
+        private bool? ValidateLastValueSpans(short v)
+        {
+            try
+            {
+                var found = Values?.Values.First(x => x == v);
+                return (found != null) ? true : null;
+            }
+            catch (InvalidOperationException)
+            {
+                if (Values == null) return null;
+                if (v >= Values.Last().Value)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
         private ModbusRegisterBase(string name, ushort addr, short def) : this(name, addr)
         {
             DefaultValue = def;
@@ -75,13 +93,18 @@ namespace RRGControl.MyModbus
         public bool ShowInDashboard { get; set; } = true;
         public short DefaultValue { get; set; } = 0;
         public bool FirstBitAsSign { get; set; } = false;
+        public bool OnlyLowByte { get; set; } = false;
+        public bool LastValueSpans { get; set; } = false;
+        public bool WriteAsCoils { get; set; } = false;
+        public short CoilAddress { get; set; } = -1;
+        public short CoilLength { get; set; } = 0;
         
         public bool ValidateValue(short v)
         {
             return ValueType switch
             {
                 RegisterValueType.Range => (v <= (Limits?.Max)) && (v >= (Limits?.Min)),
-                RegisterValueType.Fixed => Values?.Values.Any(x => x == v) ?? false,
+                RegisterValueType.Fixed => (LastValueSpans ? ValidateLastValueSpans(v)  : Values?.Values.Any(x => x == v)) ?? false,
                 _ => throw new ArgumentException("Register type out of range")
             };
         }

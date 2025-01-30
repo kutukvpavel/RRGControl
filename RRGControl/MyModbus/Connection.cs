@@ -114,8 +114,20 @@ namespace RRGControl.MyModbus
                 ThrowHelper(r);
                 unchecked
                 {
-                    var wrt = (ushort)v;
-                    await Master.WriteSingleRegisterAsync((byte)r.UnitAddress, r.Base.Address, wrt);
+                    var wrt = r.Base.OnlyLowByte ? (ushort)(v & (short)0xFF) : (ushort)v;
+                    if (r.Base.WriteAsCoils)
+                    {
+                        bool[] arr = new bool[r.Base.CoilLength];
+                        for (int i = 0; i < r.Base.CoilLength; i++)
+                        {
+                            arr[i] = ((uint)((uint)wrt & ((uint)1 << (i + r.Base.CoilAddress)))) > 0;
+                        }
+                        await Master.WriteMultipleCoilsAsync((byte)r.UnitAddress, (ushort)r.Base.CoilAddress, arr);
+                    }
+                    else
+                    {
+                        await Master.WriteSingleRegisterAsync((byte)r.UnitAddress, r.Base.Address, wrt);
+                    }
                 }
             }
             finally
@@ -142,7 +154,7 @@ namespace RRGControl.MyModbus
                     {
                         unchecked
                         {
-                            return (short)ret[0];
+                            return r.Base.OnlyLowByte ? (short)(ret[0] & (ushort)0xFF) : (short)ret[0];
                         }
                     }
                 }

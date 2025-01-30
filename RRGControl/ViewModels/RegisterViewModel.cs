@@ -53,7 +53,11 @@ namespace RRGControl.ViewModels
                 if (!ShowCombobox) return null;
                 try
                 {
-                    return mRevLookup?[mRegister.Value];
+                    if (mRegister.Base.LastValueSpans)
+                    {
+                        return mRegister.GetValueStringRepresentation();
+                    }
+                    else return mRevLookup?[mRegister.Value];
                 }
                 catch (KeyNotFoundException)
                 {

@@ -93,12 +93,18 @@ namespace RRGControl
             {
                 new MyModbus.ModbusRegisterBase("SerialNumber", 1),
                 new MyModbus.ModbusRegisterBase("StatusFlags", 3),
-                new MyModbus.ModbusRegisterBase("Baudrate", 6, 0xFF, new Dictionary<string, short>()
+                new MyModbus.ModbusRegisterBase("Baudrate", 6, 0x02, new Dictionary<string, short>()
                 {
                     { "9600", 0x00 },
                     { "38400", 0x01 },
-                    { "19200", 0xFF }
-                })
+                    { "19200", 0x02 }
+                }) { OnlyLowByte = true, LastValueSpans = true },
+                new MyModbus.ModbusRegisterBase("OperationMode", 2, 2, new Dictionary<string, short>()
+                {
+                    { RegulateModeName, 2 },
+                    { OpenModeName, 6 },
+                    { ClosedModeName, 10 }
+                }) { WriteAsCoils = true, CoilAddress = 2, CoilLength = 2 }
             });
         public static readonly MyModbus.RRGUnitMapping ExampleMapping = new MyModbus.RRGUnitMapping(
             new Dictionary<ushort, MyModbus.RRGUnitConfig>()
@@ -106,7 +112,8 @@ namespace RRGControl
                 { 
                     1, new MyModbus.RRGUnitConfig() 
                     {
-                        ConversionFactor = 0.015, Model = "RRG", 
+                        ConversionFactor = 0.015,
+                        Model = "RRG", 
                         Name = "Air", 
                         ConversionUnits = "mL/min"
                     } 
