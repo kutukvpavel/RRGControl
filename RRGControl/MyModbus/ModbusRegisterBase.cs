@@ -89,7 +89,7 @@ namespace RRGControl.MyModbus
         public Dictionary<string, short>? Values { get; set; }
         [JsonProperty(IsReference = false, DefaultValueHandling = DefaultValueHandling.Include, 
             ObjectCreationHandling = ObjectCreationHandling.Replace)]
-        public RegisterLimits? Limits { get; set; } = DefaultLimits;
+        public RegisterLimits Limits { get; set; } = DefaultLimits;
         public bool ShowInDashboard { get; set; } = true;
         public short DefaultValue { get; set; } = 0;
         public bool FirstBitAsSign { get; set; } = false;
@@ -103,7 +103,7 @@ namespace RRGControl.MyModbus
         {
             return ValueType switch
             {
-                RegisterValueType.Range => (v <= (Limits?.Max)) && (v >= (Limits?.Min)),
+                RegisterValueType.Range => (v <= Limits.Max) && (v >= Limits.Min),
                 RegisterValueType.Fixed => (LastValueSpans ? ValidateLastValueSpans(v)  : Values?.Values.Any(x => x == v)) ?? false,
                 _ => throw new ArgumentException("Register type out of range")
             };

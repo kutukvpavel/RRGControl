@@ -52,6 +52,7 @@ namespace RRGControl.MyModbus
         public string GetValueName()
         {
             NonFixedTypeThrow();
+            if (Base.Values == null) throw new InvalidOperationException("Allowed values array for a fixed type can not be null");
             try
             {
                 var found = Base.Values.First(x => x.Value == Value);
@@ -116,6 +117,7 @@ namespace RRGControl.MyModbus
             try
             {
                 NonFixedTypeThrow();
+                if (Base.Values == null) throw new InvalidOperationException("Allowed values array for a fixed type can not be null");
                 await Write(Base.Values[n]);
                 return true;
             }

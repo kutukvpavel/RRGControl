@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	<OutputType>WinExe</OutputType>
-	<TargetFramework>net5.0</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
 	<Nullable>enable</Nullable>
 	<!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
 	<TrimMode>copyused</TrimMode>
@@ -16,8 +16,8 @@
 	<PropertyGroup>
 		<Company>MDC</Company>
 		<Copyright>Copyright Kutukov Pavel © 2022-2023</Copyright>
-		<ProductVersion>0.5.2</ProductVersion>
-		<InformationalVersion>0.5.2</InformationalVersion>
+		<ProductVersion>1.0.0</ProductVersion>
+		<InformationalVersion>1.0.0</InformationalVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 	  <Optimize>true</Optimize>
@@ -28,29 +28,26 @@
 	<None Remove=".gitignore" />
   </ItemGroup>
   <ItemGroup>
-	<!--This helps with theme dll-s trimming.
-	If you will publish your application in self-contained mode with p:PublishTrimmed=true and it will use Fluent theme Default theme will be trimmed from the output and vice versa.
-	https://github.com/AvaloniaUI/Avalonia/issues/5593 -->
-	<TrimmableAssembly Include="Avalonia.Themes.Fluent" />
-	<TrimmableAssembly Include="Avalonia.Themes.Default" />
-  </ItemGroup>
-  <ItemGroup>
 	<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-	<PackageReference Include="Avalonia" Version="0.10.18" />
-	<PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
-	<PackageReference Include="Avalonia.Diagnostics" Version="0.10.18" />
-	<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.18" />
+	<PackageReference Include="Avalonia" Version="11.3.0" />
+	<PackageReference Include="Avalonia.Desktop" Version="11.3.0" />
+	<PackageReference Include="Avalonia.Diagnostics" Version="11.3.0" />
+	<PackageReference Include="Avalonia.ReactiveUI" Version="11.3.0" />
+	<PackageReference Include="Avalonia.Skia" Version="11.3.0" />
+	<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0" />
 	<PackageReference Include="CommandLineParser" Version="2.9.1" />
-	<PackageReference Include="CsvHelper" Version="29.0.0" />
+	<PackageReference Include="CsvHelper" Version="33.0.1" />
 	<PackageReference Include="L" Version="5.0.0" />
-	<PackageReference Include="MessageBox.Avalonia" Version="2.1.0" />
-	<PackageReference Include="morelinq" Version="3.3.2" />
+	<PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
+	<PackageReference Include="morelinq" Version="4.4.0" />
 	<PackageReference Include="NamedPipeWrapper.NetCore" Version="1.0.0" />
-	<PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta2" />
-	<PackageReference Include="NModbus" Version="3.0.72" />
-	<PackageReference Include="NModbus.SerialPortStream" Version="3.0.72" />
-	<PackageReference Include="ScottPlot.Avalonia" Version="4.1.58" />
-	<PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	<PackageReference Include="NModbus" Version="3.0.81" />
+	<PackageReference Include="NModbus.SerialPortStream" Version="3.0.81" />
+	<PackageReference Include="ScottPlot.Avalonia" Version="5.0.55" />
+	<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.119.0" />
+	<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="3.119.0" />
+	<PackageReference Include="SkiaSharp" Version="3.119.0" />
   </ItemGroup>
   <ItemGroup>
 	<Compile Update="Views\Register.axaml.cs">

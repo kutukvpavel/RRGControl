@@ -1,0 +1,17 @@
+{
+  "ModelsFolder": "models",
+  "UnitsFolder": "mapping",
+  "ScriptsFolder": "scripts",
+  "CsvFolder": "csvs",
+  "GasFileName": "gases.json",
+  "DisableUnitAddressChange": true,
+  "AutoScanOnStartup": true,
+  "AutoUpdateIntervalMs": 500,
+  "PipeName": "RRGControl_Pipe",
+  "OutboundSocketPort": 44753,
+  "InboundSocketPort": 44754,
+  "AutoRescanIntervalS": 5,
+  "PercentFormat": "F1",
+  "ExampleGenerationAvailable": true,
+  "TimeoutMs": 400
+}

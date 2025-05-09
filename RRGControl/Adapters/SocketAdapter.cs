@@ -41,6 +41,7 @@ namespace RRGControl.Adapters
             {
 
             }
+            GC.SuppressFinalize(this);
         }
 
         protected override void SendItem(Packet p)

@@ -1,8 +1,9 @@
 using Avalonia.Controls;
-using MessageBox.Avalonia;
-using AIcon = MessageBox.Avalonia.Enums.Icon;
+using MsBox.Avalonia;
+using AIcon = MsBox.Avalonia.Enums.Icon;
 using System;
 using System.Text;
+using ScottPlot.Avalonia;
 
 namespace RRGControl.Views
 {
@@ -15,18 +16,20 @@ namespace RRGControl.Views
 
         private ViewModels.ScriptPreviewViewModel? ViewModel => DataContext as ViewModels.ScriptPreviewViewModel;
 
-        private void OnOpened(object sender, EventArgs e)
+        private async void OnOpened(object sender, EventArgs e)
         {
             if (ViewModel == null) return;
             foreach (var item in ViewModel.Data)
             {
-                var p = Plot1.Plot.AddScatterStep(item.DataX, item.DataY, 
-                    label: item.LegendEntry, lineWidth: 1.5f);
-                p.LineStyle = item.Offline ? ScottPlot.LineStyle.Dash : ScottPlot.LineStyle.Solid;
+                var p = Plot1.Plot.Add.Scatter(item.DataX, item.DataY);
+                p.LegendText = item.LegendEntry;
+                p.LineWidth = 1.5f;
+                p.LineStyle.Pattern = item.Offline ? ScottPlot.LinePattern.Dashed : ScottPlot.LinePattern.Solid;
+                p.ConnectStyle = ScottPlot.ConnectStyle.StepHorizontal;
             }
-            Plot1.Plot.XAxis.Label("Time (seconds)");
-            Plot1.Plot.YAxis.Label("Flow Rate");
-            Plot1.Plot.Legend(location: ScottPlot.Alignment.UpperRight);
+            Plot1.Plot.Axes.Bottom.Label.Text = "Time (seconds)";
+            Plot1.Plot.Axes.Left.Label.Text = "Flow Rate";
+            Plot1.Plot.Legend.Alignment = ScottPlot.Alignment.UpperRight;
             Plot1.Refresh();
             if (ViewModel.ErrorUnits.Count > 0)
             {
@@ -36,11 +39,11 @@ namespace RRGControl.Views
                     sb.Append($"\t{item.Item1}: {item.Item2.Message};{Environment.NewLine}");
                 }
                 sb.Append("Scripts for the units listed above will not be displayed.");
-                var mb = MessageBoxManager.GetMessageBoxStandardWindow(
+                var mb = MessageBoxManager.GetMessageBoxStandard(
                     "Script Parser Error",
                     sb.ToString(),
                     icon: AIcon.Warning);
-                mb.ShowDialog(this);
+                await mb.ShowAsync();
             }
         }
     }

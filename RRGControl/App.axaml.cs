@@ -3,13 +3,14 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using CommandLine;
 using LLibrary;
-using MessageBox.Avalonia;
+using MsBox.Avalonia;
 using RRGControl.ViewModels;
 using RRGControl.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace RRGControl
 {
@@ -29,7 +30,7 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
         {
             AvaloniaXamlLoader.Load(this);
         }
-        public override void OnFrameworkInitializationCompleted()
+        public override async void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
@@ -50,7 +51,7 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
                 catch (System.Exception ex)
                 {
                     Log(this, ex.ToString());
-                    ShowMessageBox("Unhandled Error", $"Unhandled error occurred. The following message was logged: {ex}.");
+                    await ShowMessageBox("Unhandled Error", $"Unhandled error occurred. The following message was logged: {ex}.");
                     throw;
                 }
             }
@@ -72,9 +73,12 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
         {
             ConfigProvider.SaveLastUsedScripts(CurrentOptions.LastScriptsFile);
         }
+
+#pragma warning disable CS8618
         public Models.Network MyNetwork { get; private set; }
         public Models.Scripts MyScript { get; private set; }
         public CancellationTokenSource Cancellation { get; private set; }
+#pragma warning restore
 
         private void StartRRGServer()
         {
@@ -148,10 +152,10 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
         }
         private Options CurrentOptions { get; set; } = new Options();
 
-        public static void ShowMessageBox(string title, string contents)
+        public static async Task ShowMessageBox(string title, string contents)
         {
-            var w = MessageBoxManager.GetMessageBoxStandardWindow(title, contents);
-            w.Show();
+            var w = MessageBoxManager.GetMessageBoxStandard(title, contents);
+            await w.ShowAsync();
         }
         private static L LogInstance = new L();
         private static void Log(object? sender, string msg)

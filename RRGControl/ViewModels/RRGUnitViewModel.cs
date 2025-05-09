@@ -25,7 +25,9 @@ namespace RRGControl.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
             if (e.PropertyName == nameof(mUnit.Present))
             {
+#pragma warning disable CS4014
                 mUnit.ReadAll();
+#pragma warning restore
             }
         }
 

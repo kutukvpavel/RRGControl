@@ -177,9 +177,9 @@ namespace RRGControl
 
 
         public static event EventHandler<string>? LogEvent;
-        public static GeneralSettings Settings { get; private set; }
-        public static LastUsedScripts LastScripts { get; private set; }
-        public static GasDatabase KnownGases { get; private set; }
+        public static GeneralSettings Settings { get; private set; } = new GeneralSettings();
+        public static LastUsedScripts LastScripts { get; private set; } = new LastUsedScripts();
+        public static GasDatabase KnownGases { get; private set; } = new GasDatabase();
 
         private static List<T> ReadConfigFiles<T>(string folder)
         {

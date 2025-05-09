@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 #pragma warning disable CS0618
+#pragma warning disable CS8618
 
 namespace RRGControl.Adapters
 {

@@ -105,7 +105,7 @@ namespace RRGControl.Adapters
         private ScriptAdapterState mState = ScriptAdapterState.Stopped;
         private Script? mBackup;
 
-        private void MTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void MTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
             if (State == ScriptAdapterState.Cancelled) return;
             if (mTicks > (mDuration ?? 0))

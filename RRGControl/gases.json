@@ -1,0 +1,189 @@
+[
+  {
+    "Aliases": [
+      "Nitrogen",
+      "N2"
+    ],
+    "Factor": 1.0
+  },
+  {
+    "Aliases": [
+      "Air"
+    ],
+    "Factor": 1.0
+  },
+  {
+    "Aliases": [
+      "Argon",
+      "Ar"
+    ],
+    "Factor": 1.45
+  },
+  {
+    "Aliases": [
+      "Carbon Dioxide",
+      "CO2"
+    ],
+    "Factor": 0.74
+  },
+  {
+    "Aliases": [
+      "Helium",
+      "He"
+    ],
+    "Factor": 1.454
+  },
+  {
+    "Aliases": [
+      "Hydrogen",
+      "H2"
+    ],
+    "Factor": 1.01
+  },
+  {
+    "Aliases": [
+      "Ammonia",
+      "NH3"
+    ],
+    "Factor": 0.73
+  },
+  {
+    "Aliases": [
+      "Arsine",
+      "ArH3"
+    ],
+    "Factor": 0.67
+  },
+  {
+    "Aliases": [
+      "Carbon Disulfide",
+      "CS2"
+    ],
+    "Factor": 0.6
+  },
+  {
+    "Aliases": [
+      "Carbon Monoxide",
+      "CO"
+    ],
+    "Factor": 1.0
+  },
+  {
+    "Aliases": [
+      "Carbon Tetrachloride",
+      "CCl4"
+    ],
+    "Factor": 0.31
+  },
+  {
+    "Aliases": [
+      "Carbon Tetrafluoride",
+      "CF4"
+    ],
+    "Factor": 0.42
+  },
+  {
+    "Aliases": [
+      "Chlorine",
+      "Cl2"
+    ],
+    "Factor": 0.86
+  },
+  {
+    "Aliases": [
+      "Diborane",
+      "B2H6"
+    ],
+    "Factor": 0.44
+  },
+  {
+    "Aliases": [
+      "Dichlorosilane",
+      "SiH2Cl2"
+    ],
+    "Factor": 0.4
+  },
+  {
+    "Aliases": [
+      "Fluoroform",
+      "CHF3"
+    ],
+    "Factor": 0.5
+  },
+  {
+    "Aliases": [
+      "Germanium Tetrachloride"
+    ],
+    "Factor": 0.27
+  },
+  {
+    "Aliases": [
+      "Hydrogen Chloride",
+      "HCl"
+    ],
+    "Factor": 1.0
+  },
+  {
+    "Aliases": [
+      "Methane",
+      "CH4"
+    ],
+    "Factor": 0.72
+  },
+  {
+    "Aliases": [
+      "Nitrogen Monoxide",
+      "NO"
+    ],
+    "Factor": 0.99
+  },
+  {
+    "Aliases": [
+      "Nitrogen Dioxide",
+      "NO2"
+    ],
+    "Factor": 0.74
+  },
+  {
+    "Aliases": [
+      "Oxygen",
+      "O2"
+    ],
+    "Factor": 1.0
+  },
+  {
+    "Aliases": [
+      "Phosphine",
+      "PH3"
+    ],
+    "Factor": 0.76
+  },
+  {
+    "Aliases": [
+      "Silane",
+      "SiH4"
+    ],
+    "Factor": 0.6
+  },
+  {
+    "Aliases": [
+      "Silicon Tetrachloride",
+      "SiCl4"
+    ],
+    "Factor": 0.28
+  },
+  {
+    "Aliases": [
+      "Sulfure Hexafluoride",
+      "SF6"
+    ],
+    "Factor": 0.26
+  },
+  {
+    "Aliases": [
+      "Trichlorosilane",
+      "SiHCl3"
+    ],
+    "Factor": 0.33
+  }
+]

@@ -63,7 +63,7 @@ namespace RRGControl.MyModbus
         public RRGModelConfig ModbusConfig { get; }
         public RRGUnitConfig UnitConfig { get; }
 
-        public Dictionary<string, ModbusRegister> Registers { get; private set; }
+        public Dictionary<string, ModbusRegister> Registers { get; private set; } = new Dictionary<string, ModbusRegister>(0);
 
         //Default properties
         public double MaxFlowrate => UnitConfig.ConvertToUI(Registers[ConfigProvider.SetpointRegName].Base.Limits.Max);
@@ -74,7 +74,9 @@ namespace RRGControl.MyModbus
         public double Setpoint
         {
             get => UnitConfig.ConvertToUI(Registers[ConfigProvider.SetpointRegName].Value);
+#pragma warning disable CS4014
             set => Registers[ConfigProvider.SetpointRegName].Write(UnitConfig.ConvertToRegister(value));
+#pragma warning restore
         }
         public string Mode
         {
@@ -90,7 +92,9 @@ namespace RRGControl.MyModbus
                     return "";
                 }
             }
+#pragma warning disable CS4014
             set => Registers[ConfigProvider.OperationModeRegName].WriteByName(value);
+#pragma warning restore
         }
         private bool mPresent = false;
         public bool Present 

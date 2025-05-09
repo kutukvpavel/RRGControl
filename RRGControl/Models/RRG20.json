@@ -1,0 +1,65 @@
+{
+  "Registers": [
+    {
+      "Name": "SoftStartTime",
+      "Address": 19,
+      "ValueType": "Range",
+      "Type": "ReadWrite",
+      "Values": null,
+      "Limits": {
+        "Min": 30,
+        "Max": 10000
+      },
+      "ShowInDashboard": true,
+      "DefaultValue": 200,
+      "FirstBitAsSign": false,
+      "OnlyLowByte": false,
+      "LastValueSpans": false,
+      "WriteAsCoils": false,
+      "CoilAddress": -1,
+      "CoilLength": 0
+    },
+    {
+      "Name": "SoftStartStep",
+      "Address": 20,
+      "ValueType": "Range",
+      "Type": "ReadWrite",
+      "Values": null,
+      "Limits": {
+        "Min": 2,
+        "Max": 10
+      },
+      "ShowInDashboard": true,
+      "DefaultValue": 10,
+      "FirstBitAsSign": false,
+      "OnlyLowByte": false,
+      "LastValueSpans": false,
+      "WriteAsCoils": false,
+      "CoilAddress": -1,
+      "CoilLength": 0
+    },
+    {
+      "Name": "SoftStartEnable",
+      "Address": 21,
+      "ValueType": "Fixed",
+      "Type": "ReadWrite",
+      "Values": {
+        "Enable": 1,
+        "Disable": 0
+      },
+      "Limits": {
+        "Min": 0,
+        "Max": 32767
+      },
+      "ShowInDashboard": true,
+      "DefaultValue": 1,
+      "FirstBitAsSign": false,
+      "OnlyLowByte": false,
+      "LastValueSpans": false,
+      "WriteAsCoils": false,
+      "CoilAddress": -1,
+      "CoilLength": 0
+    }
+  ],
+  "ModelPath": "RRG/RRG20"
+}

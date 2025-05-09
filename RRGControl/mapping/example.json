@@ -1,0 +1,25 @@
+{
+  "Port": "COM2",
+  "Baudrate": 19200,
+  "Type": "RTU",
+  "Units": {
+    "1": {
+      "Name": "Air",
+      "Model": "RRG",
+      "ConversionFactor": 0.015,
+      "GasFactor": 1.0,
+      "ConversionUnits": "mL/min",
+      "FlowrateNumberFormat": "F2",
+      "EnableAutoupdate": true
+    },
+    "2": {
+      "Name": "Gas",
+      "Model": "RRG",
+      "ConversionFactor": 0.0015,
+      "GasFactor": 1.0,
+      "ConversionUnits": "mL/min",
+      "FlowrateNumberFormat": "F2",
+      "EnableAutoupdate": true
+    }
+  }
+}

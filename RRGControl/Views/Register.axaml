@@ -13,7 +13,7 @@
 			<Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
 		</Style>
 		<Style Selector="Button">
-			<Setter Property="FontStyle" Value="Oblique"></Setter>
+			<Setter Property="FontWeight" Value="Bold"></Setter>
 			<Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
 			<Setter Property="Margin" Value="3,0"></Setter>
 		</Style>
@@ -25,7 +25,7 @@
 					   IsVisible="{Binding ShowTextbox}" IsReadOnly="{Binding IsReadOnly}"
 					   Text="{Binding TextboxValue, Mode=OneWay}" BorderBrush="{Binding MaskColor}"></MaskedTextBox>
 		<ComboBox Padding="12,1,0,1" Grid.Column="1" PlaceholderText="{Binding LookupFailedValue}"
-				  IsVisible="{Binding ShowCombobox}" Items="{Binding ComboboxItems}" 
+				  IsVisible="{Binding ShowCombobox}" ItemsSource="{Binding ComboboxItems}" 
 				  SelectedItem="{Binding ComboboxValue}" IsEnabled="{Binding !IsReadOnly}"
 				  BorderBrush="{Binding ComboboxBorderColor}"></ComboBox>
 		<Button Grid.Column="2" Background="LightBlue" Click="R_Click">R</Button>

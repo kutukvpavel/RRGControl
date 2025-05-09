@@ -80,7 +80,7 @@ namespace RRGControl.Models
         }
 
         private readonly IEnumerable<Adapters.IAdapter> mAdapters;
-        private readonly Dictionary<string, MyModbus.RRGUnit> mUnitsByName;
+        private readonly Dictionary<string, MyModbus.RRGUnit> mUnitsByName = new Dictionary<string, MyModbus.RRGUnit>(0);
         private readonly DispatcherTimer? mRescanTimer;
 
         private async void Rescan_Callback(object? sender, EventArgs e)

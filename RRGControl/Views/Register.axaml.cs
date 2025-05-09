@@ -12,7 +12,7 @@ namespace RRGControl.Views
             mtbInput.AddHandler(KeyDownEvent, Textbox_KeyDown, RoutingStrategies.Tunnel);
         }
 
-        private async void Textbox_KeyDown(object sender, KeyEventArgs e)
+        private async void Textbox_KeyDown(object? sender, KeyEventArgs e)
         {
             var vm = DataContext as ViewModels.RegisterViewModel;
             var tb = sender as MaskedTextBox;
@@ -30,15 +30,15 @@ namespace RRGControl.Views
             }
         }
 
-        private async void R_Click(object sender, RoutedEventArgs e)
+        private async void R_Click(object? sender, RoutedEventArgs e)
         {
-            var vm = DataContext as ViewModels.RegisterViewModel;
+            if (DataContext is not ViewModels.RegisterViewModel vm) return;
             await vm.Read();
         }
 
-        private async void W_Click(object sender, RoutedEventArgs e)
+        private async void W_Click(object? sender, RoutedEventArgs e)
         {
-            var vm = DataContext as ViewModels.RegisterViewModel;
+            if (DataContext is not ViewModels.RegisterViewModel vm) return;
             await vm.Write();
         }
     }

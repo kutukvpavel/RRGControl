@@ -14,7 +14,7 @@
 			<Setter Property="Background" Value="White"></Setter>
 		</Style>
 	</UserControl.Styles>
-	<TabControl Padding="0" DataContext="{Binding Units}" Items="{Binding}">
+	<TabControl Padding="0" DataContext="{Binding Units}" ItemsSource="{Binding}">
 		<TabControl.ItemTemplate>
 			<DataTemplate>
 				<TextBlock FontSize="20" Text="{Binding Name}" Background="{Binding TabColor}" 

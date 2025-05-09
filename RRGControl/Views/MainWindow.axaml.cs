@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using System;
 
@@ -11,11 +12,12 @@ namespace RRGControl.Views
             InitializeComponent();
         }
 
-        private ViewModels.MainWindowViewModel MyVM { get => (ViewModels.MainWindowViewModel)DataContext; }
+        private ViewModels.MainWindowViewModel? MyVM { get => DataContext as ViewModels.MainWindowViewModel; }
         private FlowrateSummary? SummaryWindow;
 
         private void Summary_Click(object sender, RoutedEventArgs e)
         {
+            if (MyVM == null) return;
             if (SummaryWindow == null)
             {
                 SummaryWindow = new FlowrateSummary()
@@ -33,7 +35,7 @@ namespace RRGControl.Views
         }
         private async void OnStartup(object sender, EventArgs e)
         {
-            if (ConfigProvider.Settings.AutoScanOnStartup)
+            if (ConfigProvider.Settings.AutoScanOnStartup && (MyVM != null))
             {
                 await MyVM.RescanNetwork();
                 //await MyVM.ReadAll();
@@ -41,10 +43,12 @@ namespace RRGControl.Views
         }
         private async void Rescan_Click(object sender, RoutedEventArgs e)
         {
+            if (MyVM == null) return;
             await MyVM.RescanNetwork();
         }
         private async void ReadAll_Click(object sender, RoutedEventArgs e)
         {
+            if (MyVM == null) return;
             await MyVM.ReadAll();
         }
         private void About_Click(object sender, RoutedEventArgs e)
@@ -53,40 +57,50 @@ namespace RRGControl.Views
             a.Show(this);
             a.Focus();
         }
-        private void GenerateExamples_Click(object sender, RoutedEventArgs e)
+        private async void GenerateExamples_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 var a = (Avalonia.Application.Current as App);
                 if (a == null) throw new NullReferenceException();
                 a.GenerateExamples();
-                App.ShowMessageBox(App.Current?.Name ?? "", 
+                await App.ShowMessageBox(App.Current?.Name ?? "",
 @"Successfully generated example files.
 Check working directory and its subfolders.");
                 ConfigProvider.Settings.ExampleGenerationAvailable = false;
             }
             catch (Exception ex)
             {
-                App.ShowMessageBox(App.Current?.Name ?? "",
+                await App.ShowMessageBox(App.Current?.Name ?? "",
 @$"Failed to generate examples due to thf following exception:
 {ex}");
             }
         }
         private void ScriptStart_Click(object sender, RoutedEventArgs e)
         {
-            MyVM.ScriptStart();
+            MyVM?.ScriptStart();
         }
         private void ScriptPause_Click(object sender, RoutedEventArgs e)
         {
-            MyVM.ScriptPause();
+            MyVM?.ScriptPause();
         }
         private void ScriptStop_Click(object sender, RoutedEventArgs e)
         {
-            MyVM.ScriptStop();
+            MyVM?.ScriptStop();
         }
         private void ScriptConfigure_Click(object sender, RoutedEventArgs e)
         {
-            var w = new Scripts() { DataContext = MyVM.Scripts };
+            var w = new Scripts() { DataContext = MyVM?.Scripts };
+            w.ShowDialog(this);
+        }
+        private void ProgressBar_Click(object sender, PointerPressedEventArgs e)
+        {
+            if (MyVM == null) return;
+            var w = new ScriptPreview() 
+            { 
+                DataContext = new ViewModels.ScriptPreviewViewModel(MyVM.Scripts.Compiled, MyVM.Scripts.Duration,
+                    (App.Current as App)?.MyNetwork)
+            };
             w.ShowDialog(this);
         }
     }

@@ -1,0 +1,89 @@
+{
+  "Registers": [
+    {
+      "Name": "SerialNumber",
+      "Address": 1,
+      "ValueType": "Range",
+      "Type": "ReadOnly",
+      "Values": null,
+      "Limits": {
+        "Min": 0,
+        "Max": 32767
+      },
+      "ShowInDashboard": true,
+      "DefaultValue": 0,
+      "FirstBitAsSign": false,
+      "OnlyLowByte": false,
+      "LastValueSpans": false,
+      "WriteAsCoils": false,
+      "CoilAddress": -1,
+      "CoilLength": 0
+    },
+    {
+      "Name": "StatusFlags",
+      "Address": 3,
+      "ValueType": "Range",
+      "Type": "ReadOnly",
+      "Values": null,
+      "Limits": {
+        "Min": 0,
+        "Max": 32767
+      },
+      "ShowInDashboard": true,
+      "DefaultValue": 0,
+      "FirstBitAsSign": false,
+      "OnlyLowByte": false,
+      "LastValueSpans": false,
+      "WriteAsCoils": false,
+      "CoilAddress": -1,
+      "CoilLength": 0
+    },
+    {
+      "Name": "Baudrate",
+      "Address": 6,
+      "ValueType": "Fixed",
+      "Type": "ReadWrite",
+      "Values": {
+        "9600": 0,
+        "38400": 1,
+        "19200": 2
+      },
+      "Limits": {
+        "Min": 0,
+        "Max": 32767
+      },
+      "ShowInDashboard": true,
+      "DefaultValue": 2,
+      "FirstBitAsSign": false,
+      "OnlyLowByte": true,
+      "LastValueSpans": true,
+      "WriteAsCoils": false,
+      "CoilAddress": -1,
+      "CoilLength": 0
+    },
+    {
+      "Name": "OperationMode",
+      "Address": 2,
+      "ValueType": "Fixed",
+      "Type": "ReadWrite",
+      "Values": {
+        "Regulate": 2,
+        "Open": 6,
+        "Closed": 10
+      },
+      "Limits": {
+        "Min": 0,
+        "Max": 32767
+      },
+      "ShowInDashboard": true,
+      "DefaultValue": 2,
+      "FirstBitAsSign": false,
+      "OnlyLowByte": false,
+      "LastValueSpans": false,
+      "WriteAsCoils": true,
+      "CoilAddress": 2,
+      "CoilLength": 2
+    }
+  ],
+  "ModelPath": "RRG/RRG12"
+}

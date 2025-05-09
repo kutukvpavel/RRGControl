@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -38,19 +39,22 @@ namespace RRGControl.ViewModels
         {
             if (CanAdd)
             {
-                SelectedRight.Clear();
-                foreach (var item in SelectedLeft)
+                SelectedRight?.Clear();
+                if (SelectedLeft != null)
                 {
-                    var i = ((SingleScriptViewModel)item);
-                    ChosenItems.Add(i);
-                    i.IsSelected = true;
+                    foreach (var item in SelectedLeft)
+                    {
+                        var i = (SingleScriptViewModel)item;
+                        ChosenItems.Add(i);
+                        i.IsSelected = true;
+                    }
                 }
             }
             RaisePropChangedCan();
         }
         public void Remove()
         {
-            if (CanRemove)
+            if (CanRemove && (SelectedRight != null))
             {
                 var sel = SelectedRight.Cast<SingleScriptViewModel>().ToList();
                 SelectedRight.Clear();

@@ -39,7 +39,7 @@ namespace RRGControl.ViewModels
         public bool ShowCombobox { get => mRegister.Base.ValueType == MyModbus.RegisterValueType.Fixed; }
         public IEnumerable<string>? ComboboxItems { get; }
         public bool ShowTextbox { get => mRegister.Base.ValueType == MyModbus.RegisterValueType.Range; }
-        public string TextboxMask { get; }
+        public string TextboxMask { get; } = string.Empty;
         public string Name { get => mRegister.Base.Name; }
         public string TextboxValue
         {
@@ -134,8 +134,8 @@ namespace RRGControl.ViewModels
 
         private static string GetMask(MyModbus.ModbusRegister mRegister)
         {
-            var req = Enumerable.Repeat('0', mRegister.Base.Limits?.Min.ToString().Length ?? 0);
-            var add = Enumerable.Repeat('9', (mRegister.Base.Limits?.Max.ToString().Length - req.Count()) ?? 0);
+            var req = Enumerable.Repeat('0', mRegister.Base.Limits.Min.ToString().Length);
+            var add = Enumerable.Repeat('9', mRegister.Base.Limits.Max.ToString().Length - req.Count());
             return new string(req.Concat(add).ToArray());
         }
         private static string[] UnknownError { get; } = { "Unknown error" };

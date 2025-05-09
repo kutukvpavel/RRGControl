@@ -29,9 +29,11 @@ namespace RRGControl.ViewModels
         {
             PropertyChanged?.Invoke(this, e); //Keep same property names for simplicity!
         }
-        private void Timer_Callback(object sender, EventArgs e)
+        private void Timer_Callback(object? sender, EventArgs e)
         {
+#pragma warning disable CS4014
             if (mUnit.Present) mUnit.Registers[ConfigProvider.MeasuredRegName].Read(); //Intentional
+#pragma warning restore
         }
         private void AddError(string prop, string msg)
         {

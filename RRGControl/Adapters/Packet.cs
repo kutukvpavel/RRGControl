@@ -3,6 +3,8 @@ using System;
 using System.Globalization;
 using System.Linq;
 
+#pragma warning disable CS8618
+
 namespace RRGControl.Adapters
 {
     public class Packet
@@ -54,7 +56,7 @@ namespace RRGControl.Adapters
         }
         public double ConvertValueToDouble()
         {
-            if (double.TryParse(Value, NumberStyles.Float, CultureInfo.InvariantCulture, 
+            if (double.TryParse(Value, NumberStyles.Float, CultureInfo.InvariantCulture,
                 out double v))
             {
                 return v;
@@ -76,8 +78,8 @@ namespace RRGControl.Adapters
         {
             bool convert = false;
             if (ConvertibleRegisters.Any(x => x == r.Base.Name)) convert = true;
-            return new Packet(u.UnitConfig.Name, r.Base.Name, 
-                convert ? (u.UnitConfig.ConversionFactor * r.Value).ToString(CultureInfo.InvariantCulture) : 
+            return new Packet(u.UnitConfig.Name, r.Base.Name,
+                convert ? (u.UnitConfig.ConversionFactor * r.Value).ToString(CultureInfo.InvariantCulture) :
                 r.GetValueStringRepresentation());
         }
     }
