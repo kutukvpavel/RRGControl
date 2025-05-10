@@ -23,7 +23,7 @@ namespace RRGControl.ViewModels
             public bool Offline { get; }
         }
 
-        public ScriptPreviewViewModel(Dictionary<int, Adapters.Packet> compiled, int duration, Models.Network? n)
+        public ScriptPreviewViewModel(Dictionary<int, Adapters.Packet> compiled, int duration, Models.Network? n, int progress)
         {
             mScript = compiled;
             var units = mScript.Values.DistinctBy(x => x.UnitName).Select(x => x.UnitName);
@@ -46,6 +46,7 @@ namespace RRGControl.ViewModels
                     var ol = u?.Present ?? false ? "Online" : "Offline";
                     Data.Add(new MyPlotData($"{item}, {u?.UnitConfig?.ConversionUnits ?? "N/A"}, {ol}",
                         tmp.Keys.ToArray(), tmp.Values.ToArray(), !(u?.Present ?? false)));
+                    CurrentProgressX = progress * duration / 100.0;
                 }
                 catch (Exception ex)
                 {
@@ -56,6 +57,7 @@ namespace RRGControl.ViewModels
 
         public List<MyPlotData> Data { get; }
         public List<Tuple<string, Exception>> ErrorUnits { get; } = new List<Tuple<string, Exception>>();
+        public double CurrentProgressX { get; }
 
         private readonly Dictionary<int, Adapters.Packet> mScript;
     }

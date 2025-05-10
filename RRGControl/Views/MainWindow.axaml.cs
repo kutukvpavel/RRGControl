@@ -61,8 +61,7 @@ namespace RRGControl.Views
         {
             try
             {
-                var a = (Avalonia.Application.Current as App);
-                if (a == null) throw new NullReferenceException();
+                var a = (Avalonia.Application.Current as App) ?? throw new NullReferenceException();
                 a.GenerateExamples();
                 await App.ShowMessageBox(App.Current?.Name ?? "",
 @"Successfully generated example files.
@@ -99,7 +98,7 @@ Check working directory and its subfolders.");
             var w = new ScriptPreview() 
             { 
                 DataContext = new ViewModels.ScriptPreviewViewModel(MyVM.Scripts.Compiled, MyVM.Scripts.Duration,
-                    (App.Current as App)?.MyNetwork)
+                    (App.Current as App)?.MyNetwork, MyVM.ScriptProgress)
             };
             w.ShowDialog(this);
         }

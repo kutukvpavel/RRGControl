@@ -26,7 +26,7 @@ namespace RRGControl.Views
             var w = new ScriptPreview() 
             { 
                 DataContext = new ViewModels.ScriptPreviewViewModel(ViewModel.Compiled, ViewModel.Duration,
-                    (App.Current as App)?.MyNetwork)
+                    (App.Current as App)?.MyNetwork, 0)
             };
             w.ShowDialog(this);
         }
