@@ -27,11 +27,11 @@
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-		<Button x:Name="btnUpdate" Grid.Row="0" Grid.Column="1" Background="LightBlue">Update</Button>
+		<Button x:Name="btnUpdate" Grid.Row="0" Grid.Column="1" Background="{DynamicResource BlueBrush}">Update</Button>
 		<Button x:Name="btnAdd" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
-				Content="&gt;&gt;" Background="LightGreen" IsEnabled="{Binding CanAdd}"></Button>
+				Content="&gt;&gt;" Background="{DynamicResource GreenBrush}" IsEnabled="{Binding CanAdd}"></Button>
 		<Button x:Name="btnRemove" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center"
-				Content="&lt;&lt;" Background="LightSalmon" IsEnabled="{Binding CanRemove}"></Button>
+				Content="&lt;&lt;" Background="{DynamicResource OrangeBrush}" IsEnabled="{Binding CanRemove}"></Button>
 		<Grid Grid.Column="2" Grid.Row="0" ColumnDefinitions="2*,3*,*" HorizontalAlignment="Stretch">
 			<TextBlock Grid.Column="0" Margin="15,0,0,0">Name</TextBlock>
 			<TextBlock Grid.Column="1">Comment</TextBlock>
@@ -45,10 +45,10 @@
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-		<Button x:Name="btnCancel" Grid.Row="3" Grid.Column="0" Background="LightSalmon" 
+		<Button x:Name="btnCancel" Grid.Row="3" Grid.Column="0" Background="{DynamicResource OrangeBrush}" 
 				HorizontalAlignment="Stretch" Margin="5,3,7,3" HorizontalContentAlignment="Center">Cancel</Button>
-		<Button x:Name="btnPreview" Grid.Row="3" Grid.Column="1" Background="LightBlue">Preview</Button>
-		<Button x:Name="btnOK" Grid.Row="3" Grid.Column="2" Background="LightGreen" 
+		<Button x:Name="btnPreview" Grid.Row="3" Grid.Column="1" Background="{DynamicResource BlueBrush}">Preview</Button>
+		<Button x:Name="btnOK" Grid.Row="3" Grid.Column="2" Background="{DynamicResource GreenBrush}" 
 				HorizontalAlignment="Stretch" Margin="7,3,5,3" HorizontalContentAlignment="Center">OK</Button>
 	</Grid>
 </Window>
