@@ -24,6 +24,7 @@ namespace RRGControl.MyModbus
         private void InitRegs()
         {
             Registers = new Dictionary<string, ModbusRegister>(ModbusConfig.Registers.Count);
+            bool encounteredOperationMode = false;
             foreach (var item in ModbusConfig.Registers)
             {
                 var r = new ModbusRegister(item, Connection, Address);
@@ -31,7 +32,9 @@ namespace RRGControl.MyModbus
                 r.RegisterChanged += OnRegisterChanged;
                 r.ReadTimeout += OnReadTimeout;
                 Registers.Add(item.Name, r);
+                if (item.Name == ConfigProvider.OperationModeRegName) encounteredOperationMode = true;
             }
+            HasOperationModes = encounteredOperationMode;
         }
 
         private void OnReadTimeout(object? sender, EventArgs e)
@@ -64,6 +67,7 @@ namespace RRGControl.MyModbus
         public RRGUnitConfig UnitConfig { get; }
 
         public Dictionary<string, ModbusRegister> Registers { get; private set; } = new Dictionary<string, ModbusRegister>(0);
+        public bool HasOperationModes { get; private set; }
 
         //Default properties
         public double MaxFlowrate => UnitConfig.ConvertToUI(Registers[ConfigProvider.SetpointRegName].Base.Limits.Max);
@@ -82,6 +86,7 @@ namespace RRGControl.MyModbus
         {
             get
             {
+                if (!HasOperationModes) return "";
                 try
                 {
                     return Registers[ConfigProvider.OperationModeRegName].GetValueName();
@@ -93,7 +98,17 @@ namespace RRGControl.MyModbus
                 }
             }
 #pragma warning disable CS4014
-            set => Registers[ConfigProvider.OperationModeRegName].WriteByName(value);
+            set
+            {
+                if (HasOperationModes)
+                {
+                    Registers[ConfigProvider.OperationModeRegName].WriteByName(value);
+                }
+                else
+                {
+                    LogEvent?.Invoke(this, $"WARNING: Unit '{UnitConfig.Name}' does not contain OperationMode register to write to.");
+                }
+            }
 #pragma warning restore
         }
         private bool mPresent = false;

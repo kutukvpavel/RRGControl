@@ -5,6 +5,18 @@
 			 xmlns:local="using:RRGControl"
 			 mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
 			 x:Class="RRGControl.Views.Dashboard">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key='Light'>
+					<SolidColorBrush x:Key='BackgroundBrush'>LightGray</SolidColorBrush>
+				</ResourceDictionary>
+				<ResourceDictionary x:Key='Dark'>
+					<SolidColorBrush x:Key='BackgroundBrush'>DimGray</SolidColorBrush>
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
+		</ResourceDictionary>
+  	</UserControl.Resources>
 	<UserControl.Styles>
 		<Style Selector="HeaderedContentControl">
 			<Setter Property="Template">
@@ -41,22 +53,23 @@
 	</UserControl.Styles>
 	<Grid Name="mainGrid" ColumnDefinitions="2*,5*" RowDefinitions="auto,auto,*">
 		<TextBlock Grid.Column="0" Grid.Row="0" Text="Unit Address:"></TextBlock>
-		<TextBox Grid.Column="0" Grid.Row="1" Text="{Binding Address, Mode=OneWay}" KeyDown="Address_OnKeyDown" 
+		<TextBox Grid.Column="0" Grid.Row="1" Text="{Binding Address, Mode=OneWay}" KeyDown="Address_OnKeyDown" Background="{DynamicResource BackgroundBrush}"
 				 IsReadOnly="{Binding Source={x:Static local:ConfigProvider.Settings}, Path=DisableUnitAddressChange}"></TextBox>
 		<TextBlock Grid.Column="1" Grid.Row="0" Text="Unit Model:"></TextBlock>
-		<TextBox Grid.Column="1" Grid.Row="1" Text="{Binding UnitModel}" IsReadOnly="True"></TextBox>
-		<HeaderedContentControl Grid.Column="0" Grid.Row="2" Header="Mode" >
+		<TextBox Grid.Column="1" Grid.Row="1" Text="{Binding UnitModel}" IsReadOnly="True" Background="{DynamicResource BackgroundBrush}"></TextBox>
+		<HeaderedContentControl Grid.Column="0" Grid.Row="2" Header="Mode" IsVisible="{Binding ShowModes}">
 			<Grid ColumnDefinitions="*" RowDefinitions="auto,3,auto,auto,auto">
-				<TextBox Grid.Column="0" Grid.Row="0" Text="{Binding Mode}" IsReadOnly="True" FontWeight="Bold"></TextBox>
-				<Button Grid.Column="0" Grid.Row="2" Background="LightGreen" Content="{x:Static local:ConfigProvider.RegulateModeName}"
+				<TextBox Grid.Column="0" Grid.Row="0" Text="{Binding Mode}" IsReadOnly="True" FontWeight="Bold"
+					Background="{DynamicResource BackgroundBrush}"></TextBox>
+				<Button Grid.Column="0" Grid.Row="2" Background="{DynamicResource GreenBrush}" Content="{x:Static local:ConfigProvider.RegulateModeName}"
 						Click="Regulate_Click"></Button>
-				<Button Grid.Column="0" Grid.Row="3" Background="LightBlue" Content="{x:Static local:ConfigProvider.OpenModeName}"
+				<Button Grid.Column="0" Grid.Row="3" Background="{DynamicResource BlueBrush}" Content="{x:Static local:ConfigProvider.OpenModeName}"
 						Click="Open_Click"></Button>
-				<Button Grid.Column="0" Grid.Row="4" Background="LightSalmon" Content="{x:Static local:ConfigProvider.ClosedModeName}"
+				<Button Grid.Column="0" Grid.Row="4" Background="{DynamicResource OrangeBrush}" Content="{x:Static local:ConfigProvider.ClosedModeName}"
 						Click="Close_Click"></Button>
 			</Grid>
 		</HeaderedContentControl>
-		<HeaderedContentControl Grid.Column="1" Grid.Row="2" Header="Flowrate">
+		<HeaderedContentControl Grid.Column="{Binding FlowrateColumn}" Grid.ColumnSpan="{Binding FlowrateColumnSpan}" Grid.Row="2" Header="Flowrate">
 			<Grid ColumnDefinitions="auto,*,3,auto" RowDefinitions="auto,10,auto,10,auto,7,auto">
 				<TextBlock Grid.Column="0" Grid.Row="0" Text="Measured:   "></TextBlock>
 				<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Measured}" FontSize="16" FontWeight="Bold"></TextBlock>

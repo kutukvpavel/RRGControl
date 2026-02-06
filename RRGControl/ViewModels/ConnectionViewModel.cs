@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -19,12 +20,20 @@ namespace RRGControl.ViewModels
                 Units.Add(u);
             }
             base.PropertyChanged += PropertyChanged;
+            if (App.Current != null) App.Current.ActualThemeVariantChanged += ThemeVariant_Changed;
         }
 
+        private void UpdateColors()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TabColor)));
+        }
+        private void ThemeVariant_Changed(object? sender, EventArgs e)
+        {
+            UpdateColors();
+        }
         private void MConnection_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(mConnection.IsUp)) 
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TabColor)));
+            if (e.PropertyName == nameof(mConnection.IsUp)) UpdateColors();
         }
         private void U_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -33,7 +42,7 @@ namespace RRGControl.ViewModels
 
         private MyModbus.Connection mConnection;
 
-        public IBrush TabColor { get => mConnection.IsUp ? Brushes.LightGreen : Brushes.LightSalmon; }
+        public IBrush TabColor { get => mConnection.IsUp ? App.GreenOK : App.OrangeWarning; }
         public bool Remote { get => mConnection.Mapping.Type == MyModbus.ModbusType.TCP; }
         public bool Local { get => mConnection.Mapping.Type == MyModbus.ModbusType.RTU; }
         public string Port { get => mConnection.Mapping.Port; }

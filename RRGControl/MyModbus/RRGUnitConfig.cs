@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 
 namespace RRGControl.MyModbus
 {
@@ -23,11 +22,15 @@ namespace RRGControl.MyModbus
         public string Name { get; set; } = "Example";
         public string Model { get; set; } = "RRG20";
         public double ConversionFactor { get; set; } = 1;
-        public double GasFactor { get; set; } = 1;
+        [JsonProperty(Required = Required.Default, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [System.ComponentModel.DefaultValue((double)1.0)]
+        public double GasFactor { get; set; } = 1.0;
         [JsonProperty(Required = Required.Default, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string? GasName { get; set; }
         public string ConversionUnits { get; set; } = "N/A";
         public string FlowrateNumberFormat { get; set; } = "F2";
+        [JsonProperty(Required = Required.Default, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [System.ComponentModel.DefaultValue((bool)true)]
         public bool EnableAutoupdate { get; set; } = true;
 
         /// <summary>

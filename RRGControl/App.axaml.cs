@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
+using Avalonia.Styling;
 using CommandLine;
 using LLibrary;
 using MsBox.Avalonia;
@@ -16,6 +18,8 @@ namespace RRGControl
 {
     public partial class App : Application
     {
+        public event EventHandler? ThemeVariantChanged;
+
         private class Options
         {
             [Option('c', "config", Required = false, HelpText = @"General settings file path,
@@ -43,6 +47,7 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
                     ConfigProvider.ReadLastUsedScripts(CurrentOptions.LastScriptsFile);
                     StartRRGServer();
                     desktop.ShutdownRequested += Desktop_ShutdownRequested;
+                    if (Current != null) Current.ActualThemeVariantChanged += ActualThemeVariant_Changed;
                     desktop.MainWindow = new MainWindow
                     {
                         DataContext = new MainWindowViewModel(MyNetwork, MyScript)
@@ -57,12 +62,17 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
             }
             base.OnFrameworkInitializationCompleted();
         }
+        public void ActualThemeVariant_Changed(object? sender, EventArgs e)
+        {
+            ThemeVariantChanged?.Invoke(this, new EventArgs());
+        }
         public void GenerateExamples()
         {
             ExampleHelper(ConfigProvider.Settings.UnitsFolder, "example.json", ConfigProvider.ExampleMapping);
             ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG.json",ConfigProvider.RRG);
             ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG20.json", ConfigProvider.RRG20);
             ExampleHelper(ConfigProvider.Settings.ModelsFolder, "RRG12.json", ConfigProvider.RRG12);
+            ExampleHelper(ConfigProvider.Settings.ModelsFolder, "Bronkhorst.json", ConfigProvider.Bronkhorst);
             ExampleHelper(ConfigProvider.Settings.ScriptsFolder, "example.json", ConfigProvider.ExampleScript);
             if (!File.Exists(ConfigProvider.Settings.GasFileName))
                 File.WriteAllText(ConfigProvider.Settings.GasFileName, ConfigProvider.Serialize(ConfigProvider.ExampleGases));
@@ -176,5 +186,9 @@ can be absolute or relative to working directory.", Default = ConfigProvider.Las
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllText(p, ConfigProvider.Serialize(src));
         }
+
+        public static bool IsDarkThemed => (string?)(Current?.ActualThemeVariant.Key) == (string)ThemeVariant.Dark.Key;
+        public static IBrush GreenOK => IsDarkThemed ? Brushes.DarkGreen : Brushes.LightGreen;
+        public static IBrush OrangeWarning => IsDarkThemed ? Brushes.DarkRed : Brushes.LightSalmon;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia.Controls;
+using Avalonia.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -73,6 +74,9 @@ namespace RRGControl.ViewModels
             }
         }
         public string Mode { get => mUnit.Mode; }
+        public bool ShowModes { get => mUnit.HasOperationModes; }
+        public int FlowrateColumn { get => ShowModes ? 1 : 0; }
+        public int FlowrateColumnSpan { get => ShowModes ? 1 : 2; }
         public string Measured 
         { 
             get => $"{mUnit.Measured.ToString(NumberFormat)}  " +

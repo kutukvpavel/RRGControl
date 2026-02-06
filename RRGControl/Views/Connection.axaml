@@ -5,13 +5,25 @@
 			 xmlns:local="using:RRGControl.Views"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="RRGControl.Views.Connection">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key='Light'>
+					<SolidColorBrush x:Key='BackgroundBrush'>White</SolidColorBrush>
+				</ResourceDictionary>
+				<ResourceDictionary x:Key='Dark'>
+					<SolidColorBrush x:Key='BackgroundBrush'>Black</SolidColorBrush>
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
+		</ResourceDictionary>
+  	</UserControl.Resources>
 	<UserControl.Styles>
 		<Style Selector="TabItem">
 			<Setter Property="Padding" Value="3,0,12,0"></Setter>
 			<Setter Property="MinHeight" Value="30"></Setter>
 		</Style>
 		<Style Selector="TabControl ItemsPresenter > WrapPanel">
-			<Setter Property="Background" Value="White"></Setter>
+			<Setter Property="Background" Value="{DynamicResource BackgroundBrush}"></Setter>
 		</Style>
 	</UserControl.Styles>
 	<TabControl Padding="0" DataContext="{Binding Units}" ItemsSource="{Binding}">
