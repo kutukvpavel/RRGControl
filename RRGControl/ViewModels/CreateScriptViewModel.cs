@@ -95,7 +95,7 @@ namespace RRGControl.ViewModels
             try
             {
                 if (Commands.Count == 0) return;
-                string appFolder = AppDomain.CurrentDomain.BaseDirectory;
+                string appFolder = Environment.CurrentDirectory;
                 string scriptsDir = Path.Combine(appFolder, "scripts");
                 string filePath = Path.Combine(scriptsDir, ScriptName + ".json");
 
