@@ -23,7 +23,7 @@
     },
     "4": {
       "Name": "Gas",
-      "Model": "RRG12",
+      "Model": "RRG20",
       "ConversionFactor": 0.0015,
       "GasFactor": 1.0,
       "ConversionUnits": "mL/min",

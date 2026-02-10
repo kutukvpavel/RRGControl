@@ -92,6 +92,34 @@ Check working directory and its subfolders.");
             var w = new Scripts() { DataContext = MyVM?.Scripts };
             w.ShowDialog(this);
         }
+        private void ScriptCreate_Click(object sender, RoutedEventArgs e)
+        {
+            if (MyVM == null) return;
+
+            var unitsForScript = new System.Collections.Generic.Dictionary<string, string>();
+            
+            if (MyVM.UnitsConfig != null && MyVM.UnitsConfig.Count > 0)
+            {
+                foreach (var pair in MyVM.UnitsConfig)
+                {
+                    unitsForScript.Add(pair.Key, pair.Value.Name);
+                }
+            }
+            else 
+            {
+                int id = 1;
+                foreach (var unitName in MyVM.AvailableUnits)
+                {
+                    unitsForScript.Add(id.ToString(), unitName);
+                    id++;
+                }
+            }
+
+            var createVM = new ViewModels.CreateScriptViewModel(unitsForScript, MyVM.AvailableGases);
+            
+            var w = new ScriptsWindow() { DataContext = createVM };
+            w.ShowDialog(this);
+        }
         private void ProgressBar_Click(object sender, PointerPressedEventArgs e)
         {
             if (MyVM == null) return;
