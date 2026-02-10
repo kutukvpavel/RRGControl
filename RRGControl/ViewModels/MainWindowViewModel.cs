@@ -3,13 +3,24 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using RRGControl.Models;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Text.Json;
+using System.Linq;
+using System.Diagnostics;
 
 namespace RRGControl.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     {
+        private const string ConfigFilePath = "mapping/example.json";
+        private const string GasesFilePath = "gases.json";
         public static event EventHandler<string>? LogEvent;
         public new event PropertyChangedEventHandler? PropertyChanged;
+        public Dictionary<string, UnitModel> UnitsConfig { get; private set; } = new Dictionary<string, UnitModel>();
+        public ObservableCollection<string> AvailableUnits { get; } = new ObservableCollection<string>();
+        public ObservableCollection<string> AvailableGases { get; } = new ObservableCollection<string>();
 
         private readonly Models.Scripts mScript;
         private readonly Models.Network mNetwork;
@@ -46,6 +57,7 @@ namespace RRGControl.ViewModels
             s.PropertyChanged += S_PropertyChanged;
             s.ExecutionFinished += S_ExecutionFinished;
             base.PropertyChanged += PropertyChanged;
+            LoadConfigurationFiles(); // load
         }
 
         private void S_ExecutionFinished(object? sender, EventArgs e)
@@ -140,6 +152,33 @@ namespace RRGControl.ViewModels
             {
                 LogEvent?.Invoke(this, ex.ToString());
                 Status = "Reading all units failed";
+            }
+        }
+        private void LoadConfigurationFiles()
+        {
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            if (File.Exists(ConfigFilePath))
+            {
+                var config = JsonSerializer.Deserialize<ConfigModel>(File.ReadAllText(ConfigFilePath), options);
+                if (config?.Units != null)
+                    {
+                        this.UnitsConfig = config.Units;
+                        
+                        foreach (var unit in config.Units.Values)
+                        {
+                            AvailableUnits.Add(unit.Name);
+                        }
+                    }
+
+            }
+
+            if (File.Exists(GasesFilePath))
+            {
+                var gases = JsonSerializer.Deserialize<List<GasModel>>(File.ReadAllText(GasesFilePath), options);
+                var names = gases?.Select(g => g.DisplayName).Where(n => !string.IsNullOrEmpty(n) && n != "Unknown Gas");
+                if (names != null)
+                    foreach (var n in names) AvailableGases.Add(n);
             }
         }
     }

@@ -2,6 +2,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using System;
+using RRGControl.ViewModels;
+using RRGControl.Models;
 
 namespace RRGControl.Views
 {
@@ -90,6 +92,35 @@ Check working directory and its subfolders.");
         private void ScriptConfigure_Click(object sender, RoutedEventArgs e)
         {
             var w = new Scripts() { DataContext = MyVM?.Scripts };
+            w.ShowDialog(this);
+        }
+        private void ScriptCreate_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = DataContext as MainWindowViewModel;
+            if (viewModel == null) return;
+
+            var unitsForScript = new System.Collections.Generic.Dictionary<string, string>();
+            
+            if (viewModel.UnitsConfig != null && viewModel.UnitsConfig.Count > 0)
+            {
+                foreach (var pair in viewModel.UnitsConfig)
+                {
+                    unitsForScript.Add(pair.Key, pair.Value.Name);
+                }
+            }
+            else 
+            {
+                int id = 1;
+                foreach (var unitName in viewModel.AvailableUnits)
+                {
+                    unitsForScript.Add(id.ToString(), unitName);
+                    id++;
+                }
+            }
+
+            var createVM = new CreateScriptViewModel(unitsForScript, viewModel.AvailableGases);
+            
+            var w = new ScriptsWindow() { DataContext = createVM };
             w.ShowDialog(this);
         }
         private void ProgressBar_Click(object sender, PointerPressedEventArgs e)

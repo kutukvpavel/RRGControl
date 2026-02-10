@@ -40,6 +40,7 @@ namespace RRGControl
             public bool ExampleGenerationAvailable { get; set; } = true;
             public int TimeoutMs { get; set; } = 400;
         }
+        // make new property with mapping
         public class LastUsedScripts : List<string> 
         {
             public const string DefaultFileName = "last_used.json";

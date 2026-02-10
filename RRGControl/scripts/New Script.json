@@ -1,0 +1,210 @@
+{
+  "Name": "New Script",
+  "Comment": "",
+  "Commands": [
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Air_1",
+        "RegisterName": "OperationMode",
+        "Value": "Regulate"
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Air_2",
+        "RegisterName": "OperationMode",
+        "Value": "Regulate"
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Gas",
+        "RegisterName": "OperationMode",
+        "Value": "Regulate"
+      }
+    },
+    {
+      "Duration": 10,
+      "Command": {
+        "UnitName": "Air_1",
+        "RegisterName": "Setpoint",
+        "Value": "10",
+        "ConvertUnits": true
+      }
+    },
+    {
+      "Duration": 10,
+      "Command": {
+        "UnitName": "Air_2",
+        "RegisterName": "Setpoint",
+        "Value": "20",
+        "ConvertUnits": true
+      }
+    },
+    {
+      "Duration": 10,
+      "Command": {
+        "UnitName": "Gas",
+        "RegisterName": "Setpoint",
+        "Value": "30",
+        "ConvertUnits": true
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Air_1",
+        "RegisterName": "Setpoint",
+        "Value": "0",
+        "ConvertUnits": true
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Air_1",
+        "RegisterName": "OperationMode",
+        "Value": "Closed"
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Air_2",
+        "RegisterName": "Setpoint",
+        "Value": "0",
+        "ConvertUnits": true
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Air_2",
+        "RegisterName": "OperationMode",
+        "Value": "Closed"
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Gas",
+        "RegisterName": "Setpoint",
+        "Value": "0",
+        "ConvertUnits": true
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Gas",
+        "RegisterName": "OperationMode",
+        "Value": "Closed"
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Air_1",
+        "RegisterName": "OperationMode",
+        "Value": "Regulate"
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Air_2",
+        "RegisterName": "OperationMode",
+        "Value": "Regulate"
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Gas",
+        "RegisterName": "OperationMode",
+        "Value": "Regulate"
+      }
+    },
+    {
+      "Duration": 30,
+      "Command": {
+        "UnitName": "Air_1",
+        "RegisterName": "Setpoint",
+        "Value": "23",
+        "ConvertUnits": true
+      }
+    },
+    {
+      "Duration": 30,
+      "Command": {
+        "UnitName": "Air_2",
+        "RegisterName": "Setpoint",
+        "Value": "49",
+        "ConvertUnits": true
+      }
+    },
+    {
+      "Duration": 30,
+      "Command": {
+        "UnitName": "Gas",
+        "RegisterName": "Setpoint",
+        "Value": "19",
+        "ConvertUnits": true
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Air_1",
+        "RegisterName": "Setpoint",
+        "Value": "0",
+        "ConvertUnits": true
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Air_1",
+        "RegisterName": "OperationMode",
+        "Value": "Closed"
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Air_2",
+        "RegisterName": "Setpoint",
+        "Value": "0",
+        "ConvertUnits": true
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Air_2",
+        "RegisterName": "OperationMode",
+        "Value": "Closed"
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Gas",
+        "RegisterName": "Setpoint",
+        "Value": "0",
+        "ConvertUnits": true
+      }
+    },
+    {
+      "Duration": 1,
+      "Command": {
+        "UnitName": "Gas",
+        "RegisterName": "OperationMode",
+        "Value": "Closed"
+      }
+    }
+  ]
+}
