@@ -22,14 +22,7 @@ namespace RRGControl.Views
             {
                 if (DataContext is CreateScriptViewModel vm)
                 {
-                    vm.PropertyChanged += (sender, args) =>
-                    {
-                        if (args.PropertyName == nameof(vm.RequestPlotUpdate))
-                        {
-                            UpdateMyPlot();
-                        }
-                    }; // update plot when requested
-                    
+                    vm.PlotUpdateRequested += (sender, args) => UpdateMyPlot();
                     UpdateMyPlot();
                 }
             };
@@ -48,7 +41,7 @@ namespace RRGControl.Views
             if (data != null && data.Count > 0)
             {
                 int colorIdx = 0;
-                var colors = new Color[] { Colors.Blue, Colors.Red, Colors.Green, Colors.Orange, Colors.Purple };
+                var colors = Palette.Default.Colors;
 
                 foreach (var line in data)
                 {

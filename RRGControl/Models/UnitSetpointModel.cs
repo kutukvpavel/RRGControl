@@ -27,6 +27,6 @@ namespace RRGControl.Models
             }
         }
 
-        public string DisplaySummary => UnitName + " (" + GasType + "): " + Setpoint;
+        public string DisplaySummary => $"{UnitName} ({GasType}): {Setpoint}";
     }
 }

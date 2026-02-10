@@ -2,8 +2,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using System;
-using RRGControl.ViewModels;
-using RRGControl.Models;
 
 namespace RRGControl.Views
 {
@@ -96,14 +94,13 @@ Check working directory and its subfolders.");
         }
         private void ScriptCreate_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = DataContext as MainWindowViewModel;
-            if (viewModel == null) return;
+            if (MyVM == null) return;
 
             var unitsForScript = new System.Collections.Generic.Dictionary<string, string>();
             
-            if (viewModel.UnitsConfig != null && viewModel.UnitsConfig.Count > 0)
+            if (MyVM.UnitsConfig != null && MyVM.UnitsConfig.Count > 0)
             {
-                foreach (var pair in viewModel.UnitsConfig)
+                foreach (var pair in MyVM.UnitsConfig)
                 {
                     unitsForScript.Add(pair.Key, pair.Value.Name);
                 }
@@ -111,14 +108,14 @@ Check working directory and its subfolders.");
             else 
             {
                 int id = 1;
-                foreach (var unitName in viewModel.AvailableUnits)
+                foreach (var unitName in MyVM.AvailableUnits)
                 {
                     unitsForScript.Add(id.ToString(), unitName);
                     id++;
                 }
             }
 
-            var createVM = new CreateScriptViewModel(unitsForScript, viewModel.AvailableGases);
+            var createVM = new ViewModels.CreateScriptViewModel(unitsForScript, MyVM.AvailableGases);
             
             var w = new ScriptsWindow() { DataContext = createVM };
             w.ShowDialog(this);

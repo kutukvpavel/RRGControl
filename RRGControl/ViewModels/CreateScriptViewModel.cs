@@ -5,35 +5,26 @@ using System.Collections.Generic;
 using RRGControl.Models;
 using System;
 using System.Reactive.Linq;
-using System.Linq; 
-using System.IO;
-using System.Text.Json;
+using System.Linq;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 namespace RRGControl.ViewModels
 {
-
-
     public class CreateScriptViewModel : ReactiveObject
     {
+        public event EventHandler? PlotUpdateRequested;
+
         private string _scriptName = "New Script";
         public string ScriptName { get => _scriptName; set => this.RaiseAndSetIfChanged(ref _scriptName, value); }
         private string _comment = "";
         public string Comment { get => _comment; set => this.RaiseAndSetIfChanged(ref _comment, value); }
-        public ObservableCollection<UnitSetpointModel> InputUnits { get; } = new ObservableCollection<UnitSetpointModel>();
+        public ObservableCollection<UnitSetpointModel> InputUnits { get; } = new();
         private double _newDuration = 10; //default 10 sec
         public double NewDuration { get => _newDuration; set => this.RaiseAndSetIfChanged(ref _newDuration, value); }
-        public ObservableCollection<ScriptCommandModel> Commands { get; } = new ObservableCollection<ScriptCommandModel>();
+        public ObservableCollection<ScriptCommandModel> Commands { get; } = new();
         private ScriptCommandModel? _selectedCommand;
         public ScriptCommandModel? SelectedCommand { get => _selectedCommand; set => this.RaiseAndSetIfChanged(ref _selectedCommand, value); }
-        private int _requestPlotUpdate;
-        public int RequestPlotUpdate 
-        { 
-            get => _requestPlotUpdate; 
-            set => this.RaiseAndSetIfChanged(ref _requestPlotUpdate, value); 
-        }
 
         private Dictionary<string, (double[] Xs, double[] Ys)> _plotData = new();
         public Dictionary<string, (double[] Xs, double[] Ys)> PlotData 
@@ -46,7 +37,7 @@ namespace RRGControl.ViewModels
         public ReactiveCommand<Unit, Unit> RemoveCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveScriptCommand { get; }
 
-        public CreateScriptViewModel(Dictionary<string, string> unitsMap, ObservableCollection<string> gases)
+        public CreateScriptViewModel(Dictionary<string, string> unitsMap)
         {
             foreach (var kvpair in unitsMap)
             {
@@ -69,15 +60,19 @@ namespace RRGControl.ViewModels
         {
             if (NewDuration <= 0) return;
 
-            ScriptCommandModel newStep = new ScriptCommandModel();
-            newStep.Duration = NewDuration;
+            ScriptCommandModel newStep = new()
+            {
+                Duration = NewDuration
+            };
 
             foreach (var input in InputUnits)
             {
-                UnitSetpointModel unitCopy = new UnitSetpointModel();
-                unitCopy.UnitId = input.UnitId;
-                unitCopy.UnitName = input.UnitName;
-                unitCopy.Setpoint = input.Setpoint;
+                UnitSetpointModel unitCopy = new()
+                {
+                    UnitId = input.UnitId,
+                    UnitName = input.UnitName,
+                    Setpoint = input.Setpoint
+                };
 
                 newStep.UnitSetpoints.Add(unitCopy);
             }
@@ -95,9 +90,6 @@ namespace RRGControl.ViewModels
             try
             {
                 if (Commands.Count == 0) return;
-                string appFolder = Environment.CurrentDirectory;
-                string scriptsDir = Path.Combine(appFolder, "scripts");
-                string filePath = Path.Combine(scriptsDir, ScriptName + ".json");
 
                 var commandList = new List<object>();
                 
@@ -115,8 +107,8 @@ namespace RRGControl.ViewModels
                     {
                         if (unitIsRegulating[sp.UnitName])
                         {
-                            commandList.Add(new { Duration = 1, Command = new { UnitName = sp.UnitName, RegisterName = "Setpoint", Value = "0", ConvertUnits = true } });
-                            commandList.Add(new { Duration = 1, Command = new { UnitName = sp.UnitName, RegisterName = "OperationMode", Value = "Closed" } });
+                            commandList.Add(new { Duration = 1, Command = new { UnitName = sp.UnitName, RegisterName = ConfigProvider.SetpointRegName, Value = "0", ConvertUnits = true } });
+                            commandList.Add(new { Duration = 1, Command = new { UnitName = sp.UnitName, RegisterName = ConfigProvider.OperationModeRegName, Value = ConfigProvider.ClosedModeName } });
                             
                             unitIsRegulating[sp.UnitName] = false;
                             technicalSeconds += 2;
@@ -128,7 +120,7 @@ namespace RRGControl.ViewModels
                     {
                         if (!unitIsRegulating[sp.UnitName])
                         {
-                            commandList.Add(new { Duration = 1, Command = new { UnitName = sp.UnitName, RegisterName = "OperationMode", Value = "Regulate" } });
+                            commandList.Add(new { Duration = 1, Command = new { UnitName = sp.UnitName, RegisterName = ConfigProvider.OperationModeRegName, Value = ConfigProvider.RegulateModeName } });
                             unitIsRegulating[sp.UnitName] = true;
                             technicalSeconds += 1;
                         }
@@ -150,8 +142,8 @@ namespace RRGControl.ViewModels
                             Duration = duration, 
                             Command = new { 
                                 UnitName = u.UnitName, 
-                                RegisterName = "Setpoint", 
-                                Value = u.Setpoint.ToString("G", System.Globalization.CultureInfo.InvariantCulture), 
+                                RegisterName = ConfigProvider.SetpointRegName, 
+                                Value = u.Setpoint.ToString("G", CultureInfo.InvariantCulture), 
                                 ConvertUnits = true 
                             } 
                         });
@@ -161,7 +153,7 @@ namespace RRGControl.ViewModels
                     if (activeFlows.Count == 0)
                     {
                         commandList.Add(new { Duration = Math.Max(1, step.Duration - technicalSeconds), Command = new { UnitName = allPossibleUnits.First(), 
-                        RegisterName = "Setpoint", Value = "0" } });
+                        RegisterName = ConfigProvider.SetpointRegName, Value = "0" } });
                     }
                 }
 
@@ -171,26 +163,29 @@ namespace RRGControl.ViewModels
                     {
                         string unitName = kvpair.Key;
 
-                        commandList.Add(new { Duration = 1, Command = new { UnitName = unitName, RegisterName = "Setpoint", Value = "0", ConvertUnits = true } });
-                        commandList.Add(new { Duration = 1, Command = new { UnitName = unitName, RegisterName = "OperationMode", Value = "Closed" } });
+                        commandList.Add(new { Duration = 1, Command = new { UnitName = unitName, RegisterName = ConfigProvider.SetpointRegName, Value = "0", ConvertUnits = true } });
+                        commandList.Add(new { Duration = 1, Command = new { UnitName = unitName, RegisterName = ConfigProvider.OperationModeRegName, Value = ConfigProvider.ClosedModeName } });
                     }
                 }
-
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                File.WriteAllText(filePath, JsonSerializer.Serialize(new { Name = ScriptName, Comment = Comment, Commands = commandList }, options));
+                ConfigProvider.Serialize(new { Name = ScriptName, Comment = Comment, Commands = commandList });
             }
-            catch (Exception ex) 
-                { 
-                Debug.WriteLine(ex.Message); 
-                }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void RequestPlotUpdate()
+        {
+            PlotUpdateRequested?.Invoke(this, new EventArgs());
         }
 
         public void RecalculatePlotData()
         {
             if (Commands.Count == 0 || InputUnits.Count == 0)
             {
-                PlotData = new Dictionary<string, (double[] Xs, double[] Ys)>();
-                RequestPlotUpdate++;
+                PlotData.Clear();
+                RequestPlotUpdate();
                 return;
             }
 
@@ -203,7 +198,7 @@ namespace RRGControl.ViewModels
             }
 
             double currentTime = 0;
-            
+
             var currentLevels = allUnitNames.ToDictionary(n => n, n => 0.0);
 
             foreach (var step in Commands)
@@ -237,27 +232,24 @@ namespace RRGControl.ViewModels
                 currentTime = endTime;
             }
 
-            var newData = new Dictionary<string, (double[] Xs, double[] Ys)>();
+            PlotData.Clear();
+            foreach (var kvpair in unitFlows)
+            {
+                var pointsList = kvpair.Value;
+                int count = pointsList.Count;
 
-                foreach (var kvpair in unitFlows)
+                double[] xArray = new double[count];
+                double[] yArray = new double[count];
+
+                for (int j = 0; j < count; j++)
                 {
-                    var pointsList = kvpair.Value;
-                    int count = pointsList.Count;
-
-                    double[] xArray = new double[count];
-                    double[] yArray = new double[count];
-
-                    for (int j = 0; j < count; j++)
-                    {
-                        xArray[j] = pointsList[j].Time;
-                        yArray[j] = pointsList[j].Flow;
-                    }
-
-                    newData[kvpair.Key] = (xArray, yArray);
+                    xArray[j] = pointsList[j].Time;
+                    yArray[j] = pointsList[j].Flow;
                 }
 
-            PlotData = newData;
-            RequestPlotUpdate++;
+                PlotData[kvpair.Key] = (xArray, yArray);
+            }
+            RequestPlotUpdate();
         }
     }
 }

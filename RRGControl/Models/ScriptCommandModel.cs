@@ -9,7 +9,6 @@ namespace RRGControl.Models
     public class ScriptCommandModel : ReactiveObject
     {
         private double _duration;
-        [JsonPropertyName("Duration")]
         public double Duration
         {
             get => _duration;
@@ -21,8 +20,7 @@ namespace RRGControl.Models
         }
 
         [JsonPropertyName("UnitSetpoints")]
-        public ObservableCollection<UnitSetpointModel> UnitSetpoints { get; set; } 
-            = new ObservableCollection<UnitSetpointModel>();
+        public ObservableCollection<UnitSetpointModel> UnitSetpoints { get; set; } = new();
 
         [JsonIgnore]
         public string DisplaySummary
@@ -30,12 +28,12 @@ namespace RRGControl.Models
             get
             {
 
-                List<string> activeParts = new List<string>();
+                List<string> activeParts = new();
                 foreach (var usp in UnitSetpoints)
                 {
                     if (usp.Setpoint > 0)
                     {
-                        activeParts.Add(usp.UnitName + ": " + usp.Setpoint);
+                        activeParts.Add($"{usp.UnitName} : {usp.Setpoint}");
                     }
                 }
 
@@ -45,7 +43,7 @@ namespace RRGControl.Models
                     flowsText = string.Join("; ", activeParts);
                 }
 
-                return "Time: " + Duration + "s   |   " + flowsText;
+                return $"Time: {Duration} s   |   {flowsText}";
             }
         }
     }
