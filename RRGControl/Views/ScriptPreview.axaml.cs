@@ -12,11 +12,20 @@ namespace RRGControl.Views
         public ScriptPreview()
         {
             InitializeComponent();
+            DataContextChanged += (o, e) =>
+            {
+                if (ViewModel == null) return;
+                ViewModel.ReplotRequested += (o, e) =>
+                {
+                    Plot();  
+                };
+                Plot();
+            };
         }
 
         private ViewModels.ScriptPreviewViewModel? ViewModel => DataContext as ViewModels.ScriptPreviewViewModel;
 
-        private async void OnOpened(object sender, EventArgs e)
+        private async void Plot()
         {
             if (ViewModel == null) return;
             foreach (var item in ViewModel.Data)

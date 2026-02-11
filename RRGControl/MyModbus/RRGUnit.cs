@@ -75,7 +75,19 @@ namespace RRGControl.MyModbus
         {
             get => UnitConfig.ConvertToUI(Registers[ConfigProvider.SetpointRegName].Value);
 #pragma warning disable CS4014
-            set => Registers[ConfigProvider.SetpointRegName].Write(UnitConfig.ConvertToRegister(value));
+            set 
+            {
+                Registers[ConfigProvider.SetpointRegName].Write(UnitConfig.ConvertToRegister(value));
+                if (!UnitConfig.AutoOpenClose) return;
+                if ((value > 0) && (Mode == ConfigProvider.ClosedModeName))
+                {
+                    Mode = ConfigProvider.RegulateModeName;
+                }
+                else if ((value <= 0) && (Mode != ConfigProvider.ClosedModeName))
+                {
+                    Mode = ConfigProvider.ClosedModeName;
+                }
+            }
 #pragma warning restore
         }
         public string Mode

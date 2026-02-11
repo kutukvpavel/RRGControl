@@ -34,7 +34,7 @@ namespace RRGControl.Models
         }
 
         public int Duration => mAdapter.Script?.GetDuration() ?? 0;
-        public Dictionary<int, Adapters.Packet> Compiled => mAdapter.Compiled ?? new Dictionary<int, Adapters.Packet>();
+        public Dictionary<int, Adapters.Packet[]> Compiled => mAdapter.Compiled ?? new Dictionary<int, Adapters.Packet[]>();
         public List<Adapters.Script> Items { get; private set; } = new List<Adapters.Script>();
         public List<string> LastChosenNames => ConfigProvider.LastScripts;
 

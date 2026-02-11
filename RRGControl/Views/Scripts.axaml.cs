@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 
 namespace RRGControl.Views
@@ -23,10 +24,11 @@ namespace RRGControl.Views
         {
             if (ViewModel == null) return;
             ViewModel.Choose();
+            var pm = new ViewModels.ScriptPreviewViewModel();
+            pm.UpdatePreview(ViewModel.Compiled, ViewModel.Duration, (Application.Current as App)?.MyNetwork, 0);
             var w = new ScriptPreviewWindow() 
-            { 
-                DataContext = new ViewModels.ScriptPreviewViewModel(ViewModel.Compiled, ViewModel.Duration,
-                    (App.Current as App)?.MyNetwork, 0)
+            {
+                DataContext = pm
             };
             w.ShowDialog(this);
         }

@@ -14,21 +14,39 @@ namespace RRGControl.Adapters
     {
         public static event EventHandler<string>? LogEvent;
 
+        public class LegacyScript
+        {
+            public class Element
+            {
+                [JsonConstructor]
+                public Element() : base() { }
+                [JsonProperty(Required = Required.Always)]
+                public int Duration { get; set; }
+                [JsonProperty(Required = Required.Always)]
+                public Packet Command { get; set; }
+            }
+            [JsonConstructor]
+            public LegacyScript() { }
+            public string Name { get; set; }
+            public string Comment { get; set; }
+            public List<Element> Commands { get; set; } = new List<Element>();
+        }
+
         public class Element
         {
             [JsonConstructor]
             public Element() : base() { }
 
-            public Element(int dur, Packet p)
+            public Element(int dur, Packet[] p)
             {
                 Duration = dur;
-                Command = p;
+                Packets = p;
             }
 
             [JsonProperty(Required = Required.Always)]
             public int Duration { get; set; }
             [JsonProperty(Required = Required.Always)]
-            public Packet Command { get; set; }
+            public Packet[] Packets { get; set; }
         }
 
 
@@ -54,18 +72,18 @@ namespace RRGControl.Adapters
         public string Name { get; set; } = "Example Script";
         public string Comment { get; set; } = "...";
         public List<Element> Commands { get; set; } = new List<Element>();
-        
+
         public int GetDuration()
         {
             return Commands.Sum(x => x.Duration);
         }
-        public Dictionary<int, Packet> Compile()
+        public Dictionary<int, Packet[]> Compile()
         {
-            var res = new Dictionary<int, Packet>(Commands.Count);
+            var res = new Dictionary<int, Packet[]>(Commands.Count);
             int time = 0;
             foreach (var item in Commands)
             {
-                res.Add(time, item.Command);
+                res.Add(time, item.Packets);
                 time += item.Duration;
             }
             return res;
@@ -80,21 +98,88 @@ namespace RRGControl.Adapters
             IList<string> msgs = new List<string>();
             vr.ValidationEventHandler += (o, e) => { msgs.Add($"\t!! Validation message at {e.Path}: {e.Message}"); };
             JsonSerializer s = JsonSerializer.Create(ConfigProvider.SerializerOptions);
-            Script? res;
+            Script? res = null;
             try
             {
                 res = s.Deserialize<Script>(vr);
-                if (msgs.Any()) LogEvent?.Invoke("Script Validation", string.Join('\n', msgs));
+                if (msgs.Any()) LogEvent?.Invoke(LogTag, string.Join('\n', msgs));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                LogEvent?.Invoke("Script Validation", string.Join('\n', msgs));
-                throw;
+                LogEvent?.Invoke(LogTag, ex.Message);
+                LogEvent?.Invoke(LogTag, "Trying legacy script schema...");
+                vr.Schema = JsonSchema.Parse(LegacySchema);
+                msgs.Clear();
+                try
+                {
+                    LegacyScript? legacy = s.Deserialize<LegacyScript>(vr);
+                    if (msgs.Any()) LogEvent?.Invoke(LogTag, string.Join('\n', msgs));   
+                }
+                catch (Exception lex)
+                {
+                    LogEvent?.Invoke(LogTag, lex.ToString());
+                    throw;
+                }
             }
             return res;
         }
 
+        private static readonly string LogTag = "Script Validation";
+
         private static readonly string Schema = @"
+{
+	'$schema': 'http://json-schema.org/draft-04/schema#',
+	'type': 'object',
+	'properties': {
+		'Name': {
+			'type': 'string',
+            'required': true
+		},
+		'Comment': {
+			'type': 'string',
+            'required': false
+		},
+		'Commands': {
+			'type': 'array',
+            'required': true,
+			'items': {
+				'type': 'object',
+				'properties': {
+					'Duration': {
+						'type': 'integer',
+                        'required': true
+					},
+                    'Packets': {
+                        'type': 'array',
+                        'required': true,
+                        'items': {
+                            'type': 'object',
+                            'properties': {
+                                'UnitName': {
+                                    'type': 'string',
+                                    'required': true
+                                },
+                                'RegisterName': {
+                                    'type': 'string',
+                                    'required': true
+                                },
+                                'Value': {
+                                    'type': 'string',
+                                    'required': true
+                                },
+                                'ConvertUnits': {
+                                    'type': 'boolean',
+                                    'required': false
+                                }
+                            }
+                        }
+                    }
+                }
+			}
+		}
+	}
+}";
+        private static readonly string LegacySchema = @"
 {
 	'$schema': 'http://json-schema.org/draft-04/schema#',
 	'type': 'object',

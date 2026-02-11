@@ -129,6 +129,7 @@ namespace RRGControl.MyModbus
                         await Master.WriteSingleRegisterAsync((byte)r.UnitAddress, r.Base.Address, wrt);
                     }
                 }
+                if (Mapping.ThrottleDelayMs > 0) await Task.Delay(Mapping.ThrottleDelayMs);
             }
             finally
             {

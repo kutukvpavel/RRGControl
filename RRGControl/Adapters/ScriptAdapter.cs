@@ -45,7 +45,7 @@ namespace RRGControl.Adapters
                 mDuration = mScript?.GetDuration();
             }
         }
-        public Dictionary<int, Packet>? Compiled { get => mCompiled; }
+        public Dictionary<int, Packet[]>? Compiled { get => mCompiled; }
         public ScriptAdapterState State
         {
             get => mState;
@@ -101,7 +101,7 @@ namespace RRGControl.Adapters
         private int mTicks = 0;
         private Script? mScript = null;
         private int? mDuration;
-        private Dictionary<int, Packet>? mCompiled = null;
+        private Dictionary<int, Packet[]>? mCompiled = null;
         private ScriptAdapterState mState = ScriptAdapterState.Stopped;
         private Script? mBackup;
 
@@ -117,10 +117,15 @@ namespace RRGControl.Adapters
             {
                 Dispatcher.UIThread.Post(() => { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress))); });
                 if (mCompiled == null) return;
-                if (mCompiled.TryGetValue(mTicks, out Packet? p))
+                if (mCompiled.TryGetValue(mTicks, out Packet[]? p))
                 {
                     if (p != null)
-                        mQueue.Add(p);
+                    {
+                        foreach (var item in p)
+                        {
+                            mQueue.Add(item);
+                        }   
+                    }
                 }
             }
             catch (Exception ex)

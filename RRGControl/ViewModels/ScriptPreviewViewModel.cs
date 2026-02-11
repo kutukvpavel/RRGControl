@@ -23,18 +23,30 @@ namespace RRGControl.ViewModels
             public bool Offline { get; }
         }
 
-        public ScriptPreviewViewModel(Dictionary<int, Adapters.Packet> compiled, int duration, Models.Network? n, int progress)
+        public event EventHandler? ReplotRequested;
+
+        public ScriptPreviewViewModel()
         {
-            mScript = compiled;
-            var units = mScript.Values.DistinctBy(x => x.UnitName).Select(x => x.UnitName);
-            Data = new List<MyPlotData>();
+            
+        }
+        public ScriptPreviewViewModel(Dictionary<int, Adapters.Packet[]> compiled, int duration, Models.Network? n, int progress)
+        {
+            UpdatePreview(compiled, duration, n, progress);
+        }
+
+        public void UpdatePreview(Dictionary<int, Adapters.Packet[]> compiled, int duration, Models.Network? n, int progress)
+        {
+            var units = compiled.Values.Select(x => x.Select(y => y.UnitName)).Flatten().Cast<string>().Distinct();
+            Data.Clear();
             foreach (var item in units)
             {
                 try
                 {
-                    var tmp = compiled.Where(x => x.Value.UnitName == item && x.Value.RegisterName == ConfigProvider.SetpointRegName
-                        && x.Value.TryConvertValueToDouble(out _))
-                            .ToDictionary(x => (double)x.Key, x => x.Value.ConvertValueToDouble());
+                    var tmp = compiled.Select(x =>
+                    {
+                        return new KeyValuePair<int, Adapters.Packet?>(x.Key, x.Value.LastOrDefault(
+                            y => y.UnitName == item && y.RegisterName == ConfigProvider.SetpointRegName && y.TryConvertValueToDouble(out _)));
+                    }).Where(x => x.Value != null).ToDictionary(x => (double)x.Key, x => x.Value!.ConvertValueToDouble());
                     try
                     {
                         var lst = tmp.Last();
@@ -53,12 +65,16 @@ namespace RRGControl.ViewModels
                     ErrorUnits.Add(new Tuple<string, Exception>(item, ex));
                 }
             }
+            ReplotPreview();
         }
 
-        public List<MyPlotData> Data { get; }
-        public List<Tuple<string, Exception>> ErrorUnits { get; } = new List<Tuple<string, Exception>>();
-        public double CurrentProgressX { get; }
+        public void ReplotPreview()
+        {
+            ReplotRequested?.Invoke(this, new EventArgs());
+        }
 
-        private readonly Dictionary<int, Adapters.Packet> mScript;
+        public List<MyPlotData> Data { get; } = new();
+        public List<Tuple<string, Exception>> ErrorUnits { get; } = new();
+        public double CurrentProgressX { get; set; }
     }
 }

@@ -134,45 +134,45 @@ namespace RRGControl
         };
         public static readonly MyModbus.RRGGas[] ExampleGases = new MyModbus.RRGGas[]
         {
-            new MyModbus.RRGGas(1, "Nitrogen", "N2"),
-            new MyModbus.RRGGas(1, "Air"),
-            new MyModbus.RRGGas(1.45, "Argon", "Ar"),
-            new MyModbus.RRGGas(0.74, "Carbon Dioxide", "CO2"),
-            new MyModbus.RRGGas(1.454, "Helium", "He"),
-            new MyModbus.RRGGas(1.01, "Hydrogen", "H2"),
-            new MyModbus.RRGGas(0.73, "Ammonia", "NH3"),
-            new MyModbus.RRGGas(0.67, "Arsine", "ArH3"),
-            new MyModbus.RRGGas(0.60, "Carbon Disulfide", "CS2"),
-            new MyModbus.RRGGas(1, "Carbon Monoxide", "CO"),
-            new MyModbus.RRGGas(0.31, "Carbon Tetrachloride", "CCl4"),
-            new MyModbus.RRGGas(0.42, "Carbon Tetrafluoride", "CF4"),
-            new MyModbus.RRGGas(0.86, "Chlorine", "Cl2"),
-            new MyModbus.RRGGas(0.44, "Diborane", "B2H6"),
-            new MyModbus.RRGGas(0.40, "Dichlorosilane", "SiH2Cl2"),
-            new MyModbus.RRGGas(0.50, "Fluoroform", "CHF3"),
-            new MyModbus.RRGGas(0.27, "Germanium Tetrachloride"),
-            new MyModbus.RRGGas(1, "Hydrogen Chloride", "HCl"),
-            new MyModbus.RRGGas(0.72, "Methane", "CH4"),
-            new MyModbus.RRGGas(0.99, "Nitrogen Monoxide", "NO"),
-            new MyModbus.RRGGas(0.74, "Nitrogen Dioxide", "NO2"),
-            new MyModbus.RRGGas(1, "Oxygen", "O2"),
-            new MyModbus.RRGGas(0.76, "Phosphine", "PH3"),
-            new MyModbus.RRGGas(0.60, "Silane", "SiH4"),
-            new MyModbus.RRGGas(0.28, "Silicon Tetrachloride", "SiCl4"),
-            new MyModbus.RRGGas(0.26, "Sulfure Hexafluoride", "SF6"),
-            new MyModbus.RRGGas(0.33, "Trichlorosilane", "SiHCl3")
+            new(1, "Nitrogen", "N2"),
+            new(1, "Air"),
+            new(1.45, "Argon", "Ar"),
+            new(0.74, "Carbon Dioxide", "CO2"),
+            new(1.454, "Helium", "He"),
+            new(1.01, "Hydrogen", "H2"),
+            new(0.73, "Ammonia", "NH3"),
+            new(0.67, "Arsine", "ArH3"),
+            new(0.60, "Carbon Disulfide", "CS2"),
+            new(1, "Carbon Monoxide", "CO"),
+            new(0.31, "Carbon Tetrachloride", "CCl4"),
+            new(0.42, "Carbon Tetrafluoride", "CF4"),
+            new(0.86, "Chlorine", "Cl2"),
+            new(0.44, "Diborane", "B2H6"),
+            new(0.40, "Dichlorosilane", "SiH2Cl2"),
+            new(0.50, "Fluoroform", "CHF3"),
+            new(0.27, "Germanium Tetrachloride"),
+            new(1, "Hydrogen Chloride", "HCl"),
+            new(0.72, "Methane", "CH4"),
+            new(0.99, "Nitrogen Monoxide", "NO"),
+            new(0.74, "Nitrogen Dioxide", "NO2"),
+            new(1, "Oxygen", "O2"),
+            new(0.76, "Phosphine", "PH3"),
+            new(0.60, "Silane", "SiH4"),
+            new(0.28, "Silicon Tetrachloride", "SiCl4"),
+            new(0.26, "Sulfure Hexafluoride", "SF6"),
+            new(0.33, "Trichlorosilane", "SiHCl3")
         };
-        public static readonly Adapters.Script ExampleScript = new Adapters.Script(
+        public static readonly Adapters.Script ExampleScript = new(
             "Example Script", "Example Comment", new List<Adapters.Script.Element>()
             {
-                new Adapters.Script.Element(1, new Adapters.Packet("Gas", OperationModeRegName, RegulateModeName)),
-                new Adapters.Script.Element(5, new Adapters.Packet("Air", OperationModeRegName, RegulateModeName)),
-                new Adapters.Script.Element(1, new Adapters.Packet("Air", SetpointRegName, "10") { ConvertUnits = true }),
-                new Adapters.Script.Element(10, new Adapters.Packet("Gas", SetpointRegName, "100") { ConvertUnits = true }),
-                new Adapters.Script.Element(1, new Adapters.Packet("Air", SetpointRegName, "0") { ConvertUnits = true }),
-                new Adapters.Script.Element(10, new Adapters.Packet("Gas", SetpointRegName, "0") { ConvertUnits = true }),
-                new Adapters.Script.Element(1, new Adapters.Packet("Air", OperationModeRegName, RegulateModeName)),
-                new Adapters.Script.Element(5, new Adapters.Packet("Gas", OperationModeRegName, ClosedModeName))
+                new(1, new Adapters.Packet[] { new("Gas", OperationModeRegName, RegulateModeName) }),
+                new(5, new Adapters.Packet[] { new("Air", OperationModeRegName, RegulateModeName)}),
+                new(1, new Adapters.Packet[] { new("Air", SetpointRegName, "10") { ConvertUnits = true }}),
+                new(10, new Adapters.Packet[] { new("Gas", SetpointRegName, "100") { ConvertUnits = true }}),
+                new(1, new Adapters.Packet[] { new("Air", SetpointRegName, "0") { ConvertUnits = true }}),
+                new(10, new Adapters.Packet[] { new("Gas", SetpointRegName, "0") { ConvertUnits = true }}),
+                new(1, new Adapters.Packet[] { new("Air", OperationModeRegName, RegulateModeName)}),
+                new(5, new Adapters.Packet[] { new("Gas", OperationModeRegName, ClosedModeName)})
             });
 
 

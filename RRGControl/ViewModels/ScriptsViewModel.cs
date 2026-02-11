@@ -32,7 +32,7 @@ namespace RRGControl.ViewModels
         public IList? SelectedRight { get; set; }
         public bool CanAdd => (SelectedLeft?.Count ?? 0) > 0;
         public bool CanRemove => (SelectedRight?.Count ?? 0) > 0;
-        public Dictionary<int, Adapters.Packet> Compiled => mModel.Compiled;
+        public Dictionary<int, Adapters.Packet[]> Compiled => mModel.Compiled;
         public int Duration => mModel.Duration;
 
         public void Add()
