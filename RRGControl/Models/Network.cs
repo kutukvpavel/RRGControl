@@ -58,6 +58,7 @@ namespace RRGControl.Models
 
         public List<MyModbus.Connection> Connections { get; }
         public MyModbus.ModbusProvider Provider { get; }
+        public Dictionary<string, MyModbus.RRGUnit> UnitsByName => mUnitsByName;
 
         public async Task Scan()
         {

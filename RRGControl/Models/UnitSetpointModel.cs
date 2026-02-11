@@ -5,7 +5,7 @@ namespace RRGControl.Models
 {
     public class UnitSetpointModel : ReactiveObject
     {
-        public string UnitId { get; set; } = string.Empty;
+        public ushort UnitId { get; set; }
         public string UnitName { get; set; } = string.Empty;
 
         public string FullDisplayName => $"{UnitId}_{UnitName}";

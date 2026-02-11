@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -94,36 +95,15 @@ Check working directory and its subfolders.");
         }
         private void ScriptCreate_Click(object sender, RoutedEventArgs e)
         {
-            if (MyVM == null) return;
-
-            var unitsForScript = new System.Collections.Generic.Dictionary<string, string>();
-            
-            if (MyVM.UnitsConfig != null && MyVM.UnitsConfig.Count > 0)
-            {
-                foreach (var pair in MyVM.UnitsConfig)
-                {
-                    unitsForScript.Add(pair.Key, pair.Value.Name);
-                }
-            }
-            else 
-            {
-                int id = 1;
-                foreach (var unitName in MyVM.AvailableUnits)
-                {
-                    unitsForScript.Add(id.ToString(), unitName);
-                    id++;
-                }
-            }
-
-            var createVM = new ViewModels.CreateScriptViewModel(unitsForScript, MyVM.AvailableGases);
-            
-            var w = new ScriptsWindow() { DataContext = createVM };
+            if (Application.Current == null) return;
+            var createVM = new ViewModels.CreateScriptViewModel((Application.Current as App)!.MyNetwork);
+            var w = new CreateScript() { DataContext = createVM };
             w.ShowDialog(this);
         }
         private void ProgressBar_Click(object sender, PointerPressedEventArgs e)
         {
             if (MyVM == null) return;
-            var w = new ScriptPreview() 
+            var w = new ScriptPreviewWindow() 
             { 
                 DataContext = new ViewModels.ScriptPreviewViewModel(MyVM.Scripts.Compiled, MyVM.Scripts.Duration,
                     (App.Current as App)?.MyNetwork, MyVM.ScriptProgress)

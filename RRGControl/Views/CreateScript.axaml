@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:RRGControl.ViewModels"
         xmlns:sp="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
-        x:Class="RRGControl.Views.ScriptsWindow"
+        x:Class="RRGControl.Views.CreateScript"
         Title="Script Creation" Width="950" Height="750"
         WindowStartupLocation="CenterOwner">
 

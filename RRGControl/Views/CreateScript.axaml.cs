@@ -8,10 +8,10 @@ using ReactiveUI;
 
 namespace RRGControl.Views
 {
-    public partial class ScriptsWindow : Window 
+    public partial class CreateScript : Window 
     {
         private AvaPlot? MyPlot;
-        public ScriptsWindow()
+        public CreateScript()
         {
             InitializeComponent();
 

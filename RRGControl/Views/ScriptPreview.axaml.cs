@@ -7,9 +7,8 @@ using ScottPlot;
 
 namespace RRGControl.Views
 {
-    public partial class ScriptPreview : Window
+    public partial class ScriptPreview : UserControl
     {
-        //AvaPlot Plot1;
         public ScriptPreview()
         {
             InitializeComponent();

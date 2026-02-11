@@ -15,6 +15,25 @@ namespace RRGControl.ViewModels
     {
         public event EventHandler? PlotUpdateRequested;
 
+        public CreateScriptViewModel(Network network)
+        {
+            foreach (var unit in network.UnitsByName)
+            {
+                InputUnits.Add(new UnitSetpointModel 
+                { 
+                    UnitId = unit.Value.Address, 
+                    UnitName = unit.Key, 
+                    Setpoint = 0 
+                });
+            }
+
+            AddCommand = ReactiveCommand.Create(AddCommandExecute);
+            RemoveCommand = ReactiveCommand.Create(RemoveCommandExecute);
+            SaveScriptCommand = ReactiveCommand.Create(SaveScriptExecute);
+
+            Commands.CollectionChanged += (s, e) => RecalculatePlotData();
+        }
+
         private string _scriptName = "New Script";
         public string ScriptName { get => _scriptName; set => this.RaiseAndSetIfChanged(ref _scriptName, value); }
         private string _comment = "";
@@ -36,25 +55,6 @@ namespace RRGControl.ViewModels
         public ReactiveCommand<Unit, Unit> AddCommand { get; }
         public ReactiveCommand<Unit, Unit> RemoveCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveScriptCommand { get; }
-
-        public CreateScriptViewModel(Dictionary<string, string> unitsMap)
-        {
-            foreach (var kvpair in unitsMap)
-            {
-                InputUnits.Add(new UnitSetpointModel 
-                { 
-                    UnitId = kvpair.Key, 
-                    UnitName = kvpair.Value, 
-                    Setpoint = 0 
-                });
-            }
-
-            AddCommand = ReactiveCommand.Create(AddCommandExecute);
-            RemoveCommand = ReactiveCommand.Create(RemoveCommandExecute);
-            SaveScriptCommand = ReactiveCommand.Create(SaveScriptExecute);
-
-            Commands.CollectionChanged += (s, e) => RecalculatePlotData();
-        }
 
         private void AddCommandExecute()
         {
