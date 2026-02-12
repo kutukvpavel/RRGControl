@@ -24,7 +24,6 @@ namespace RRGControl.MyModbus
         [JsonConverter(typeof(StringEnumConverter))]
         public ModbusType Type { get; set; } = ModbusType.RTU;
         public int ThrottleDelayMs { get; set; } = 10;
-        public bool AutoOpenClose { get; set; } = false;
         public Dictionary<ushort, RRGUnitConfig> Units { get; set; } = new Dictionary<ushort, RRGUnitConfig>();
     }
 }

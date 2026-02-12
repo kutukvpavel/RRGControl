@@ -13,7 +13,8 @@ namespace RRGControl
     }
     public static class ConfigProvider
     {
-        public const string FilenameFilter = "*.json";
+        public const string JsonExtension = ".json";
+        public const string FilenameFilter = $"*{JsonExtension}";
         public class GeneralSettings
         {
             private const string DefaultModelsSubfolder = "models";
@@ -39,6 +40,7 @@ namespace RRGControl
             public string PercentFormat { get; set; } = "F1";
             public bool ExampleGenerationAvailable { get; set; } = true;
             public int TimeoutMs { get; set; } = 400;
+            public char InvalidCharacterReplacement { get; set; } = '_';
         }
         public class LastUsedScripts : List<string> 
         {
@@ -274,6 +276,13 @@ namespace RRGControl
                 LogEvent?.Invoke("Last used scripts serializer", $"{ex}");
             }
         }
+        public static void SaveNewScript(Adapters.Script s, string? alreadySerialized = null)
+        {
+            string path = ReplaceInvalidFilenameChars(s.Name);
+            path = Path.Combine(Settings.ScriptsFolder, $"{path}{JsonExtension}");
+            if (File.Exists(path)) throw new IOException("File already exists.");
+            File.WriteAllText(path, alreadySerialized ?? Serialize(s));
+        }
         public static string Serialize<T>(T input)
         {
             return JsonConvert.SerializeObject(input, SerializerOptions);
@@ -281,6 +290,10 @@ namespace RRGControl
         public static MyModbus.RRGGas? TryGetGas(string name)
         {
             return KnownGases.Where(x => x.Aliases.Any(y => y == name.ToLowerInvariant())).FirstOrDefault();
+        }
+        public static string ReplaceInvalidFilenameChars(string seed)
+        {
+            return Path.GetInvalidFileNameChars().Aggregate(seed, (str, cItem) => str.Replace(cItem, Settings.InvalidCharacterReplacement));
         }
     }
 }

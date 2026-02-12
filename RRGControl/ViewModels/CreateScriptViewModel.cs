@@ -16,7 +16,7 @@ namespace RRGControl.ViewModels
 
         public CreateScriptViewModel(Network network)
         {
-            mUnitsByName = network.UnitsByName;
+            mNetwork = network;
             mNewCommand = new(mUnitsByName.Keys.Select(x => new UnitSetpoint(x)));
             mCommandUnderConstruction = mNewCommand;
             AddCommand = ReactiveCommand.Create(AddCommandExecute);
@@ -25,7 +25,8 @@ namespace RRGControl.ViewModels
             Commands.CollectionChanged += (s, e) => ConstructScript();
         }
 
-        private readonly Dictionary<string, RRGUnit> mUnitsByName;
+        private readonly Network mNetwork;
+        private Dictionary<string, RRGUnit> mUnitsByName => mNetwork.UnitsByName;
         private readonly Adapters.Script mScriptUnderConstruction = new();
         private readonly ScriptCommand mNewCommand;
         private ScriptCommand mCommandUnderConstruction;
@@ -64,6 +65,15 @@ namespace RRGControl.ViewModels
         public ReactiveCommand<Unit, Unit> RemoveCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveScriptCommand { get; }
         public ScriptPreviewViewModel PreviewViewModel { get; } = new ScriptPreviewViewModel();
+        private string _previewJson = string.Empty;
+        public string PreviewJson
+        {
+            get => _previewJson;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _previewJson, value);
+            }
+        }
 
         private void AddCommandExecute()
         {
@@ -77,14 +87,16 @@ namespace RRGControl.ViewModels
         }
         private void SaveScriptExecute()
         {
-            
+            ConfigProvider.SaveNewScript(mScriptUnderConstruction, PreviewJson.Length > 0 ? PreviewJson : null);
         }
 
         private void ConstructScript()
         {
             mScriptUnderConstruction.Commands.Clear();
             mScriptUnderConstruction.Commands.AddRange(Commands.Select(x => x.Command.GetScriptAdapterElement()));
+            PreviewViewModel.UpdatePreview(mScriptUnderConstruction.Compile(), mScriptUnderConstruction.GetDuration(), mNetwork, 0);
             PlotUpdateRequested?.Invoke(this, new EventArgs());
+            PreviewJson = ConfigProvider.Serialize(mScriptUnderConstruction);
         }
     }
 }

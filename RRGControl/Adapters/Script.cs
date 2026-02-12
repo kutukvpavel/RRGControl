@@ -69,8 +69,8 @@ namespace RRGControl.Adapters
             Comment = "Compiled script";
         }
 
-        public string Name { get; set; } = "Example Script";
-        public string Comment { get; set; } = "...";
+        public string Name { get; set; } = string.Empty;
+        public string Comment { get; set; } = string.Empty;
         public List<Element> Commands { get; set; } = new List<Element>();
 
         public int GetDuration()

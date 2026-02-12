@@ -28,6 +28,7 @@ namespace RRGControl.Views
         private async void Plot()
         {
             if (ViewModel == null) return;
+            Plot1.Plot.Clear();
             foreach (var item in ViewModel.Data)
             {
                 var p = Plot1.Plot.Add.Scatter(item.DataX, item.DataY);

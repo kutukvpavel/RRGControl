@@ -3,26 +3,26 @@
         xmlns:vm="using:RRGControl.ViewModels"
         xmlns:local="using:RRGControl.Views"
         x:Class="RRGControl.Views.CreateScript"
-        Title="Script Creation" Width="950" Height="750"
+        Title="Script Creation" Width="950" Height="750" MinHeight="620" MinWidth="700" VerticalContentAlignment="Stretch"
         WindowStartupLocation="CenterOwner">
     <Design.DataContext>
         <vm:CreateScriptViewModel/>
     </Design.DataContext>
 
-    <Grid ColumnDefinitions="420, *">
-        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="15" Spacing="12">
-                <TextBlock Text="Info" FontWeight="Bold" FontSize="16" Foreground="#0b7e65"/>
-                <TextBox Watermark="Script Name" Text="{Binding ScriptName, Mode=TwoWay}"/>
-                <TextBox Watermark="Comment" Text="{Binding Comment, Mode=TwoWay}" Height="60" AcceptsReturn="True" TextWrapping="Wrap"/>
-                <Separator/>
-                <TextBlock Text="Step configuration" FontWeight="Bold" FontSize="16" Foreground="#0b7e65"/>
-                <Grid ColumnDefinitions="Auto, *">
-                    <TextBlock Text="Duration (sec):" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                    <TextBox Grid.Column="1" Text="{Binding NewDuration, Mode=TwoWay}"/>
-                </Grid>
-                <TextBlock Text="Set flow rates (ml/min):" FontSize="12" Foreground="Gray" Margin="0,5,0,0"/>
-                <ItemsControl ItemsSource="{Binding SetpointsUnderConstruction}">
+    <Grid ColumnDefinitions="420, *" RowDefinitions="auto,*,auto" ClipToBounds="True">
+            <StackPanel Margin="15,0" Orientation="Vertical" Spacing="12">
+                <TextBlock DockPanel.Dock="Top" Text="Info" FontWeight="Bold" FontSize="16" Foreground="#0b7e65"/>
+                <TextBox DockPanel.Dock="Top" Watermark="Script Name" Text="{Binding ScriptName, Mode=TwoWay}"/>
+                <TextBox DockPanel.Dock="Top" Watermark="Comment" Text="{Binding ScriptComment, Mode=TwoWay}" Height="60"
+                    AcceptsReturn="True" TextWrapping="Wrap"/>
+                <Separator DockPanel.Dock="Top" />
+                <TextBlock DockPanel.Dock="Top" Text="Step configuration" FontWeight="Bold" FontSize="16" Foreground="#0b7e65"/>
+                <DockPanel DockPanel.Dock="Top" LastChildFill="True">
+                    <TextBlock DockPanel.Dock="Left" Text="Duration (sec):" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBox DockPanel.Dock="Right" Text="{Binding NewDuration, Mode=TwoWay}"/>
+                </DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="Set flow rates (ml/min):" FontSize="12" Foreground="Gray" Margin="0,5,0,0"/>
+                <ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding SetpointsUnderConstruction}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid ColumnDefinitions="120, *" Margin="0,2">
@@ -34,39 +34,41 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <Button Content="Add step" Command="{Binding AddCommand}" 
+                <Button DockPanel.Dock="Top" Content="Add step" Command="{Binding AddCommand}" 
                         HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                         Background="#0b7e65" Foreground="White" FontWeight="Bold" Margin="0,10,0,0"/>
-                <Separator/>
-                <TextBlock Text="Command sequence" FontWeight="Bold" FontSize="16" Foreground="#0b7e65"/>
-                <ListBox ItemsSource="{Binding Commands}" 
+                <Separator DockPanel.Dock="Top"/>
+                <TextBlock DockPanel.Dock="Top" Text="Command sequence" FontWeight="Bold" FontSize="16" Foreground="#0b7e65"/>
+            </StackPanel>
+                <ListBox Grid.Row="1" DockPanel.Dock="Top" Margin="12" ItemsSource="{Binding Commands}" 
                          SelectedItem="{Binding SelectedCommand}" 
-                         Height="160" SelectionMode="Single,Toggle">
+                         SelectionMode="Single,Toggle" VerticalAlignment="Stretch" MinHeight="160">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding DisplaySummary}" FontSize="12"/> 
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <StackPanel Spacing="5">
-                    <Grid ColumnDefinitions="*, *">
-                        <Button Grid.Column="0" Content="Delete step" 
+                <UniformGrid Grid.Row="2" DockPanel.Dock="Top" Columns="2">
+                        <Button Content="Delete step" HorizontalContentAlignment="Center"
                                 Command="{Binding RemoveCommand}" 
-                                HorizontalAlignment="Stretch" Margin="0,0,5,0"/>
-                        
-                        <Button Grid.Column="1" Content="Generate JSON" 
-                                Command="{Binding SaveScriptCommand}" 
+                                HorizontalAlignment="Stretch" Margin="6"/>
+                        <Button Content="Save" HorizontalContentAlignment="Center" 
+                                Command="{Binding SaveScriptCommand}" Margin="6"
                                 Background="#1e7a1e" Foreground="White" HorizontalAlignment="Stretch"/>
-                    </Grid>
-                </StackPanel>
-            </StackPanel>
-        </ScrollViewer>
-        <Border Grid.Column="1" BorderBrush="LightGray" BorderThickness="1, 0, 0, 0" Padding="15">
+                </UniformGrid>
+        <Border Grid.Column="1" Grid.RowSpan="3" BorderBrush="LightGray" BorderThickness="1, 0, 0, 0" Padding="15" ClipToBounds="True">
             <DockPanel>
-                <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0,0,0,20">
-                    <TextBlock Text="PREVIEW" FontWeight="Bold" FontSize="20"/>
-                </StackPanel>
-                <local:ScriptPreview DataContext="{Binding PreviewViewModel}" />
+                <TextBlock DockPanel.Dock="Top" Text="PREVIEW" FontWeight="Bold" FontSize="20"
+                    TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                    <TabControl>
+                        <TabItem Header="Plot">
+                            <local:ScriptPreview DataContext="{Binding PreviewViewModel}"/>
+                        </TabItem>
+                        <TabItem Header="JSON">
+                            <TextBox IsReadOnly="True" Text="{Binding PreviewJson}"/>
+                        </TabItem>
+                    </TabControl>
             </DockPanel>
         </Border>
     </Grid>

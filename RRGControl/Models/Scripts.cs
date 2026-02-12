@@ -1,4 +1,5 @@
-﻿using MoreLinq;
+﻿using Avalonia;
+using MoreLinq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -85,7 +86,7 @@ namespace RRGControl.Models
                 {
                     try
                     {
-                        string name = ReplaceAll(mAdapter.Script?.Name ?? "null", Path.GetInvalidFileNameChars(), '_');
+                        string name = ConfigProvider.ReplaceInvalidFilenameChars(mAdapter.Script?.Name ?? "null");
                         mCurrentCsv = new FileInfo(Path.Combine(mCsvsFolder, $"{DateTime.Now:yyyy-MM-dd HH-mm-ss} - {name}.csv"));
                         mCurrentCsv.Directory?.Create();
                         File.WriteAllText(mCurrentCsv.FullName, FormattableString.Invariant(
@@ -110,7 +111,7 @@ namespace RRGControl.Models
         }
         public void Save()
         {
-            (App.Current as App)?.SaveLastUsedScripts();
+            (Application.Current as App)?.SaveLastUsedScripts();
         }
         public void Recall()
         {
@@ -179,10 +180,6 @@ namespace RRGControl.Models
                     break;
                 }
             }
-        }
-        private static string ReplaceAll(string seed, char[] chars, char replacementCharacter)
-        {
-            return chars.Aggregate(seed, (str, cItem) => str.Replace(cItem, replacementCharacter));
         }
     }
 }
