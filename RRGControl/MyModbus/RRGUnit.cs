@@ -35,6 +35,7 @@ namespace RRGControl.MyModbus
                 if (item.Name == ConfigProvider.OperationModeRegName) encounteredOperationMode = true;
             }
             HasOperationModes = encounteredOperationMode;
+            AutoOpenCloseEnabled = HasOperationModes && UnitConfig.AutoOpenClose;
         }
 
         private void OnReadTimeout(object? sender, EventArgs e)
@@ -68,6 +69,7 @@ namespace RRGControl.MyModbus
 
         public Dictionary<string, ModbusRegister> Registers { get; private set; } = new Dictionary<string, ModbusRegister>(0);
         public bool HasOperationModes { get; private set; }
+        public bool AutoOpenCloseEnabled { get; private set; }
 
         //Default properties
         public double MaxFlowrate => UnitConfig.ConvertToUI(Registers[ConfigProvider.SetpointRegName].Base.Limits.Max);
@@ -82,14 +84,16 @@ namespace RRGControl.MyModbus
             set 
             {
                 Registers[ConfigProvider.SetpointRegName].Write(UnitConfig.ConvertToRegister(value));
-                if (!UnitConfig.AutoOpenClose) return;
-                if ((value > 0) && (Mode == ConfigProvider.ClosedModeName))
+                if (AutoOpenCloseEnabled)
                 {
-                    Mode = ConfigProvider.RegulateModeName;
-                }
-                else if ((value <= 0) && (Mode != ConfigProvider.ClosedModeName))
-                {
-                    Mode = ConfigProvider.ClosedModeName;
+                    if ((value > 0) && (Mode == ConfigProvider.ClosedModeName))
+                    {
+                        Mode = ConfigProvider.RegulateModeName;
+                    }
+                    else if ((value <= 0) && (Mode != ConfigProvider.ClosedModeName))
+                    {
+                        Mode = ConfigProvider.ClosedModeName;
+                    }
                 }
             }
 #pragma warning restore
@@ -98,16 +102,7 @@ namespace RRGControl.MyModbus
         {
             get
             {
-                if (!HasOperationModes) return "";
-                try
-                {
-                    return Registers[ConfigProvider.OperationModeRegName].GetValueName();
-                }
-                catch (Exception ex)
-                {
-                    LogEvent?.Invoke(this, ex.ToString());
-                    return "";
-                }
+                return HasOperationModes ? Registers[ConfigProvider.OperationModeRegName].GetValueName() : string.Empty;
             }
 #pragma warning disable CS4014
             set
