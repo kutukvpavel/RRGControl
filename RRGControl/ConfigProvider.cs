@@ -320,11 +320,11 @@ namespace RRGControl
                 LogEvent?.Invoke("Last used scripts serializer", $"{ex}");
             }
         }
-        public static void SaveNewScript(Adapters.Script s, string? alreadySerialized = null)
+        public static void SaveNewScript(Adapters.Script s, bool overwrite, string? alreadySerialized = null)
         {
             string path = ReplaceInvalidFilenameChars(s.Name);
             path = Path.Combine(Settings.ScriptsFolder, $"{path}{JsonExtension}");
-            if (File.Exists(path)) throw new IOException("File already exists.");
+            if (File.Exists(path) && !overwrite) throw new FileExistsException(path);
             File.WriteAllText(path, alreadySerialized ?? Serialize(s));
         }
         public static string Serialize<T>(T input)

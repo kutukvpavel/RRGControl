@@ -42,6 +42,7 @@ namespace RRGControl.ViewModels
             };
         }
 
+        private const string MessageBoxTitle = "Script GUI";
         private readonly Network mNetwork;
         private readonly Adapters.Script mScriptUnderConstruction = new();
 
@@ -115,10 +116,26 @@ namespace RRGControl.ViewModels
         {
             if (ScriptName.Length <= 0)
             {
-                await MsBox.Avalonia.MessageBoxManager.GetMessageBoxStandard("Script GUI", "Script Name can't be empty!").ShowAsync();
+                await MsBox.Avalonia.MessageBoxManager.GetMessageBoxStandard(MessageBoxTitle, "Script Name can't be empty!").ShowAsync();
                 return;
             }
-            ConfigProvider.SaveNewScript(mScriptUnderConstruction, PreviewJson.Length > 0 ? PreviewJson : null);
+            try
+            {
+                ConfigProvider.SaveNewScript(mScriptUnderConstruction, false, PreviewJson.Length > 0 ? PreviewJson : null);
+            }
+            catch (FileExistsException ex)
+            {
+                var mbResult = await MsBox.Avalonia.MessageBoxManager.GetMessageBoxStandard(MessageBoxTitle,
+                    $"Script with this name already exists ({ex.Message}).\nOverwrite?", MsBox.Avalonia.Enums.ButtonEnum.YesNo).ShowAsync();
+                if (mbResult == MsBox.Avalonia.Enums.ButtonResult.Yes)
+                {
+                    ConfigProvider.SaveNewScript(mScriptUnderConstruction, true, PreviewJson.Length > 0 ? PreviewJson : null);
+                }
+            }
+            catch (Exception ex)
+            {
+                await MsBox.Avalonia.MessageBoxManager.GetMessageBoxStandard(MessageBoxTitle, $"Failed to save script:\n{ex}").ShowAsync();
+            }
         }
         private void OnCommandPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
