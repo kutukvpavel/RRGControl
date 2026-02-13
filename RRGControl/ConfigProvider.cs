@@ -67,6 +67,13 @@ namespace RRGControl
             Formatting = Formatting.Indented,
             TypeNameHandling = TypeNameHandling.Auto
         };
+        public static readonly MyModbus.RRGModelConfig Bronkhorst = new MyModbus.RRGModelConfig("Bronkhorst", new List<MyModbus.ModbusRegisterBase>()
+        {
+            new MyModbus.ModbusRegisterBase(AddressRegName, 4010, 0, 1, 255),
+            new MyModbus.ModbusRegisterBase(SetpointRegName, 33, 0, 0, 32000),
+            new MyModbus.ModbusRegisterBase(MeasuredRegName, 32) { FirstBitAsSign = false },
+            new MyModbus.ModbusRegisterBase("Temperature", 1063)
+        });
         public static readonly MyModbus.RRGModelConfig RRG = new MyModbus.RRGModelConfig("RRG", new List<MyModbus.ModbusRegisterBase>()
         {
             new MyModbus.ModbusRegisterBase(AddressRegName, 0, 0, 1, 255),
@@ -116,17 +123,54 @@ namespace RRGControl
                     {
                         ConversionFactor = 0.015,
                         Model = "RRG", 
-                        Name = "Air", 
-                        ConversionUnits = "mL/min"
+                        Name = "Ex1", 
+                        ConversionUnits = "mL/min",
+                        GasName = "Nitrogen",
+                        FlowrateNumberFormat = "F1"
                     } 
                 },
                 { 
                     2, new MyModbus.RRGUnitConfig() 
+                    {
+                        ConversionFactor = 0.015,
+                        Model = "RRG12", 
+                        Name = "Ex2", 
+                        ConversionUnits = "mL/min",
+                        GasName = "He",
+                        FlowrateNumberFormat = "F1"
+                    } 
+                },
+                { 
+                    3, new MyModbus.RRGUnitConfig() 
                     { 
                         ConversionFactor = 0.0015,
+                        Model = "RRG20", 
+                        Name = "Ex3", 
+                        ConversionUnits = "mL/min",
+                        GasName = "O2",
+                        FlowrateNumberFormat = "F2"
+                    }
+                },
+                { 
+                    4, new MyModbus.RRGUnitConfig() 
+                    { 
+                        ConversionFactor = 0.003125,
+                        Model = "Bronkhorst", 
+                        Name = "Ex4", 
+                        ConversionUnits = "mL/min",
+                        GasName = "Air",
+                        FlowrateNumberFormat = "F1"
+                    } 
+                },
+                { 
+                    5, new MyModbus.RRGUnitConfig() 
+                    { 
+                        ConversionFactor = 0.003125,
                         Model = "RRG", 
-                        Name = "Gas", 
-                        ConversionUnits = "mL/min" 
+                        Name = "Ex5", 
+                        ConversionUnits = "mL/min",
+                        GasFactor = 0.27,
+                        FlowrateNumberFormat = "F1"
                     } 
                 }
             })

@@ -4,31 +4,44 @@
   "Type": "RTU",
   "Units": {
     "1": {
-      "Name": "Air_1",
-      "Model": "RRG12",
-      "ConversionFactor": 0.15,
-      "GasFactor": 1.0,
+      "Name": "Ex1",
+      "Model": "RRG",
+      "ConversionFactor": 0.015,
+      "GasName": "Nitrogen",
       "ConversionUnits": "mL/min",
-      "FlowrateNumberFormat": "F2",
-      "EnableAutoupdate": true
+      "FlowrateNumberFormat": "F1"
     },
     "2": {
-      "Name": "Air_2",
+      "Name": "Ex2",
       "Model": "RRG12",
-      "ConversionFactor": 0.15,
-      "GasFactor": 1.0,
+      "ConversionFactor": 0.015,
+      "GasName": "He",
       "ConversionUnits": "mL/min",
-      "FlowrateNumberFormat": "F2",
-      "EnableAutoupdate": true
+      "FlowrateNumberFormat": "F1"
+    },
+    "3": {
+      "Name": "Ex3",
+      "Model": "RRG20",
+      "ConversionFactor": 0.0015,
+      "GasName": "O2",
+      "ConversionUnits": "mL/min",
+      "FlowrateNumberFormat": "F2"
     },
     "4": {
-      "Name": "Gas",
-      "Model": "RRG12",
-      "ConversionFactor": 0.0015,
-      "GasFactor": 1.0,
+      "Name": "Ex4",
+      "Model": "Bronkhorst",
+      "ConversionFactor": 0.003125,
+      "GasName": "Air",
       "ConversionUnits": "mL/min",
-      "FlowrateNumberFormat": "F2",
-      "EnableAutoupdate": true
+      "FlowrateNumberFormat": "F1"
+    },
+    "5": {
+      "Name": "Ex5",
+      "Model": "RRG",
+      "ConversionFactor": 0.003125,
+      "GasFactor": 0.27,
+      "ConversionUnits": "mL/min",
+      "FlowrateNumberFormat": "F1"
     }
   }
 }

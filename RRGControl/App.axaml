@@ -3,6 +3,23 @@
              xmlns:local="using:RRGControl"
              x:Class="RRGControl.App"
              RequestedThemeVariant="Default">
+    <Application.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key='Light'>
+					<SolidColorBrush x:Key='GreenBrush'>LightGreen</SolidColorBrush>
+					<SolidColorBrush x:Key='OrangeBrush'>LightSalmon</SolidColorBrush>
+					<SolidColorBrush x:Key='BlueBrush'>LightBlue</SolidColorBrush>
+				</ResourceDictionary>
+				<ResourceDictionary x:Key='Dark'>
+					<SolidColorBrush x:Key='GreenBrush'>DarkGreen</SolidColorBrush>
+					<SolidColorBrush x:Key='OrangeBrush'>DarkRed</SolidColorBrush>
+					<SolidColorBrush x:Key='BlueBrush'>Blue</SolidColorBrush>
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
+		</ResourceDictionary>
+  	</Application.Resources>
+
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>

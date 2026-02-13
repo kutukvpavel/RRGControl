@@ -8,6 +8,18 @@
 		x:Class="RRGControl.Views.MainWindow"
 		Icon="/Assets/c.png"
 		Title="RRG Control" Opened="OnStartup">
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key='Light'>
+					<SolidColorBrush x:Key='BackgroundBrush'>#DFEFF4</SolidColorBrush>
+				</ResourceDictionary>
+				<ResourceDictionary x:Key='Dark'>
+					<SolidColorBrush x:Key='BackgroundBrush'>#003E51</SolidColorBrush>
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
+		</ResourceDictionary>
+  	</Window.Resources>
 	<Grid ColumnDefinitions="*" RowDefinitions="auto,*,auto">
 		<Menu Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="Gray">
 			<MenuItem Header="Network">
@@ -34,7 +46,7 @@
 		<TabControl Name="tabConnections" Padding="5" Grid.Column="0" Grid.Row="1" DataContext="{Binding Connections}" ItemsSource="{Binding}">
 			<TabControl.Styles>
 				<Style Selector="TabControl#tabConnections > Border > DockPanel > ItemsPresenter > WrapPanel">
-					<Setter Property="Background" Value="#DFEFF4"></Setter>
+					<Setter Property="Background" Value="{DynamicResource BackgroundBrush}"></Setter>
 				</Style>
 				<Style Selector="TabControl#tabConnections TabItem">
 					<Setter Property="Margin" Value="0,0,0,5"></Setter>

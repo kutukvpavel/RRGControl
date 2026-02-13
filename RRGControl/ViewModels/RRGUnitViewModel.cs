@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using System;
 using System.ComponentModel;
 
 namespace RRGControl.ViewModels
@@ -18,6 +19,12 @@ namespace RRGControl.ViewModels
             Dashboard = new DashboardViewModel(u);
             mUnit.PropertyChanged += MUnit_PropertyChanged;
             base.PropertyChanged += PropertyChanged;
+            if (App.Current != null) App.Current.ActualThemeVariantChanged += ThemeVariant_Changed;
+        }
+
+        private void ThemeVariant_Changed(object? sender, EventArgs e)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TabColor)));
         }
 
         private void MUnit_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -33,7 +40,7 @@ namespace RRGControl.ViewModels
 
         private MyModbus.RRGUnit mUnit;
 
-        public IBrush TabColor { get => mUnit.Present ? Brushes.LightGreen : Brushes.Orange; }
+        public IBrush TabColor { get => mUnit.Present ? App.GreenOK : App.OrangeWarning; }
         public string Name => mUnit.UnitConfig.Name;
         public RegisterViewModel[] Registers { get; }
         
