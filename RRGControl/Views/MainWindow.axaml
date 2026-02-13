@@ -18,8 +18,9 @@
 				<MenuItem Header="Start" Click="ScriptStart_Click" IsEnabled="{Binding ScriptStartEnable}"></MenuItem>
 				<MenuItem Header="Pause" Click="ScriptPause_Click" IsEnabled="{Binding ScriptPauseEnable}"></MenuItem>
 				<MenuItem Header="Stop" Click="ScriptStop_Click" IsEnabled="{Binding ScriptStopEnable}"></MenuItem>
+				<Separator/>
 				<MenuItem Header="Configure..." Click="ScriptConfigure_Click" IsEnabled="{Binding ScriptConfigureEnable}"></MenuItem>
-				<MenuItem Header="Create" Click="ScriptCreate_Click"/> <Separator/> 
+				<MenuItem Header="Create" Click="ScriptCreate_Click"/>
 			</MenuItem>
 			<MenuItem Header="View">
 				<MenuItem Header="Flowrate Summary" Click="Summary_Click"></MenuItem>

@@ -23,6 +23,7 @@ namespace RRGControl.MyModbus
         public int Baudrate { get; set; } = 19200;
         [JsonConverter(typeof(StringEnumConverter))]
         public ModbusType Type { get; set; } = ModbusType.RTU;
+        [JsonProperty(Required = Required.Default)]
         public int ThrottleDelayMs { get; set; } = 10;
         public Dictionary<ushort, RRGUnitConfig> Units { get; set; } = new Dictionary<ushort, RRGUnitConfig>();
     }

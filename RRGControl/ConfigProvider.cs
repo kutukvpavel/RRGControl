@@ -263,7 +263,7 @@ namespace RRGControl
         }
         public static void ReadLastUsedScripts(string filePath)
         {
-            LastScripts = DeserializeSettingsFile<LastUsedScripts>(filePath);
+            LastScripts = File.Exists(filePath) ? DeserializeSettingsFile<LastUsedScripts>(filePath) : new();
         }
         public static void SaveLastUsedScripts(string filePath)
         {

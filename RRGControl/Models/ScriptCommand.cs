@@ -1,44 +1,27 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
 namespace RRGControl.Models
 {
-    public class ScriptCommand : INotifyPropertyChanged
+    public class ScriptCommand
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
-
         public ScriptCommand()
         {
-            UnitSetpoints = new();
+            UnitSetpoints = Array.Empty<UnitSetpoint>();
         }
         public ScriptCommand(IEnumerable<UnitSetpoint> setpoints)
         {
-            UnitSetpoints = new(setpoints);
+            UnitSetpoints = setpoints.ToArray();
         }
         public ScriptCommand(int duration, IEnumerable<UnitSetpoint> setpoints) : this(setpoints)
         {
             Duration = duration;
         }
 
-        private int _duration = 10;
-        public int Duration
-        {
-            get => _duration;
-            set 
-            {
-                if (_duration != value)
-                {
-                    _duration = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Duration)));
-                }
-            }
-        }
-
-        public ObservableCollection<UnitSetpoint> UnitSetpoints { get; }
+        public int Duration { get; set; }
+        public UnitSetpoint[] UnitSetpoints { get; }
 
         public Adapters.Script.Element GetScriptAdapterElement()
         {

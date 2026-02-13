@@ -42,6 +42,7 @@ namespace RRGControl.Views
             Plot1.Plot.Legend.Alignment = Alignment.UpperRight;
             Plot1.Plot.Add.VerticalLine(ViewModel.CurrentProgressX,
                 pattern: ViewModel.CurrentProgressX > 0 ? LinePattern.Solid : LinePattern.Dotted);
+            Plot1.Plot.Axes.AutoScale();
             Plot1.Refresh();
             if (ViewModel.ErrorUnits.Count > 0)
             {

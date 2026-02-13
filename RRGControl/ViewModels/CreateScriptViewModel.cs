@@ -1,12 +1,13 @@
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Reactive;
-using System.Collections.Generic;
 using RRGControl.Models;
 using System;
 using System.Reactive.Linq;
 using System.Linq;
-using RRGControl.MyModbus;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace RRGControl.ViewModels
 {
@@ -17,24 +18,43 @@ namespace RRGControl.ViewModels
         public CreateScriptViewModel(Network network)
         {
             mNetwork = network;
-            mNewCommand = new(mUnitsByName.Keys.Select(x => new UnitSetpoint(x)));
-            mCommandUnderConstruction = mNewCommand;
             AddCommand = ReactiveCommand.Create(AddCommandExecute);
             RemoveCommand = ReactiveCommand.Create(RemoveCommandExecute);
-            SaveScriptCommand = ReactiveCommand.Create(SaveScriptExecute);
-            Commands.CollectionChanged += (s, e) => ConstructScript();
+            SaveScriptCommand = ReactiveCommand.CreateFromTask(SaveScriptExecute);
+            Commands.CollectionChanged += (s, e) =>
+            {
+                if (e.OldItems != null)
+                {
+                    foreach (var item in e.OldItems)
+                    {
+                        (item as ScriptCommandViewModel)!.PropertyChanged -= OnCommandPropertyChanged;
+                    }
+                }
+                if (e.NewItems != null)
+                {
+                    foreach (var item in e.NewItems)
+                    {
+                        (item as ScriptCommandViewModel)!.PropertyChanged += OnCommandPropertyChanged;
+                    }
+                }
+                this.RaisePropertyChanged(nameof(CanSave));
+                ConstructScriptAndPreviews();
+            };
         }
 
         private readonly Network mNetwork;
-        private Dictionary<string, RRGUnit> mUnitsByName => mNetwork.UnitsByName;
         private readonly Adapters.Script mScriptUnderConstruction = new();
-        private readonly ScriptCommand mNewCommand;
-        private ScriptCommand mCommandUnderConstruction;
 
+        [Required]
         public string ScriptName
         {
             get => mScriptUnderConstruction.Name;
-            set => mScriptUnderConstruction.Name = value;
+            set
+            {
+                mScriptUnderConstruction.Name = value;
+                this.RaisePropertyChanged();
+                this.RaisePropertyChanged(nameof(CanSave));
+            }
         }
         public string ScriptComment
         {
@@ -42,12 +62,6 @@ namespace RRGControl.ViewModels
             set => mScriptUnderConstruction.Comment = value;
         }
         public ObservableCollection<ScriptCommandViewModel> Commands { get; } = new();
-        public int NewDuration
-        {
-            get => mCommandUnderConstruction.Duration;
-            set => mCommandUnderConstruction.Duration = value;
-        }
-        public ObservableCollection<UnitSetpoint> SetpointsUnderConstruction => mCommandUnderConstruction.UnitSetpoints;
         private ScriptCommandViewModel? _selectedCommand = null;
         public ScriptCommandViewModel? SelectedCommand
         { 
@@ -56,11 +70,14 @@ namespace RRGControl.ViewModels
             {
                 if (_selectedCommand == value) return;
                 this.RaiseAndSetIfChanged(ref _selectedCommand, value);
-                mCommandUnderConstruction = _selectedCommand == null ? mNewCommand : _selectedCommand.Command;
-                this.RaisePropertyChanged(nameof(NewDuration));
-                this.RaisePropertyChanged(nameof(SetpointsUnderConstruction));
+                this.RaisePropertyChanged(nameof(CanDelete));
+                this.RaisePropertyChanged(nameof(CanEdit));
             }
         }
+        public int SelectedCommandIndex { get; set; } = -1;
+        public bool CanDelete => SelectedCommand != null;
+        public bool CanSave => (Commands.Count > 0) && (ScriptName.Length > 0);
+        public bool CanEdit => SelectedCommand != null;
         public ReactiveCommand<Unit, Unit> AddCommand { get; }
         public ReactiveCommand<Unit, Unit> RemoveCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveScriptCommand { get; }
@@ -77,7 +94,16 @@ namespace RRGControl.ViewModels
 
         private void AddCommandExecute()
         {
-            Commands.Add(new ScriptCommandViewModel(new ScriptCommand(mNewCommand.Duration, mNewCommand.UnitSetpoints)));
+            var svm = new ScriptCommandViewModel(new ScriptCommand(10, mNetwork.UnitsByName.Select(x => new UnitSetpoint(x.Key))));
+            if (SelectedCommandIndex > -1)
+            {
+                Commands.Insert(SelectedCommandIndex + 1, svm);
+            }
+            else
+            {
+                Commands.Add(svm);
+            }
+            SelectedCommand = svm;
         }
         private void RemoveCommandExecute()
         {
@@ -85,12 +111,20 @@ namespace RRGControl.ViewModels
             Commands.Remove(SelectedCommand); 
             SelectedCommand = null;
         }
-        private void SaveScriptExecute()
+        private async Task SaveScriptExecute()
         {
+            if (ScriptName.Length <= 0)
+            {
+                await MsBox.Avalonia.MessageBoxManager.GetMessageBoxStandard("Script GUI", "Script Name can't be empty!").ShowAsync();
+                return;
+            }
             ConfigProvider.SaveNewScript(mScriptUnderConstruction, PreviewJson.Length > 0 ? PreviewJson : null);
         }
-
-        private void ConstructScript()
+        private void OnCommandPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            ConstructScriptAndPreviews();
+        }
+        private void ConstructScriptAndPreviews()
         {
             mScriptUnderConstruction.Commands.Clear();
             mScriptUnderConstruction.Commands.AddRange(Commands.Select(x => x.Command.GetScriptAdapterElement()));

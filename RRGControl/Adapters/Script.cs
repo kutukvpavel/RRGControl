@@ -36,6 +36,11 @@ namespace RRGControl.Adapters
         {
             [JsonConstructor]
             public Element() : base() { }
+            public Element(LegacyScript.Element src)
+            {
+                Duration = src.Duration;
+                Packets = new Packet[] { src.Command };
+            }
 
             public Element(int dur, Packet[] p)
             {
@@ -68,6 +73,12 @@ namespace RRGControl.Adapters
             }
             Comment = "Compiled script";
         }
+        public Script(LegacyScript src)
+        {
+            Name = src.Name;
+            Comment = src.Comment;
+            Commands = src.Commands.Select(x => new Element()).ToList();
+        }
 
         public string Name { get; set; } = string.Empty;
         public string Comment { get; set; } = string.Empty;
@@ -89,43 +100,45 @@ namespace RRGControl.Adapters
             return res;
         }
 
-        public static Script? FromJson(string json)
+        private static T? FromJson<T>(string json, string schema)
         {
             using TextReader tr = new StringReader(json);
             using JsonReader r = new JsonTextReader(tr);
-            using JsonValidatingReader vr = new JsonValidatingReader(r);
-            vr.Schema = JsonSchema.Parse(Schema);
+            using JsonValidatingReader vr = new(r);
+            vr.Schema = JsonSchema.Parse(schema);
             IList<string> msgs = new List<string>();
             vr.ValidationEventHandler += (o, e) => { msgs.Add($"\t!! Validation message at {e.Path}: {e.Message}"); };
             JsonSerializer s = JsonSerializer.Create(ConfigProvider.SerializerOptions);
-            Script? res = null;
+            T? res = default;
             try
             {
-                res = s.Deserialize<Script>(vr);
+                res = s.Deserialize<T>(vr);
                 if (msgs.Any()) LogEvent?.Invoke(LogTag, string.Join('\n', msgs));
             }
             catch (Exception ex)
             {
                 LogEvent?.Invoke(LogTag, ex.Message);
-                LogEvent?.Invoke(LogTag, "Trying legacy script schema...");
-                vr.Schema = JsonSchema.Parse(LegacySchema);
-                msgs.Clear();
-                try
-                {
-                    LegacyScript? legacy = s.Deserialize<LegacyScript>(vr);
-                    if (msgs.Any()) LogEvent?.Invoke(LogTag, string.Join('\n', msgs));   
-                }
-                catch (Exception lex)
-                {
-                    LogEvent?.Invoke(LogTag, lex.ToString());
-                    throw;
-                }
+                throw;
+            }
+            return res;
+        }
+        public static Script? FromJson(string json)
+        {
+            Script? res = null;
+            try
+            {
+                res = FromJson<Script>(json, Schema);
+            }
+            catch (Exception)
+            {
+                LogEvent?.Invoke(LogTag, "Trying legacy schema...");
+                var ls = FromJson<LegacyScript>(json, LegacySchema);
+                res = (ls == null) ? null : new Script(ls);
             }
             return res;
         }
 
         private static readonly string LogTag = "Script Validation";
-
         private static readonly string Schema = @"
 {
 	'$schema': 'http://json-schema.org/draft-04/schema#',

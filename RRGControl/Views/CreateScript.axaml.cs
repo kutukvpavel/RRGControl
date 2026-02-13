@@ -1,6 +1,6 @@
 using Avalonia.Controls;
-using System;
 using RRGControl.ViewModels;
+using Avalonia.Input;
 
 namespace RRGControl.Views
 {
