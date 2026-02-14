@@ -28,6 +28,7 @@ namespace RRGControl.ViewModels
                 UpdateColors();
             }
         }
+        public Adapters.Script Model => mScript;
         public IBrush FontColor => IsSelected ? (App.IsDarkThemed ? Brushes.LightGreen : Brushes.Green) : (App.IsDarkThemed ? Brushes.White : Brushes.Black);
         public FontWeight FontWeight => IsSelected ? FontWeight.Bold : FontWeight.Normal;
 

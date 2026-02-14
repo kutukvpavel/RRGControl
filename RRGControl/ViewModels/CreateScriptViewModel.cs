@@ -8,6 +8,7 @@ using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using DynamicData;
 
 namespace RRGControl.ViewModels
 {
@@ -15,7 +16,7 @@ namespace RRGControl.ViewModels
     {
         public event EventHandler? PlotUpdateRequested;
 
-        public CreateScriptViewModel(Network network)
+        public CreateScriptViewModel(Network network, Adapters.Script? scriptToEdit = null)
         {
             mNetwork = network;
             AddCommand = ReactiveCommand.Create(AddCommandExecute);
@@ -40,6 +41,13 @@ namespace RRGControl.ViewModels
                 this.RaisePropertyChanged(nameof(CanSave));
                 ConstructScriptAndPreviews();
             };
+            if (scriptToEdit != null)
+            {
+                IsEditingExistingScript = true;
+                ScriptName = scriptToEdit.Name;
+                ScriptComment = scriptToEdit.Comment;
+                Commands.AddRange(scriptToEdit.Commands.Select(x => new ScriptCommandViewModel(new ScriptCommand(x))));
+            }
         }
 
         private const string MessageBoxTitle = "Script GUI";
@@ -62,6 +70,7 @@ namespace RRGControl.ViewModels
             get => mScriptUnderConstruction.Comment;
             set => mScriptUnderConstruction.Comment = value;
         }
+        public bool IsEditingExistingScript { get; } = false;
         public ObservableCollection<ScriptCommandViewModel> Commands { get; } = new();
         private ScriptCommandViewModel? _selectedCommand = null;
         public ScriptCommandViewModel? SelectedCommand
@@ -121,7 +130,7 @@ namespace RRGControl.ViewModels
             }
             try
             {
-                ConfigProvider.SaveNewScript(mScriptUnderConstruction, false, PreviewJson.Length > 0 ? PreviewJson : null);
+                ConfigProvider.SaveNewScript(mScriptUnderConstruction, IsEditingExistingScript, PreviewJson.Length > 0 ? PreviewJson : null);
             }
             catch (FileExistsException ex)
             {

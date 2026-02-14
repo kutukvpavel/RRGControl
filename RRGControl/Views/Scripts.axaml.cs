@@ -20,6 +20,13 @@ namespace RRGControl.Views
 
         private ViewModels.ScriptsViewModel? ViewModel => DataContext as ViewModels.ScriptsViewModel;
 
+        private void BtnEdit_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (ViewModel == null) return;
+            var w = ViewModel.GetEditorWindow();
+            if (w == null) return;
+            w.ShowDialog(this);
+        }
         private void BtnPreview_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             if (ViewModel == null) return;

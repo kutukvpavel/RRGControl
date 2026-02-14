@@ -19,6 +19,9 @@ namespace RRGControl.Models
         {
             Duration = duration;
         }
+        public ScriptCommand(Adapters.Script.Element elementToImport) 
+            : this(elementToImport.Duration, elementToImport.Packets.Select(x => new UnitSetpoint(x)))
+        { }
 
         public int Duration { get; set; }
         public UnitSetpoint[] UnitSetpoints { get; }

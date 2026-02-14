@@ -28,7 +28,7 @@ namespace RRGControl.ViewModels
         {
             mNetwork = n;
             mScript = s;
-            Scripts = new ScriptsViewModel(mScript);
+            Scripts = new ScriptsViewModel(mNetwork, mScript);
             Connections = new List<ConnectionViewModel>(n.Connections.Count);
             foreach (var item in n.Connections)
             {

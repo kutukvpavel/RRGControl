@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using RRGControl.Models;
+using RRGControl.Views;
 
 namespace RRGControl.ViewModels
 {
@@ -11,9 +13,10 @@ namespace RRGControl.ViewModels
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ScriptsViewModel(Models.Scripts s)
+        public ScriptsViewModel(Network network, Models.Scripts s)
         {
             mModel = s;
+            mNetwork = network;
             mModel.Update();
             InitViewModels();
             foreach (var item in mModel.LastChosenNames)
@@ -32,6 +35,7 @@ namespace RRGControl.ViewModels
         public IList? SelectedRight { get; set; }
         public bool CanAdd => (SelectedLeft?.Count ?? 0) > 0;
         public bool CanRemove => (SelectedRight?.Count ?? 0) > 0;
+        public bool CanEdit => (SelectedLeft?.Count ?? 0) == 1;
         public Dictionary<int, Adapters.Packet[]> Compiled => mModel.Compiled;
         public int Duration => mModel.Duration;
 
@@ -105,8 +109,19 @@ namespace RRGControl.ViewModels
         {
             mModel.Choose(ChosenItems.Select(x => x.Name));
         }
+        public CreateScript? GetEditorWindow()
+        {
+            var selectedScipt = SelectedLeft?.Cast<SingleScriptViewModel>().First().Model;
+            if (selectedScipt == null) return null;
+            var w = new CreateScript()
+            {
+                DataContext = new CreateScriptViewModel(mNetwork, selectedScipt)
+            };
+            return w;
+        }
 
         private readonly Models.Scripts mModel;
+        private readonly Network mNetwork;
         private readonly List<SingleScriptViewModel> mChosenBcp = new List<SingleScriptViewModel>();
 
         private void InitViewModels()
