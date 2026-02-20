@@ -88,27 +88,27 @@ Check working directory and its subfolders.");
         {
             MyVM?.ScriptStop();
         }
-        private void ScriptConfigure_Click(object sender, RoutedEventArgs e)
+        private async void ScriptConfigure_Click(object sender, RoutedEventArgs e)
         {
             var w = new Scripts() { DataContext = MyVM?.Scripts };
-            w.ShowDialog(this);
+            await w.ShowDialog(this);
         }
-        private void ScriptCreate_Click(object sender, RoutedEventArgs e)
+        private async void ScriptCreate_Click(object sender, RoutedEventArgs e)
         {
             if (Application.Current == null) return;
             var createVM = new ViewModels.CreateScriptViewModel((Application.Current as App)!.MyNetwork);
             var w = new CreateScript() { DataContext = createVM };
-            w.ShowDialog(this);
+            await w.ShowDialog(this);
         }
-        private void ProgressBar_Click(object sender, PointerPressedEventArgs e)
+        private async void ProgressBar_Click(object sender, PointerPressedEventArgs e)
         {
             if (MyVM == null) return;
             var w = new ScriptPreviewWindow() 
             { 
                 DataContext = new ViewModels.ScriptPreviewViewModel(MyVM.Scripts.Compiled, MyVM.Scripts.Duration,
-                    (App.Current as App)?.MyNetwork, MyVM.ScriptProgress)
+                    (Application.Current as App)?.MyNetwork, MyVM.ScriptProgress)
             };
-            w.ShowDialog(this);
+            await w.ShowDialog(this);
         }
     }
 }
