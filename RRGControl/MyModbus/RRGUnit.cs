@@ -102,7 +102,16 @@ namespace RRGControl.MyModbus
         {
             get
             {
-                return HasOperationModes ? Registers[ConfigProvider.OperationModeRegName].GetValueName() : string.Empty;
+                try
+                {
+                    return HasOperationModes ? Registers[ConfigProvider.OperationModeRegName].GetValueName() : string.Empty;
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    LogEvent?.Invoke(this,
+                        $"Unable to parse {ConfigProvider.OperationModeRegName} value of unit '{UnitConfig.Name}'");
+                    return string.Empty;
+                }
             }
 #pragma warning disable CS4014
             set
