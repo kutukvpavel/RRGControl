@@ -20,24 +20,23 @@ namespace RRGControl.Views
 
         private ViewModels.ScriptsViewModel? ViewModel => DataContext as ViewModels.ScriptsViewModel;
 
-        private void BtnEdit_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void BtnEdit_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             if (ViewModel == null) return;
             var w = ViewModel.GetEditorWindow();
             if (w == null) return;
-            w.ShowDialog(this);
+            await w.ShowDialog(this);
         }
-        private void BtnPreview_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void BtnPreview_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             if (ViewModel == null) return;
             ViewModel.Choose();
-            var pm = new ViewModels.ScriptPreviewViewModel();
-            pm.UpdatePreview(ViewModel.Compiled, ViewModel.Duration, (Application.Current as App)?.MyNetwork, 0);
+            var pm = new ViewModels.ScriptPreviewViewModel(ViewModel.Compiled, ViewModel.Duration, (Application.Current as App)?.MyNetwork, 0);
             var w = new ScriptPreviewWindow() 
             {
                 DataContext = pm
             };
-            w.ShowDialog(this);
+            await w.ShowDialog(this);
         }
         private void BtnRemove_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {

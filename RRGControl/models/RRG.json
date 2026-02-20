@@ -10,14 +10,7 @@
         "Min": 1,
         "Max": 255
       },
-      "ShowInDashboard": true,
-      "DefaultValue": 0,
-      "FirstBitAsSign": false,
-      "OnlyLowByte": false,
-      "LastValueSpans": false,
-      "WriteAsCoils": false,
-      "CoilAddress": -1,
-      "CoilLength": 0
+      "DefaultValue": 0
     },
     {
       "Name": "OperationMode",
@@ -33,14 +26,7 @@
         "Min": 0,
         "Max": 32767
       },
-      "ShowInDashboard": true,
-      "DefaultValue": 19,
-      "FirstBitAsSign": false,
-      "OnlyLowByte": false,
-      "LastValueSpans": false,
-      "WriteAsCoils": false,
-      "CoilAddress": -1,
-      "CoilLength": 0
+      "DefaultValue": 19
     },
     {
       "Name": "Setpoint",
@@ -52,14 +38,7 @@
         "Min": 0,
         "Max": 10000
       },
-      "ShowInDashboard": true,
-      "DefaultValue": 0,
-      "FirstBitAsSign": false,
-      "OnlyLowByte": false,
-      "LastValueSpans": false,
-      "WriteAsCoils": false,
-      "CoilAddress": -1,
-      "CoilLength": 0
+      "DefaultValue": 0
     },
     {
       "Name": "Measured",
@@ -71,14 +50,8 @@
         "Min": 0,
         "Max": 32767
       },
-      "ShowInDashboard": true,
       "DefaultValue": 0,
-      "FirstBitAsSign": true,
-      "OnlyLowByte": false,
-      "LastValueSpans": false,
-      "WriteAsCoils": false,
-      "CoilAddress": -1,
-      "CoilLength": 0
+      "FirstBitAsSign": true
     }
   ],
   "ModelPath": "RRG"

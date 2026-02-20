@@ -77,7 +77,7 @@ namespace RRGControl.Adapters
         {
             Name = src.Name;
             Comment = src.Comment;
-            Commands = src.Commands.Select(x => new Element()).ToList();
+            Commands = src.Commands.Select(x => new Element(x)).ToList();
         }
 
         public string Name { get; set; } = string.Empty;

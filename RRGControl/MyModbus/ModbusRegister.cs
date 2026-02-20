@@ -65,7 +65,7 @@ namespace RRGControl.MyModbus
                     var lastValue = Base.Values.Last();
                     if (Value >= lastValue.Value) return lastValue.Key;
                 }
-                throw;
+                throw new ArgumentOutOfRangeException(Base.Name, Value, "Unable to find fixed string representation");
             }
         }
         public async Task<bool> Read()

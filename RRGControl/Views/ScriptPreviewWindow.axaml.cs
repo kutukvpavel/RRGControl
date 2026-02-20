@@ -7,7 +7,7 @@ namespace RRGControl.Views
     {
         public ScriptPreviewWindow()
         {
-            
+            InitializeComponent();
         }
     }
 }

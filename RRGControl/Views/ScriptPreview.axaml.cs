@@ -21,6 +21,7 @@ namespace RRGControl.Views
                 };
                 Plot();
             };
+            //Loaded += (o, e) => Plot();
         }
 
         private ViewModels.ScriptPreviewViewModel? ViewModel => DataContext as ViewModels.ScriptPreviewViewModel;

@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace RRGControl.MyModbus
@@ -90,14 +91,42 @@ namespace RRGControl.MyModbus
         [JsonProperty(IsReference = false, DefaultValueHandling = DefaultValueHandling.Include, 
             ObjectCreationHandling = ObjectCreationHandling.Replace)]
         public RegisterLimits Limits { get; set; } = DefaultLimits;
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue(true)]
         public bool ShowInDashboard { get; set; } = true;
         public short DefaultValue { get; set; } = 0;
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool FirstBitAsSign { get; set; } = false;
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool OnlyLowByte { get; set; } = false;
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool LastValueSpans { get; set; } = false;
-        public bool WriteAsCoils { get; set; } = false;
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public bool TreatAsCoils { get; set; } = false;
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue(-1)]
         public short CoilAddress { get; set; } = -1;
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public short CoilLength { get; set; } = 0;
+
+        [JsonIgnore]
+        protected short _CoilMask = 0;
+        [JsonIgnore]
+        public short CoilReadMask
+        {
+            get
+            {
+                if (_CoilMask == 0)
+                {
+                    if (CoilAddress < 0 || CoilLength <= 0) throw new ArgumentOutOfRangeException("CoilAddress or CoilLength");
+                    for (int i = 0; i < CoilLength; i++)
+                    {
+                        _CoilMask |= (short)(ushort)((uint)1 << (i + CoilAddress));
+                    }
+                }
+                return _CoilMask;
+            }
+        }
         
         public bool ValidateValue(short v)
         {

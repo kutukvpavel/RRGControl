@@ -34,7 +34,7 @@
 			<ItemsControl ItemsSource="{Binding Registers}" Margin="0,3,15,3">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<local:Register DataContext="{Binding}"></local:Register>
+						<local:Register DataContext="{Binding}" IsVisible="{Binding ShowInDashboard}"></local:Register>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>

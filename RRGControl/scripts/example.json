@@ -1,0 +1,90 @@
+{
+  "Name": "Example Script",
+  "Comment": "Example Comment",
+  "Commands": [
+    {
+      "Duration": 1,
+      "Packets": [
+        {
+          "UnitName": "Gas",
+          "RegisterName": "OperationMode",
+          "Value": "Regulate"
+        }
+      ]
+    },
+    {
+      "Duration": 5,
+      "Packets": [
+        {
+          "UnitName": "Air",
+          "RegisterName": "OperationMode",
+          "Value": "Regulate"
+        }
+      ]
+    },
+    {
+      "Duration": 1,
+      "Packets": [
+        {
+          "UnitName": "Air",
+          "RegisterName": "Setpoint",
+          "Value": "10",
+          "ConvertUnits": true
+        }
+      ]
+    },
+    {
+      "Duration": 10,
+      "Packets": [
+        {
+          "UnitName": "Gas",
+          "RegisterName": "Setpoint",
+          "Value": "100",
+          "ConvertUnits": true
+        }
+      ]
+    },
+    {
+      "Duration": 1,
+      "Packets": [
+        {
+          "UnitName": "Air",
+          "RegisterName": "Setpoint",
+          "Value": "0",
+          "ConvertUnits": true
+        }
+      ]
+    },
+    {
+      "Duration": 10,
+      "Packets": [
+        {
+          "UnitName": "Gas",
+          "RegisterName": "Setpoint",
+          "Value": "0",
+          "ConvertUnits": true
+        }
+      ]
+    },
+    {
+      "Duration": 1,
+      "Packets": [
+        {
+          "UnitName": "Air",
+          "RegisterName": "OperationMode",
+          "Value": "Regulate"
+        }
+      ]
+    },
+    {
+      "Duration": 5,
+      "Packets": [
+        {
+          "UnitName": "Gas",
+          "RegisterName": "OperationMode",
+          "Value": "Closed"
+        }
+      ]
+    }
+  ]
+}

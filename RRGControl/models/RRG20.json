@@ -10,14 +10,7 @@
         "Min": 30,
         "Max": 10000
       },
-      "ShowInDashboard": true,
-      "DefaultValue": 200,
-      "FirstBitAsSign": false,
-      "OnlyLowByte": false,
-      "LastValueSpans": false,
-      "WriteAsCoils": false,
-      "CoilAddress": -1,
-      "CoilLength": 0
+      "DefaultValue": 200
     },
     {
       "Name": "SoftStartStep",
@@ -29,14 +22,7 @@
         "Min": 2,
         "Max": 10
       },
-      "ShowInDashboard": true,
-      "DefaultValue": 10,
-      "FirstBitAsSign": false,
-      "OnlyLowByte": false,
-      "LastValueSpans": false,
-      "WriteAsCoils": false,
-      "CoilAddress": -1,
-      "CoilLength": 0
+      "DefaultValue": 10
     },
     {
       "Name": "SoftStartEnable",
@@ -51,14 +37,7 @@
         "Min": 0,
         "Max": 32767
       },
-      "ShowInDashboard": true,
-      "DefaultValue": 1,
-      "FirstBitAsSign": false,
-      "OnlyLowByte": false,
-      "LastValueSpans": false,
-      "WriteAsCoils": false,
-      "CoilAddress": -1,
-      "CoilLength": 0
+      "DefaultValue": 1
     }
   ],
   "ModelPath": "RRG/RRG20"

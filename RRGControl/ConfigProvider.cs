@@ -67,55 +67,71 @@ namespace RRGControl
             Formatting = Formatting.Indented,
             TypeNameHandling = TypeNameHandling.Auto
         };
-        public static readonly MyModbus.RRGModelConfig Bronkhorst = new MyModbus.RRGModelConfig("Bronkhorst", new List<MyModbus.ModbusRegisterBase>()
+        public static readonly MyModbus.RRGModelConfig Bronkhorst = new("Bronkhorst", new List<MyModbus.ModbusRegisterBase>()
         {
-            new MyModbus.ModbusRegisterBase(AddressRegName, 4010, 0, 1, 255),
-            new MyModbus.ModbusRegisterBase(SetpointRegName, 33, 0, 0, 32000),
-            new MyModbus.ModbusRegisterBase(MeasuredRegName, 32) { FirstBitAsSign = false },
-            new MyModbus.ModbusRegisterBase("Temperature", 1063)
+            new(AddressRegName, 4010, 0, 1, 255),
+            new(SetpointRegName, 33, 0, 0, 32000),
+            new(MeasuredRegName, 32) { FirstBitAsSign = false },
+            new("Temperature", 1063)
         });
-        public static readonly MyModbus.RRGModelConfig RRG = new MyModbus.RRGModelConfig("RRG", new List<MyModbus.ModbusRegisterBase>()
+        public static readonly MyModbus.RRGModelConfig RRG = new("RRG", new List<MyModbus.ModbusRegisterBase>()
         {
-            new MyModbus.ModbusRegisterBase(AddressRegName, 0, 0, 1, 255),
-            new MyModbus.ModbusRegisterBase(OperationModeRegName, 2, 19, new Dictionary<string, short>()
+            new(AddressRegName, 0, 0, 1, 255),
+            new(OperationModeRegName, 2, 19, new Dictionary<string, short>()
             {
                 { RegulateModeName, 19 },
                 { OpenModeName, 6 },
                 { ClosedModeName, 10 }
             }),
-            new MyModbus.ModbusRegisterBase(SetpointRegName, 4, 0, 0, 10000),
-            new MyModbus.ModbusRegisterBase(MeasuredRegName, 5) { FirstBitAsSign = true }
+            new(SetpointRegName, 4, 0, 0, 10000),
+            new(MeasuredRegName, 5) { FirstBitAsSign = true }
         });
-        public static readonly MyModbus.RRGModelConfig RRG20 = new MyModbus.RRGModelConfig(
+        public static readonly MyModbus.RRGModelConfig RRG20 = new(
             $"RRG{MyModbus.RRGModelConfig.ModelPathSeparator}RRG20", new List<MyModbus.ModbusRegisterBase>()
             {
-                new MyModbus.ModbusRegisterBase("SoftStartTime", 19, 200, 30, 10000),
-                new MyModbus.ModbusRegisterBase("SoftStartStep", 20, 10, 2, 10),
-                new MyModbus.ModbusRegisterBase("SoftStartEnable", 21, 1, new Dictionary<string, short>()
+                new("SoftStartTime", 19, 200, 30, 10000),
+                new("SoftStartStep", 20, 10, 2, 10),
+                new("SoftStartEnable", 21, 1, new Dictionary<string, short>()
                 {
                     { "Enable", 1 },
                     { "Disable", 0 }
                 })
             });
-        public static readonly MyModbus.RRGModelConfig RRG12 = new MyModbus.RRGModelConfig(
+        public static readonly MyModbus.RRGModelConfig RRG12 = new(
             $"RRG{MyModbus.RRGModelConfig.ModelPathSeparator}RRG12", new List<MyModbus.ModbusRegisterBase>()
             {
-                new MyModbus.ModbusRegisterBase("SerialNumber", 1),
-                new MyModbus.ModbusRegisterBase("StatusFlags", 3),
-                new MyModbus.ModbusRegisterBase("Baudrate", 6, 0x02, new Dictionary<string, short>()
+                new("SerialNumber", 1),
+                new("StatusFlags1", 2),
+                new("StatusFlags2", 3),
+                new("Baudrate", 6, 0x02, new Dictionary<string, short>()
                 {
                     { "9600", 0x00 },
                     { "38400", 0x01 },
                     { "19200", 0x02 }
                 }) { OnlyLowByte = true, LastValueSpans = true },
-                new MyModbus.ModbusRegisterBase("OperationMode", 2, 2, new Dictionary<string, short>()
+                new(OperationModeRegName, 2, 0, new Dictionary<string, short>()
                 {
-                    { RegulateModeName, 2 },
-                    { OpenModeName, 6 },
-                    { ClosedModeName, 10 }
-                }) { WriteAsCoils = true, CoilAddress = 2, CoilLength = 2 }
+                    { RegulateModeName, 0 },
+                    { OpenModeName, 4 },
+                    { ClosedModeName, 8 }
+                }) { TreatAsCoils = true, CoilAddress = 2, CoilLength = 2 },
+                new("InputSelect", 2, 0, new Dictionary<string, short>()
+                {
+                    { "Analog", 0 },
+                    { "Digital", 1 }
+                }) { TreatAsCoils = true, CoilAddress = 1, CoilLength = 1 },
+                new("Persistence", 2, 1, new Dictionary<string, short>()
+                {
+                    { "Disabled", 1 },
+                    { "Enabled", 0 }
+                }) { TreatAsCoils = true, CoilAddress = 4, CoilLength = 1 },
+                new("CalibrateZero", 2, 0, new Dictionary<string, short>()
+                {
+                    { "Idle", 0 },
+                    { "Calibrate", 1 }
+                }) { TreatAsCoils = true, CoilAddress = 6, CoilLength = 1, ShowInDashboard = false }
             });
-        public static readonly MyModbus.RRGUnitMapping ExampleMapping = new MyModbus.RRGUnitMapping(
+        public static readonly MyModbus.RRGUnitMapping ExampleMapping = new(
             new Dictionary<ushort, MyModbus.RRGUnitConfig>()
             {
                 { 

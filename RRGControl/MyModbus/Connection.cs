@@ -115,7 +115,7 @@ namespace RRGControl.MyModbus
                 unchecked
                 {
                     var wrt = r.Base.OnlyLowByte ? (ushort)(v & (short)0xFF) : (ushort)v;
-                    if (r.Base.WriteAsCoils)
+                    if (r.Base.TreatAsCoils)
                     {
                         bool[] arr = new bool[r.Base.CoilLength];
                         for (int i = 0; i < r.Base.CoilLength; i++)
@@ -153,10 +153,16 @@ namespace RRGControl.MyModbus
                     }
                     else
                     {
+                        short truncatedValue;
                         unchecked
                         {
-                            return r.Base.OnlyLowByte ? (short)(ret[0] & (ushort)0xFF) : (short)ret[0];
+                            truncatedValue = r.Base.OnlyLowByte ? (short)(ret[0] & (ushort)0xFF) : (short)ret[0];
                         }
+                        if (r.Base.TreatAsCoils)
+                        {
+                            truncatedValue &= r.Base.CoilReadMask;
+                        }
+                        return truncatedValue;
                     }
                 }
                 else

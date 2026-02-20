@@ -10,17 +10,22 @@
         "Min": 0,
         "Max": 32767
       },
-      "ShowInDashboard": true,
-      "DefaultValue": 0,
-      "FirstBitAsSign": false,
-      "OnlyLowByte": false,
-      "LastValueSpans": false,
-      "WriteAsCoils": false,
-      "CoilAddress": -1,
-      "CoilLength": 0
+      "DefaultValue": 0
     },
     {
-      "Name": "StatusFlags",
+      "Name": "StatusFlags1",
+      "Address": 2,
+      "ValueType": "Range",
+      "Type": "ReadOnly",
+      "Values": null,
+      "Limits": {
+        "Min": 0,
+        "Max": 32767
+      },
+      "DefaultValue": 0
+    },
+    {
+      "Name": "StatusFlags2",
       "Address": 3,
       "ValueType": "Range",
       "Type": "ReadOnly",
@@ -29,14 +34,7 @@
         "Min": 0,
         "Max": 32767
       },
-      "ShowInDashboard": true,
-      "DefaultValue": 0,
-      "FirstBitAsSign": false,
-      "OnlyLowByte": false,
-      "LastValueSpans": false,
-      "WriteAsCoils": false,
-      "CoilAddress": -1,
-      "CoilLength": 0
+      "DefaultValue": 0
     },
     {
       "Name": "Baudrate",
@@ -52,14 +50,9 @@
         "Min": 0,
         "Max": 32767
       },
-      "ShowInDashboard": true,
       "DefaultValue": 2,
-      "FirstBitAsSign": false,
       "OnlyLowByte": true,
-      "LastValueSpans": true,
-      "WriteAsCoils": false,
-      "CoilAddress": -1,
-      "CoilLength": 0
+      "LastValueSpans": true
     },
     {
       "Name": "OperationMode",
@@ -67,22 +60,73 @@
       "ValueType": "Fixed",
       "Type": "ReadWrite",
       "Values": {
-        "Regulate": 2,
-        "Open": 6,
-        "Closed": 10
+        "Regulate": 0,
+        "Open": 4,
+        "Closed": 8
       },
       "Limits": {
         "Min": 0,
         "Max": 32767
       },
-      "ShowInDashboard": true,
-      "DefaultValue": 2,
-      "FirstBitAsSign": false,
-      "OnlyLowByte": false,
-      "LastValueSpans": false,
-      "WriteAsCoils": true,
+      "DefaultValue": 0,
+      "TreatAsCoils": true,
       "CoilAddress": 2,
       "CoilLength": 2
+    },
+    {
+      "Name": "InputSelect",
+      "Address": 2,
+      "ValueType": "Fixed",
+      "Type": "ReadWrite",
+      "Values": {
+        "Analog": 0,
+        "Digital": 1
+      },
+      "Limits": {
+        "Min": 0,
+        "Max": 32767
+      },
+      "DefaultValue": 0,
+      "TreatAsCoils": true,
+      "CoilAddress": 1,
+      "CoilLength": 1
+    },
+    {
+      "Name": "Persistence",
+      "Address": 2,
+      "ValueType": "Fixed",
+      "Type": "ReadWrite",
+      "Values": {
+        "Disabled": 1,
+        "Enabled": 0
+      },
+      "Limits": {
+        "Min": 0,
+        "Max": 32767
+      },
+      "DefaultValue": 1,
+      "TreatAsCoils": true,
+      "CoilAddress": 4,
+      "CoilLength": 1
+    },
+    {
+      "Name": "CalibrateZero",
+      "Address": 2,
+      "ValueType": "Fixed",
+      "Type": "ReadWrite",
+      "Values": {
+        "Idle": 0,
+        "Calibrate": 1
+      },
+      "Limits": {
+        "Min": 0,
+        "Max": 32767
+      },
+      "ShowInDashboard": false,
+      "DefaultValue": 0,
+      "TreatAsCoils": true,
+      "CoilAddress": 6,
+      "CoilLength": 1
     }
   ],
   "ModelPath": "RRG/RRG12"
