@@ -29,7 +29,8 @@ namespace RRGControl.Models
         public Adapters.Script.Element GetScriptAdapterElement()
         {
             return new Adapters.Script.Element(Duration, UnitSetpoints.Select(x =>
-                new Adapters.Packet(x.UnitName, ConfigProvider.SetpointRegName, x.Setpoint.ToString(CultureInfo.InvariantCulture))).ToArray());
+                new Adapters.Packet(x.UnitName, ConfigProvider.SetpointRegName, x.Setpoint.ToString(CultureInfo.InvariantCulture)) { ConvertUnits = true })
+                .ToArray());
         }
     }
 }
