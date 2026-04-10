@@ -29,25 +29,25 @@
   </ItemGroup>
   <ItemGroup>
 	<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-	<PackageReference Include="Avalonia" Version="11.3.0" />
-	<PackageReference Include="Avalonia.Desktop" Version="11.3.0" />
-	<PackageReference Include="Avalonia.Diagnostics" Version="11.3.0" />
-	<PackageReference Include="Avalonia.ReactiveUI" Version="11.3.0" />
-	<PackageReference Include="Avalonia.Skia" Version="11.3.0" />
-	<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0" />
+	<PackageReference Include="Avalonia" Version="11.3.9" />
+	<PackageReference Include="Avalonia.Desktop" Version="11.3.9" />
+	<PackageReference Include="Avalonia.Diagnostics" Version="11.3.9" />
+	<PackageReference Include="Avalonia.ReactiveUI" Version="11.3.9" />
+	<PackageReference Include="Avalonia.Skia" Version="11.3.9" />
+	<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9" />
 	<PackageReference Include="CommandLineParser" Version="2.9.1" />
-	<PackageReference Include="CsvHelper" Version="33.0.1" />
+	<PackageReference Include="CsvHelper" Version="33.1.0" />
 	<PackageReference Include="L" Version="5.0.0" />
-	<PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
+	<PackageReference Include="MessageBox.Avalonia" Version="3.3.1.1" />
 	<PackageReference Include="morelinq" Version="4.4.0" />
 	<PackageReference Include="NamedPipeWrapper.NetCore" Version="1.0.0" />
-	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 	<PackageReference Include="NModbus" Version="3.0.81" />
 	<PackageReference Include="NModbus.SerialPortStream" Version="3.0.81" />
-	<PackageReference Include="ScottPlot.Avalonia" Version="5.0.55" />
-	<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.119.0" />
-	<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="3.119.0" />
-	<PackageReference Include="SkiaSharp" Version="3.119.0" />
+	<PackageReference Include="ScottPlot.Avalonia" Version="5.0.56" />
+	<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.116.1" />
+	<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="3.116.1" />
+	<PackageReference Include="SkiaSharp" Version="3.116.1" />
   </ItemGroup>
   <ItemGroup>
 	<Compile Update="Views\Register.axaml.cs">
