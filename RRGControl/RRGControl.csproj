@@ -45,9 +45,9 @@
 	<PackageReference Include="NModbus" Version="3.0.81" />
 	<PackageReference Include="NModbus.SerialPortStream" Version="3.0.81" />
 	<PackageReference Include="ScottPlot.Avalonia" Version="5.0.56" />
-	<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.9" />
-	<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.9" />
-	<PackageReference Include="SkiaSharp" Version="2.88.9" />
+	<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.116.1" />
+	<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="3.116.1" />
+	<PackageReference Include="SkiaSharp" Version="3.116.1" />
   </ItemGroup>
   <ItemGroup>
 	<Compile Update="Views\Register.axaml.cs">
