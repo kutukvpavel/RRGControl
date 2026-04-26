@@ -94,8 +94,18 @@ namespace RRGControl.Models
             {
                 var u = mUnitsByName[e.UnitName];
                 if (!u.Present) return;
-                var r = u.Registers[e.RegisterName];
-                r.WriteStringRepresentation(e.GetConvertedValue(u)).Wait();
+                switch (e.RegisterName)
+                {
+                    case ConfigProvider.SetpointRegName:
+                        u.SetSetpointWithChecks(e.GetUnitConvertedValue(u)).Wait();
+                        break;
+                    default:
+                        {
+                            var r = u.Registers[e.RegisterName];
+                            r.WriteStringRepresentation(e.GetUnitConvertedValueString(u)).Wait();
+                            break;
+                        }
+                }
             }
             catch (FormatException)
             {

@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace RRGControl.Adapters
 {
-    public class NamedPipeAdapter : AdapterBase, IAdapter, IDisposable
+    public class NamedPipeAdapter : RemoteAdapterBase, IAdapter, IDisposable
     {
         public static event EventHandler<string>? LogEvent;
 

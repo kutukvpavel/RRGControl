@@ -36,6 +36,8 @@ namespace RRGControl.MyModbus
             }
             HasOperationModes = encounteredOperationMode;
             AutoOpenCloseEnabled = HasOperationModes && UnitConfig.AutoOpenClose;
+            LogEvent?.Invoke(this,
+                $"Register init: {UnitConfig.Name}, has modes = {HasOperationModes}, auto open/close = {AutoOpenCloseEnabled}");
         }
 
         private void OnReadTimeout(object? sender, EventArgs e)
@@ -80,23 +82,12 @@ namespace RRGControl.MyModbus
         public double Setpoint
         {
             get => UnitConfig.ConvertToUI(Registers[ConfigProvider.SetpointRegName].Value);
-#pragma warning disable CS4014
             set 
             {
-                Registers[ConfigProvider.SetpointRegName].Write(UnitConfig.ConvertToRegister(value));
-                if (AutoOpenCloseEnabled)
-                {
-                    if ((value > 0) && (Mode == ConfigProvider.ClosedModeName))
-                    {
-                        Mode = ConfigProvider.RegulateModeName;
-                    }
-                    else if ((value <= 0) && (Mode != ConfigProvider.ClosedModeName))
-                    {
-                        Mode = ConfigProvider.ClosedModeName;
-                    }
-                }
-            }
+#pragma warning disable CS4014
+                SetSetpointWithChecks(value);
 #pragma warning restore
+            }
         }
         public string Mode
         {
@@ -143,6 +134,28 @@ namespace RRGControl.MyModbus
             }
         }
 
+        public async Task SetSetpointWithChecks(double value)
+        {
+            if (!ValidateSetpoint(value)) return;
+            await Registers[ConfigProvider.SetpointRegName].Write(UnitConfig.ConvertToRegister(value));
+            if (AutoOpenCloseEnabled)
+            {
+                if ((value > 0) && (Mode == ConfigProvider.ClosedModeName))
+                {
+                    Mode = ConfigProvider.RegulateModeName;
+                    LogEvent?.BeginInvoke(this,
+                        $"INFO: the mode of '{UnitConfig.Name}' was switched automatically to Regulate",
+                        null, null);
+                }
+                else if ((value <= 0) && (Mode != ConfigProvider.ClosedModeName))
+                {
+                    Mode = ConfigProvider.ClosedModeName;
+                    LogEvent?.BeginInvoke(this,
+                        $"INFO: the mode of '{UnitConfig.Name}' was switched automatically to Closed",
+                        null, null);
+                }
+            }
+        }
         public async Task<bool> ChangeAddress(ushort a)
         {
             var addrReg = Registers[ConfigProvider.AddressRegName];

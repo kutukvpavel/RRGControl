@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace RRGControl.Adapters
 {
-    public class SocketAdapter : AdapterBase, IAdapter, IDisposable
+    public class SocketAdapter : RemoteAdapterBase, IAdapter, IDisposable
     {
         public static event EventHandler<string>? LogEvent;
 

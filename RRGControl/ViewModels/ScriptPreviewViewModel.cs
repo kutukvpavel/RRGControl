@@ -45,8 +45,8 @@ namespace RRGControl.ViewModels
                     var tmp = compiled.Select(x =>
                     {
                         return new KeyValuePair<int, Adapters.Packet?>(x.Key, x.Value.LastOrDefault(
-                            y => y.UnitName == item && y.RegisterName == ConfigProvider.SetpointRegName && y.TryConvertValueToDouble(out _)));
-                    }).Where(x => x.Value != null).ToDictionary(x => (double)x.Key, x => x.Value!.ConvertValueToDouble());
+                            y => y.UnitName == item && y.RegisterName == ConfigProvider.SetpointRegName && y.TryGetRawDouble(out _)));
+                    }).Where(x => x.Value != null).ToDictionary(x => (double)x.Key, x => x.Value!.ToRawDouble());
                     try
                     {
                         var lst = tmp.Last();

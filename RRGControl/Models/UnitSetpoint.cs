@@ -13,7 +13,7 @@ namespace RRGControl.Models
             //ToDo: support scripted commands other than Setpoint (at least view them gracefully)
             //Breaks legacy scrpts for now
             if (packet.RegisterName != ConfigProvider.SetpointRegName) throw new InvalidOperationException();
-            Setpoint = packet.ConvertValueToDouble();
+            Setpoint = packet.ToRawDouble();
         }
 
         public string UnitName { get; }

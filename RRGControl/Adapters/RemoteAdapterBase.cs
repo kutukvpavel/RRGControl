@@ -4,11 +4,11 @@ using System.Threading;
 
 namespace RRGControl.Adapters
 {
-    public abstract class AdapterBase : IAdapter
+    public abstract class RemoteAdapterBase : IAdapter
     {
         public event EventHandler<Packet>? PacketReceived;
 
-        protected AdapterBase(CancellationToken t)
+        protected RemoteAdapterBase(CancellationToken t)
         {
             mToken = t;
             mSenderThread = new Thread(ProcessSendQueue);

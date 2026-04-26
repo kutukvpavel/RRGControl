@@ -1,7 +1,8 @@
 {
-  "Port": "COM13",
+  "Port": "COM2",
   "Baudrate": 19200,
   "Type": "RTU",
+  "ThrottleDelayMs": 10,
   "Units": {
     "1": {
       "Name": "Ex1",
@@ -9,7 +10,8 @@
       "ConversionFactor": 0.015,
       "GasName": "Nitrogen",
       "ConversionUnits": "mL/min",
-      "FlowrateNumberFormat": "F1"
+      "FlowrateNumberFormat": "F1",
+      "AutoOpenClose": true
     },
     "2": {
       "Name": "Ex2",
@@ -17,7 +19,8 @@
       "ConversionFactor": 0.015,
       "GasName": "He",
       "ConversionUnits": "mL/min",
-      "FlowrateNumberFormat": "F1"
+      "FlowrateNumberFormat": "F1",
+      "AutoOpenClose": true
     },
     "3": {
       "Name": "Ex3",
@@ -25,7 +28,8 @@
       "ConversionFactor": 0.0015,
       "GasName": "O2",
       "ConversionUnits": "mL/min",
-      "FlowrateNumberFormat": "F2"
+      "FlowrateNumberFormat": "F2",
+      "AutoOpenClose": true
     },
     "4": {
       "Name": "Ex4",
@@ -33,7 +37,8 @@
       "ConversionFactor": 0.003125,
       "GasName": "Air",
       "ConversionUnits": "mL/min",
-      "FlowrateNumberFormat": "F1"
+      "FlowrateNumberFormat": "F1",
+      "AutoOpenClose": true
     },
     "5": {
       "Name": "Ex5",
@@ -41,7 +46,8 @@
       "ConversionFactor": 0.003125,
       "GasFactor": 0.27,
       "ConversionUnits": "mL/min",
-      "FlowrateNumberFormat": "F1"
+      "FlowrateNumberFormat": "F1",
+      "AutoOpenClose": true
     }
   }
 }

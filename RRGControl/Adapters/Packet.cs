@@ -41,11 +41,11 @@ namespace RRGControl.Adapters
         {
             return JsonConvert.SerializeObject(this);
         }
-        public bool TryConvertValueToDouble(out double d)
+        public bool TryGetRawDouble(out double d)
         {
             try
             {
-                d = ConvertValueToDouble();
+                d = ToRawDouble();
                 return true;
             }
             catch (Exception)
@@ -54,7 +54,7 @@ namespace RRGControl.Adapters
                 return false;
             }
         }
-        public double ConvertValueToDouble()
+        public double ToRawDouble()
         {
             if (double.TryParse(Value, NumberStyles.Float, CultureInfo.InvariantCulture,
                 out double v))
@@ -63,11 +63,15 @@ namespace RRGControl.Adapters
             }
             return double.Parse(Value, CultureInfo.CurrentUICulture);
         }
-        public string GetConvertedValue(MyModbus.RRGUnit u)
+        public string GetUnitConvertedValueString(MyModbus.RRGUnit u)
         {
             if (!ConvertUnits || !ConvertibleRegisters.Any(x => x == RegisterName)) return Value;
-            return Math.Round(ConvertValueToDouble() / u.UnitConfig.ConversionFactor)
-                .ToString("F0", CultureInfo.InvariantCulture);
+            return GetUnitConvertedValue(u).ToString("F0", CultureInfo.InvariantCulture);
+        }
+        public double GetUnitConvertedValue(MyModbus.RRGUnit u)
+        {
+            if (!ConvertUnits || !ConvertibleRegisters.Any(x => x == RegisterName)) return ToRawDouble();
+            return Math.Round(ToRawDouble() / u.UnitConfig.ConversionFactor);
         }
 
         public static Packet? FromJson(string json)

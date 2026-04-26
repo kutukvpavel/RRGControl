@@ -32,6 +32,8 @@ namespace RRGControl.MyModbus
         [JsonProperty(Required = Required.Default, DefaultValueHandling = DefaultValueHandling.Ignore)]
         [System.ComponentModel.DefaultValue((bool)true)]
         public bool EnableAutoupdate { get; set; } = true;
+        [JsonProperty(Required = Required.Default, DefaultValueHandling = DefaultValueHandling.Include)]
+        [System.ComponentModel.DefaultValue((bool)true)]
         public bool AutoOpenClose { get; set; } = true;
 
         /// <summary>
