@@ -87,7 +87,9 @@ namespace RRGControl.Models
                     try
                     {
                         string name = ConfigProvider.ReplaceInvalidFilenameChars(mAdapter.Script?.Name ?? "null");
-                        mCurrentCsv = new FileInfo(Path.Combine(mCsvsFolder, $"{DateTime.Now:yyyy-MM-dd HH-mm-ss} - {name}.csv"));
+                        LogEvent?.Invoke(this, $"Starting script '{name}'.");
+                        name = ConfigProvider.LimitPathLength(Path.Combine(mCsvsFolder, $"{DateTime.Now:yyyy-MM-dd HH-mm-ss} - {name}.csv"));
+                        mCurrentCsv = new FileInfo(name);
                         mCurrentCsv.Directory?.Create();
                         File.WriteAllText(mCurrentCsv.FullName, FormattableString.Invariant(
                             $"Timestamp,ScriptProgress,UnitName,RegisterName,RegisterValue,{string.Join(',', mUnitNames)}\n"));
@@ -100,14 +102,17 @@ namespace RRGControl.Models
                 }
             }
             mAdapter.Start();
+            LogEvent?.Invoke(this, $"Script started/resumed.");
         }
         public void Pause()
         {
             mAdapter.Pause();
+            LogEvent?.Invoke(this, $"Script paused.");
         }
         public void Stop()
         {
             mAdapter.Stop();
+            LogEvent?.Invoke(this, $"Script stopped.");
         }
         public void Save()
         {

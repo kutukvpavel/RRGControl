@@ -355,5 +355,18 @@ namespace RRGControl
         {
             return Path.GetInvalidFileNameChars().Aggregate(seed, (str, cItem) => str.Replace(cItem, Settings.InvalidCharacterReplacement));
         }
+        public static string LimitPathLength(string file)
+        {
+            int overflow = file.Length - 260; 
+            if (overflow > 0)
+            {
+                const string ellisis = "...";
+
+                string extension = Path.GetExtension(file);
+                string firstPart = file.Remove(extension.Length - overflow - ellisis.Length);
+                file = firstPart + ellisis + extension;
+            }
+            return file;
+        }
     }
 }

@@ -143,16 +143,18 @@ namespace RRGControl.MyModbus
                 if ((value > 0) && (Mode == ConfigProvider.ClosedModeName))
                 {
                     Mode = ConfigProvider.RegulateModeName;
-                    LogEvent?.BeginInvoke(this,
-                        $"INFO: the mode of '{UnitConfig.Name}' was switched automatically to Regulate",
-                        null, null);
+#pragma warning disable CS4014
+                    Task.Run(() => LogEvent?.Invoke(this,
+                        $"INFO: the mode of '{UnitConfig.Name}' was switched automatically to Regulate"));
+#pragma warning restore
                 }
                 else if ((value <= 0) && (Mode != ConfigProvider.ClosedModeName))
                 {
                     Mode = ConfigProvider.ClosedModeName;
-                    LogEvent?.BeginInvoke(this,
-                        $"INFO: the mode of '{UnitConfig.Name}' was switched automatically to Closed",
-                        null, null);
+#pragma warning disable CS4014
+                    Task.Run(() => LogEvent?.Invoke(this,
+                        $"INFO: the mode of '{UnitConfig.Name}' was switched automatically to Closed"));
+#pragma warning restore
                 }
             }
         }
