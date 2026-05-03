@@ -74,14 +74,14 @@ namespace RRGControl.MyModbus
         public bool AutoOpenCloseEnabled { get; private set; }
 
         //Default properties
-        public double MaxFlowrate => UnitConfig.ConvertToUI(Registers[ConfigProvider.SetpointRegName].Base.Limits.Max);
+        public double MaxFlowrate => UnitConfig.RegisterToUI(Registers[ConfigProvider.SetpointRegName].Base.Limits.Max);
         public double Measured 
         { 
-            get => UnitConfig.ConvertToUI(Registers[ConfigProvider.MeasuredRegName].Value);
+            get => UnitConfig.RegisterToUI(Registers[ConfigProvider.MeasuredRegName].Value);
         }
         public double Setpoint
         {
-            get => UnitConfig.ConvertToUI(Registers[ConfigProvider.SetpointRegName].Value);
+            get => UnitConfig.RegisterToUI(Registers[ConfigProvider.SetpointRegName].Value);
             set 
             {
 #pragma warning disable CS4014
@@ -137,7 +137,7 @@ namespace RRGControl.MyModbus
         public async Task SetSetpointWithChecks(double value)
         {
             if (!ValidateSetpoint(value)) return;
-            await Registers[ConfigProvider.SetpointRegName].Write(UnitConfig.ConvertToRegister(value));
+            await Registers[ConfigProvider.SetpointRegName].Write(UnitConfig.UiToRegister(value));
             if (AutoOpenCloseEnabled)
             {
                 if ((value > 0) && (Mode == ConfigProvider.ClosedModeName))
@@ -194,7 +194,7 @@ namespace RRGControl.MyModbus
         {
             try
             {
-                return Registers[ConfigProvider.SetpointRegName].Base.ValidateValue(UnitConfig.ConvertToRegister(v));
+                return Registers[ConfigProvider.SetpointRegName].Base.ValidateValue(UnitConfig.UiToRegister(v));
             }
             catch (Exception ex)
             {

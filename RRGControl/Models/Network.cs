@@ -93,23 +93,30 @@ namespace RRGControl.Models
             try
             {
                 var u = mUnitsByName[e.UnitName];
-                if (!u.Present) return;
-                switch (e.RegisterName)
+                if (u.Present)
                 {
-                    case ConfigProvider.SetpointRegName:
-                        u.SetSetpointWithChecks(e.GetUnitConvertedValue(u)).Wait();
-                        break;
-                    default:
-                        {
-                            var r = u.Registers[e.RegisterName];
-                            r.WriteStringRepresentation(e.GetUnitConvertedValueString(u)).Wait();
+                    switch (e.RegisterName)
+                    {
+                        case ConfigProvider.SetpointRegName:
+                            if (!e.ConvertUnits) goto default;
+                            u.SetSetpointWithChecks(e.ToRawDouble()).Wait();
                             break;
-                        }
+                        default:
+                            {
+                                var r = u.Registers[e.RegisterName];
+                                r.WriteStringRepresentation(e.Value).Wait();
+                                break;
+                            }
+                    }
+                }
+                else
+                {
+                    LogEvent?.Invoke(this, $"WARN: Unit '{e.UnitName}' is used by the script but is not present!");
                 }
             }
             catch (FormatException)
             {
-                LogEvent?.Invoke(this, "Recevied an ill-formatted packet value from an adapter.");
+                LogEvent?.Invoke(this, "ERROR: Recevied an ill-formatted packet value from an adapter.");
             }
             catch (Exception ex)
             {

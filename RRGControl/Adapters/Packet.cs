@@ -63,16 +63,6 @@ namespace RRGControl.Adapters
             }
             return double.Parse(Value, CultureInfo.CurrentUICulture);
         }
-        public string GetUnitConvertedValueString(MyModbus.RRGUnit u)
-        {
-            if (!ConvertUnits || !ConvertibleRegisters.Any(x => x == RegisterName)) return Value;
-            return GetUnitConvertedValue(u).ToString("F0", CultureInfo.InvariantCulture);
-        }
-        public double GetUnitConvertedValue(MyModbus.RRGUnit u)
-        {
-            if (!ConvertUnits || !ConvertibleRegisters.Any(x => x == RegisterName)) return ToRawDouble();
-            return Math.Round(ToRawDouble() / u.UnitConfig.ConversionFactor);
-        }
 
         public static Packet? FromJson(string json)
         {

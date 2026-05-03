@@ -41,7 +41,7 @@ namespace RRGControl.MyModbus
         /// </summary>
         /// <param name="reg"></param>
         /// <returns></returns>
-        public double ConvertToUI(short reg)
+        public double RegisterToUI(short reg)
         {
             return reg * ConversionFactor * GasFactor;
         }
@@ -50,7 +50,7 @@ namespace RRGControl.MyModbus
         /// </summary>
         /// <param name="ui"></param>
         /// <returns></returns>
-        public short ConvertToRegister(double ui)
+        public short UiToRegister(double ui)
         {
             return (short)Math.Round(ui / ConversionFactor / GasFactor);
         }
