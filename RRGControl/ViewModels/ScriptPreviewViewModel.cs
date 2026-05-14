@@ -23,7 +23,17 @@ namespace RRGControl.ViewModels
             public bool Offline { get; }
         }
 
-        public event EventHandler? ReplotRequested;
+        public class ReplotRequestedEventArgs : EventArgs
+        {
+            public ReplotRequestedEventArgs(bool autoscale = true)
+            {
+                AutoScale = autoscale;
+            }
+
+            public bool AutoScale { get; set; }
+        }
+
+        public event EventHandler<ReplotRequestedEventArgs>? ReplotRequested;
 
         public ScriptPreviewViewModel()
         {
@@ -58,7 +68,7 @@ namespace RRGControl.ViewModels
                     var ol = u?.Present ?? false ? "Online" : "Offline";
                     Data.Add(new MyPlotData($"{item}, {u?.UnitConfig?.ConversionUnits ?? "N/A"}, {ol}",
                         tmp.Keys.ToArray(), tmp.Values.ToArray(), !(u?.Present ?? false)));
-                    CurrentProgressX = progress * duration / 100.0;
+                    UpdateProgress(duration, progress, false);
                 }
                 catch (Exception ex)
                 {
@@ -68,13 +78,19 @@ namespace RRGControl.ViewModels
             ReplotPreview();
         }
 
-        public void ReplotPreview()
+        public void UpdateProgress(int duration, int progress, bool replot = true)
         {
-            ReplotRequested?.Invoke(this, new EventArgs());
+            CurrentProgressX = progress * duration / 100.0;
+            if (replot) ReplotPreview(false);
+        }
+
+        public void ReplotPreview(bool autoscale = true)
+        {
+            ReplotRequested?.Invoke(this, new ReplotRequestedEventArgs(autoscale));
         }
 
         public List<MyPlotData> Data { get; } = new();
         public List<Tuple<string, Exception>> ErrorUnits { get; } = new();
-        public double CurrentProgressX { get; set; }
+        public double CurrentProgressX { get; private set; }
     }
 }

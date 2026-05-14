@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using System;
+using System.ComponentModel;
 
 namespace RRGControl.Views
 {
@@ -103,12 +104,22 @@ Check working directory and its subfolders.");
         private async void ProgressBar_Click(object sender, PointerPressedEventArgs e)
         {
             if (MyVM == null) return;
+            var previewContext = new ViewModels.ScriptPreviewViewModel(MyVM.Scripts.Compiled, MyVM.Scripts.Duration,
+                    (Application.Current as App)?.MyNetwork, MyVM.ScriptProgress);
             var w = new ScriptPreviewWindow() 
-            { 
-                DataContext = new ViewModels.ScriptPreviewViewModel(MyVM.Scripts.Compiled, MyVM.Scripts.Duration,
-                    (Application.Current as App)?.MyNetwork, MyVM.ScriptProgress)
+            {
+                DataContext = previewContext
             };
+            PropertyChangedEventHandler progressUpdater = (s, e) =>
+            {
+                if (e.PropertyName == nameof(ViewModels.MainWindowViewModel.ScriptProgress))
+                {
+                    previewContext.UpdateProgress(MyVM.Scripts.Duration, MyVM.ScriptProgress);
+                }
+            };
+            MyVM.PropertyChanged += progressUpdater;
             await w.ShowDialog(this);
+            MyVM.PropertyChanged -= progressUpdater;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 using Timer = System.Timers.Timer;
 
 namespace RRGControl.Adapters
@@ -66,24 +67,36 @@ namespace RRGControl.Adapters
         }
         public void Start()
         {
-            if (mTimer.Enabled) mTimer.Stop();
-            mTimer.Start();
-            State = ScriptAdapterState.Running;
+            lock (mTimer)
+            {
+                if (mTimer.Enabled) mTimer.Stop();
+                State = ScriptAdapterState.Running;
+                mTimer.Start();
+            }
         }
         public void Stop()
         {
-            mTicks = 0;
-            mTimer.Stop();
-            State = ScriptAdapterState.Stopped;
+            lock (mTimer)
+            {
+                State = ScriptAdapterState.Stopped;
+                mTimer.Stop();
+                mTicks = 0;
+            }
         }
         public void Pause()
         {
-            mTimer.Stop();
-            State = ScriptAdapterState.Paused;
+            lock (mTimer)
+            {
+                mTimer.Stop();
+                State = ScriptAdapterState.Paused;
+            }
         }
         public void Rewind(int targetTicks)
         {
-            mTicks = targetTicks;
+            lock (mTimer)
+            {
+                mTicks = targetTicks;   
+            }
         }
         public void Push()
         {
@@ -107,34 +120,40 @@ namespace RRGControl.Adapters
 
         private void MTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
-            if (State == ScriptAdapterState.Cancelled) return;
-            if (mTicks > (mDuration ?? 0))
+            lock (mTimer)
             {
-                Stop();
-                Dispatcher.UIThread.Post(() => { ExecutionFinished?.Invoke(this, new EventArgs()); });
-            }
-            try
-            {
-                Dispatcher.UIThread.Post(() => { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress))); });
-                if (mCompiled == null) return;
-                if (mCompiled.TryGetValue(mTicks, out Packet[]? p))
+                if (State == ScriptAdapterState.Cancelled || State == ScriptAdapterState.Stopped) return;
+                if (mTicks > (mDuration ?? 0))
                 {
-                    if (p != null)
+                    Stop();
+                    Dispatcher.UIThread.Post(() => { ExecutionFinished?.Invoke(this, new EventArgs()); });
+                }
+                else
+                {
+                    try
                     {
-                        foreach (var item in p)
+                        Dispatcher.UIThread.Post(() => { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress))); });
+                        if (mCompiled == null) return;
+                        if (mCompiled.TryGetValue(mTicks, out Packet[]? p))
                         {
-                            mQueue.Add(item);
-                        }   
+                            if (p != null)
+                            {
+                                foreach (var item in p)
+                                {
+                                    mQueue.Add(item);
+                                }   
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Task.Run(() => LogEvent?.Invoke(this, ex.ToString()));
+                    }
+                    finally
+                    {
+                        mTicks++;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                LogEvent?.Invoke(this, ex.ToString());
-            }
-            finally
-            {
-                mTicks++;
             }
         }
         private void QueueThread(object? arg)
@@ -155,9 +174,9 @@ namespace RRGControl.Adapters
         }
         private void Cancel()
         {
+            State = ScriptAdapterState.Cancelled;
             mTimer.Stop();
             mTimer.Dispose();
-            State = ScriptAdapterState.Cancelled;
         }
     }
 }

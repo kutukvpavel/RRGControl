@@ -26,7 +26,7 @@ namespace RRGControl.Views
                 if (ViewModel == null) return;
                 ViewModel.ReplotRequested += (o, e) =>
                 {
-                    Plot();  
+                    Plot(e.AutoScale);
                 };
                 Plot();
             };
@@ -43,7 +43,7 @@ namespace RRGControl.Views
         protected Color DefaultLegendOutlineColor;
         private ViewModels.ScriptPreviewViewModel? ViewModel => DataContext as ViewModels.ScriptPreviewViewModel;
 
-        private async void Plot()
+        private async void Plot(bool autoscale = true)
         {
             if (ViewModel == null) return;
             Plot1.Plot.Clear();
@@ -60,7 +60,7 @@ namespace RRGControl.Views
             Plot1.Plot.Legend.Alignment = Alignment.UpperRight;
             Plot1.Plot.Add.VerticalLine(ViewModel.CurrentProgressX,
                 pattern: ViewModel.CurrentProgressX > 0 ? LinePattern.Solid : LinePattern.Dotted);
-            Plot1.Plot.Axes.AutoScale();
+            if (autoscale) Plot1.Plot.Axes.AutoScale();
             Plot1.Refresh();
             if (ViewModel.ErrorUnits.Count > 0)
             {
