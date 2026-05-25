@@ -77,7 +77,7 @@ namespace RRGControl.Models
             mAdapter.Script = new Adapters.Script(l);
         }
         public Adapters.ScriptAdapterState State => mAdapter.State;
-        public int Progress => (int)Math.Round((mAdapter.Progress ?? 0) * 100);
+        public double Progress => mAdapter.Progress ?? 0;
         public void Start()
         {
             if (State == Adapters.ScriptAdapterState.Stopped)

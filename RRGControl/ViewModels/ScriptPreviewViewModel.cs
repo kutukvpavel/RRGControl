@@ -39,12 +39,12 @@ namespace RRGControl.ViewModels
         {
             
         }
-        public ScriptPreviewViewModel(Dictionary<int, Adapters.Packet[]> compiled, int duration, Models.Network? n, int progress)
+        public ScriptPreviewViewModel(Dictionary<int, Adapters.Packet[]> compiled, int duration, Models.Network? n, double progress)
         {
             UpdatePreview(compiled, duration, n, progress);
         }
 
-        public void UpdatePreview(Dictionary<int, Adapters.Packet[]> compiled, int duration, Models.Network? n, int progress)
+        public void UpdatePreview(Dictionary<int, Adapters.Packet[]> compiled, int duration, Models.Network? n, double progress)
         {
             var units = compiled.Values.Select(x => x.Select(y => y.UnitName)).Flatten().Cast<string>().Distinct();
             Data.Clear();
@@ -78,7 +78,7 @@ namespace RRGControl.ViewModels
             ReplotPreview();
         }
 
-        public void UpdateProgress(int duration, int progress, bool replot = true)
+        public void UpdateProgress(int duration, double progress, bool replot = true)
         {
             CurrentProgressX = progress * duration / 100.0;
             if (replot) ReplotPreview(false);

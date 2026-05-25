@@ -20,6 +20,7 @@ namespace RRGControl.ViewModels
             nameof(ScriptPauseEnable),
             nameof(ScriptConfigureEnable),
             nameof(ScriptProgress),
+            nameof(ScriptProgressRounded),
             nameof(ShowProgressBar),
             nameof(BarColor)
         };
@@ -94,7 +95,8 @@ namespace RRGControl.ViewModels
         {
             get => mScript.State == Adapters.ScriptAdapterState.Stopped;
         }
-        public int ScriptProgress => mScript.Progress;
+        public double ScriptProgress => mScript.Progress * 100.0;
+        public int ScriptProgressRounded => (int)Math.Round(ScriptProgress);
         public bool ShowProgressBar => ScriptStopEnable;
         public IBrush BarColor => mScript.State == Adapters.ScriptAdapterState.Running ? App.GreenOK : App.OrangeWarning;
         public bool ShowGenerateExamples => ConfigProvider.Settings.ExampleGenerationAvailable;
