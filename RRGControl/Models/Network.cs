@@ -111,7 +111,7 @@ namespace RRGControl.Models
                 }
                 else
                 {
-                    LogEvent?.Invoke(this, $"WARN: Unit '{e.UnitName}' is used by the script but is not present!");
+                    LogEvent?.Invoke(this, $"WARN: Unit '{e.UnitName}' was targeted by a script or an adapter but is OFFLINE!");
                 }
             }
             catch (FormatException)
